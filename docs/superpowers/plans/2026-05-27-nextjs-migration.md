@@ -53,8 +53,11 @@ Expected: each shows the first 5 lines of the respective file.
 rm server.js
 rm -rf public/
 rm 10-example-cars.json
-rm -rf node_modules/ package-lock.json
+rm package.json package-lock.json
+rm -rf node_modules/
 ```
+
+Note: `package.json` is removed too so `create-next-app` in Task 2 can scaffold a fresh one cleanly. The new package.json will have entirely different dependencies.
 
 - [ ] **Step 4: Commit deletion**
 
