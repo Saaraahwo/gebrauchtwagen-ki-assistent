@@ -73,31 +73,66 @@ git commit -m "Remove pre-migration Express + CDN React sources"
 **Files:**
 - Create: `package.json` (replaced), `tsconfig.json`, `next.config.mjs`, `next-env.d.ts`, `app/layout.tsx` (stub), `app/page.tsx` (stub), `app/globals.css`, `postcss.config.mjs`, `tailwind.config.ts`, `.gitignore` (Next.js additions)
 
-- [ ] **Step 1: Run create-next-app non-interactively**
+- [ ] **Step 1: Stash files that conflict with create-next-app**
 
-From repo root:
+`create-next-app` is interactive about existing files (it will prompt to overwrite `README.md`, `.gitignore`, etc.). Subagents have no stdin, so we move conflicting files out of the way first. They're already in git history; we'll restore via `git checkout` afterward.
 
 ```bash
-npx --yes create-next-app@latest . --typescript --tailwind --app --src-dir=false --import-alias "@/*" --eslint --use-npm --no-turbopack
+mkdir -p /tmp/preserve-migration
+mv Dockerfile README.md QUICK_START.md .env.example CLAUDE.md .env /tmp/preserve-migration/ 2>/dev/null || true
+# Keep the .docx (it's reference material, not in git) — move it too:
+mv *.docx /tmp/preserve-migration/ 2>/dev/null || true
+# Also drop .gitignore since create-next-app generates one:
+rm -f .gitignore
+# docs/ does not conflict (Next.js doesn't generate it), so leave it.
+ls -A
 ```
 
-Answer "Yes" to overwrite existing files (Dockerfile, README.md, etc. — we'll merge by hand).
+Expected: only `.git/` and `docs/` remain visible.
 
-- [ ] **Step 2: Restore non-Next files we want to keep**
-
-`create-next-app` may have overwritten our preserved files. Restore them from master:
+- [ ] **Step 2: Run create-next-app fully non-interactively**
 
 ```bash
-git checkout master -- Dockerfile README.md QUICK_START.md .env.example CLAUDE.md docs/
+npx --yes create-next-app@latest . \
+  --typescript --tailwind --app --no-src-dir \
+  --import-alias "@/*" --eslint --use-npm --no-turbopack \
+  --skip-install
+```
+
+Notes on flags:
+- `--no-src-dir` (not `--src-dir=false`) — boolean negation flag
+- `--no-turbopack` — opt out of Turbopack default in Next 15+
+- `--skip-install` — we install in a separate step so any install errors don't mix with scaffolding
+
+Then install:
+```bash
+npm install
+```
+
+Expected: scaffold completes without prompts, then `npm install` finishes cleanly. If `create-next-app` errors with "directory not empty" or any other interactive prompt, run `npx create-next-app@latest --help` to see the current flag set and retry. Report as NEEDS_CONTEXT if stuck.
+
+- [ ] **Step 3: Restore preserved files**
+
+```bash
+mv /tmp/preserve-migration/Dockerfile ./
+mv /tmp/preserve-migration/QUICK_START.md ./
+mv /tmp/preserve-migration/.env.example ./
+mv /tmp/preserve-migration/.env ./ 2>/dev/null || true
+mv /tmp/preserve-migration/*.docx ./ 2>/dev/null || true
+# Restore CLAUDE.md from preserved — Task 38 will rewrite it later, but keep it for now so devs reading mid-migration aren't confused:
+mv /tmp/preserve-migration/CLAUDE.md ./
+# Discard the preserved README.md (create-next-app made a Next.js one which is fine):
+rm -f /tmp/preserve-migration/README.md
+rmdir /tmp/preserve-migration 2>/dev/null || true
 ```
 
 Verify:
 ```bash
-ls Dockerfile README.md .env.example CLAUDE.md
+ls Dockerfile QUICK_START.md .env.example CLAUDE.md
 ls docs/superpowers/specs/ docs/superpowers/plans/
 ```
 
-- [ ] **Step 3: Verify Next.js scaffold builds**
+- [ ] **Step 4: Verify Next.js scaffold builds**
 
 ```bash
 npm run build
@@ -105,7 +140,7 @@ npm run build
 
 Expected: builds without errors, generates `.next/`. Warnings about empty pages are OK.
 
-- [ ] **Step 4: Commit scaffold**
+- [ ] **Step 5: Commit scaffold**
 
 ```bash
 git add -A
