@@ -6,7 +6,14 @@
 
 **Architecture:** Next.js 14+ App Router. Server components render the buyer/seller shells and read data files directly. Client components handle interactive analysis/chat. Route handlers in `app/api/*/route.ts` are thin wrappers calling pure functions in `lib/cars`, `lib/ai`, `lib/auth`, `lib/questions`. Demo mode (no `ANTHROPIC_API_KEY`) is the fallback contract for every Claude call.
 
-**Tech Stack:** Next.js (App Router), TypeScript, Tailwind CSS, Vitest, `@anthropic-ai/sdk`, `jsonwebtoken`.
+**Tech Stack:** Next.js 16 (App Router, Turbopack default, React 19), TypeScript, Tailwind v4 (CSS-based config in `globals.css`), Vitest, `@anthropic-ai/sdk`, `jsonwebtoken`.
+
+**Stack version notes (post-Phase-1 reality check):**
+- create-next-app currently scaffolds Next.js **16.2.6 + React 19.2.4 + Tailwind v4 + flat ESLint config**.
+- No `tailwind.config.ts` — Tailwind v4 uses `@theme` blocks inside `globals.css`.
+- `next lint` is gone; just `eslint` (already what create-next-app sets up).
+- `--no-turbopack` flag is gone (Task 2 worked around this).
+- Directory name `Unternehmensethik` had uppercase, which npm rejects in `name`. Task 2 lowercased it to `unternehmensethik` in `package.json` — preserved.
 
 **Spec:** `docs/superpowers/specs/2026-05-27-nextjs-migration-design.md` — read first.
 
@@ -185,14 +192,15 @@ export default defineConfig({
 
 - [ ] **Step 3: Add test scripts to package.json**
 
-Modify the `scripts` section of `package.json`:
+`create-next-app` already set up `dev`, `build`, `start`, and `lint` (the latter uses plain `eslint` in Next 16 — do not change it to `next lint` which was removed). Just add the two test scripts. After editing, the `scripts` section should look like:
+
 ```json
 {
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run"
   }
@@ -2035,75 +2043,60 @@ git commit -m "Add GET /api/sellers/faq-pack route handler"
 
 ## Phase 6 — UI foundation
 
-### Task 24: Tailwind config + root layout + globals
+### Task 24: Tailwind v4 design tokens + root layout
 
 **Files:**
-- Modify: `tailwind.config.ts`, `app/globals.css`, `app/layout.tsx`
-- Source: master `public/index.html:11-13` (font import), `:17-99` (header/breadcrumb CSS for design tokens)
+- Replace: `app/globals.css` (overwrite create-next-app's default)
+- Modify: `app/layout.tsx` (set lang=de, metadata, import font)
+- Do NOT create: `tailwind.config.ts` — Tailwind v4 is CSS-first, the config lives in `globals.css` via `@theme`.
 
-- [ ] **Step 1: Configure Tailwind with BMW design tokens**
+**Source:** master `public/index.html:11-13` (font import), `:17-99` (header/breadcrumb CSS for design tokens).
 
-`tailwind.config.ts`:
-```typescript
-import type { Config } from 'tailwindcss';
+- [ ] **Step 1: Replace globals.css with BMW design tokens (Tailwind v4 syntax)**
 
-const config: Config = {
-  content: [
-    './app/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-  ],
-  theme: {
-    extend: {
-      colors: {
-        bmw: {
-          blue: '#1c69d4',
-          dark: '#1c1c1c',
-          gray: {
-            border: '#e0e0e0',
-            text: '#555555',
-            muted: '#888888',
-            bg: '#f5f5f5',
-          },
-        },
-        flag: {
-          red: '#dc2626',
-          orange: '#f59e0b',
-          green: '#16a34a',
-        },
-      },
-      fontFamily: {
-        sans: ['Inter', 'Arial', 'sans-serif'],
-      },
-      maxWidth: {
-        layout: '1400px',
-      },
-    },
-  },
-  plugins: [],
-};
+`app/globals.css` — REPLACE the entire file with this:
 
-export default config;
-```
-
-- [ ] **Step 2: Update globals.css**
-
-`app/globals.css`:
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-bmw-gray-bg text-bmw-dark font-sans text-sm;
-  }
+@theme {
+  --color-bmw-blue: #1c69d4;
+  --color-bmw-dark: #1c1c1c;
+  --color-bmw-gray-border: #e0e0e0;
+  --color-bmw-gray-text: #555555;
+  --color-bmw-gray-muted: #888888;
+  --color-bmw-gray-bg: #f5f5f5;
+
+  --color-flag-red: #dc2626;
+  --color-flag-orange: #f59e0b;
+  --color-flag-green: #16a34a;
+
+  --font-sans: 'Inter', Arial, sans-serif;
+  --container-layout: 1400px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  background: var(--color-bmw-gray-bg);
+  color: var(--color-bmw-dark);
+  font-family: var(--font-sans);
+  font-size: 14px;
 }
 ```
 
-- [ ] **Step 3: Update root layout**
+Notes on Tailwind v4 token namespaces:
+- `--color-*` → produces `text-*`, `bg-*`, `border-*` utilities (e.g., `--color-bmw-blue` → `text-bmw-blue`, `bg-bmw-blue`, `border-bmw-blue`)
+- `--font-*` → produces `font-*` family utilities (`font-sans` from `--font-sans`)
+- `--container-*` → produces `max-w-*` utilities (`max-w-layout` from `--container-layout`)
+- No JS config file needed. Delete `tailwind.config.ts` if create-next-app made one (it shouldn't have in v4).
 
-`app/layout.tsx`:
+The default create-next-app `globals.css` had a dark-mode media query and Geist font tokens — those are intentionally dropped here since the BMW design is a single light theme.
+
+- [ ] **Step 2: Update root layout**
+
+`app/layout.tsx` — REPLACE the create-next-app default with:
+
 ```typescript
 import type { Metadata } from 'next';
 import './globals.css';
@@ -2122,19 +2115,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 4: Verify build**
+The default scaffold imports `Geist` and `Geist_Mono` from `next/font/google` — remove those imports and the body className that applied them.
+
+- [ ] **Step 3: Verify build**
 
 ```bash
 npm run build
 ```
 
-Expected: no errors.
+Expected: no errors. The generated CSS should now include classes like `.text-bmw-blue`, `.bg-bmw-dark`, `.max-w-layout`. You can spot-check by `grep -r 'bmw-blue\|max-w-layout' .next/static/css/ 2>/dev/null | head -5` after the build.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add tailwind.config.ts app/globals.css app/layout.tsx
-git commit -m "Configure Tailwind with BMW design tokens"
+# Remove tailwind.config.ts if it exists (v4 doesn't use it):
+rm -f tailwind.config.ts tailwind.config.js
+git add app/globals.css app/layout.tsx
+git add -u tailwind.config.* 2>/dev/null || true
+git commit -m "Configure Tailwind v4 BMW design tokens and root layout"
 ```
 
 ---
