@@ -23,6 +23,9 @@ Copy `.env.example` to `.env` and fill in:
 - `ANTHROPIC_API_KEY` — required for live Claude analysis (without it, the app runs in demo mode)
 - `JWT_SECRET` — used for seller authentication tokens
 - `PORT` — defaults to 5000
+- `CORS_ORIGIN` — defaults to open CORS (`*`); set to your domain in production
+
+**Important**: `server.js` does not use `dotenv`. The `.env` file is not auto-loaded. To load it, either export vars in your shell (`export $(cat .env | xargs)`) or install and require dotenv.
 
 Seller demo account: `demo@carcheck.de` / `demo123`
 
@@ -71,3 +74,25 @@ Single-file backend (`server.js`) + single-file frontend (`public/index.html`). 
 - **In-memory state**: `questionLog` and seller data are lost on server restart. No database.
 - **JWT**: 7-day expiry, verified via `verifyToken` middleware. Secret defaults to a hardcoded dev value when `JWT_SECRET` is not set.
 - **Model used**: `claude-sonnet-4-6` for both analysis and chat endpoints.
+- **Seller auth**: Password comparison is plain-text string comparison (the field name `passwordHash` is misleading — no hashing is done in the MVP).
+- **Article numbers**: `articleNr()` always generates `BMW-GW-XXX` format regardless of the actual car brand.
+
+## Deployment
+
+```bash
+# Docker
+docker build -t car-ai .
+docker run -e ANTHROPIC_API_KEY="sk-ant-..." -p 5000:5000 car-ai
+
+# Fly.io
+fly launch
+fly secrets set ANTHROPIC_API_KEY="sk-ant-..."
+fly deploy
+
+# Heroku
+heroku create your-app-name
+heroku config:set ANTHROPIC_API_KEY="sk-ant-..."
+git push heroku main
+```
+
+The Docker image uses the `HEALTHCHECK` on `GET /api/cars` every 30 seconds.
