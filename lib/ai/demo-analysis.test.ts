@@ -28,4 +28,9 @@ describe('generateDemoAnalysis', () => {
     expect(a).toMatch(/UNFALLSCHÄDEN/i);
     expect(a).toContain('1.500');
   });
+
+  it('does NOT contain SCHRITT headers', () => {
+    const a = generateDemoAnalysis(car, findings);
+    expect(a).not.toMatch(/SCHRITT \d/);
+  });
 });
