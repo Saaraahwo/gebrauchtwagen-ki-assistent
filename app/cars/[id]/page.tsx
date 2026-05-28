@@ -32,10 +32,8 @@ export default async function CarDetailPage({
           { label: car.name },
         ]}
       />
-      <main className="max-w-layout mx-auto px-6 py-6 space-y-6">
-        <CarDetail car={car} />
-        <ChatWidget car={car} />
-      </main>
+      <CarDetail car={car} />
+      <ChatWidget car={car} />
     </>
   );
 }
