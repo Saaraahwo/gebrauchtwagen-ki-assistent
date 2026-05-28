@@ -1,143 +1,150 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Car, Findings, Anomaly, PriceAmpel } from '@/lib/cars/types';
 
-interface AnalysisResponse {
-  success: true;
-  analysis: {
-    carData: Car;
-    findings: Findings;
-    auffaelligkeiten: Anomaly[];
-    preisAmpel: PriceAmpel;
-    aiAnalysis: { analysis: string; model: string };
-    timestamp: string;
-  };
+interface AnalysisData {
+  carData: Car;
+  findings: Findings;
+  auffaelligkeiten: Anomaly[];
+  preisAmpel: PriceAmpel;
+  aiAnalysis: { analysis: string; model: string };
 }
 
 interface AnalysisPanelProps {
   car: Car;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
-export function AnalysisPanel({ car }: AnalysisPanelProps) {
+export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
   const [state, setState] = useState<
-    | { kind: 'idle' }
     | { kind: 'loading' }
     | { kind: 'error'; message: string }
-    | { kind: 'ready'; data: AnalysisResponse['analysis'] }
-  >({ kind: 'idle' });
+    | { kind: 'ready'; data: AnalysisData }
+  >({ kind: 'loading' });
 
-  async function runAnalysis() {
-    setState({ kind: 'loading' });
-    try {
-      const res = await fetch('/api/cars/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(car),
-      });
-      if (!res.ok) throw new Error('Analyse fehlgeschlagen');
-      const json: AnalysisResponse = await res.json();
-      setState({ kind: 'ready', data: json.analysis });
-    } catch (e) {
-      setState({ kind: 'error', message: (e as Error).message });
-    }
-  }
+  useEffect(() => {
+    fetch('/api/cars/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(car),
+    })
+      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+      .then(json => setState({ kind: 'ready', data: json.analysis }))
+      .catch(e => setState({ kind: 'error', message: String(e) }));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (state.kind === 'idle') {
-    return (
-      <button
-        onClick={runAnalysis}
-        className="w-full py-3 bg-bmw-blue text-white font-semibold hover:bg-blue-700 rounded-sm"
-      >
-        🤖 KI-Analyse starten
-      </button>
-    );
-  }
-  if (state.kind === 'loading') {
-    return (
-      <div className="bg-white border border-bmw-gray-border p-6 text-center text-bmw-gray-text">
-        Analysiere…
-      </div>
-    );
-  }
-  if (state.kind === 'error') {
-    return (
-      <div className="bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-        {state.message}
-        <button onClick={runAnalysis} className="ml-3 underline">
-          Erneut versuchen
-        </button>
-      </div>
-    );
-  }
+  const allFindings = state.kind === 'ready'
+    ? [...state.data.findings.red, ...state.data.findings.orange, ...state.data.findings.green]
+    : [];
 
-  const { findings, auffaelligkeiten, preisAmpel, aiAnalysis } = state.data;
   return (
-    <div className="space-y-4">
-      {findings.red.length > 0 && (
-        <section className="bg-white border-l-4 border-flag-red p-4">
-          <h3 className="font-bold mb-2">🔴 Wichtige Punkte</h3>
-          <ul className="space-y-2 text-sm">
-            {findings.red.map((f, i) => (
-              <li key={i}>
-                <strong>{f.flag}:</strong> {f.message}
-                <div className="text-xs text-bmw-gray-muted">{f.tip}</div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {findings.orange.length > 0 && (
-        <section className="bg-white border-l-4 border-flag-orange p-4">
-          <h3 className="font-bold mb-2">🟠 Hinweise</h3>
-          <ul className="space-y-2 text-sm">
-            {findings.orange.map((f, i) => (
-              <li key={i}>
-                <strong>{f.flag}:</strong> {f.message}
-                <div className="text-xs text-bmw-gray-muted">{f.tip}</div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {findings.green.length > 0 && (
-        <section className="bg-white border-l-4 border-flag-green p-4">
-          <h3 className="font-bold mb-2">🟢 Positiv</h3>
-          <ul className="space-y-1 text-sm">
-            {findings.green.map((f, i) => (
-              <li key={i}>{f.message}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {auffaelligkeiten.length > 0 && (
-        <section className="bg-white border border-bmw-gray-border p-4">
-          <h3 className="font-bold mb-2">Auffälligkeiten</h3>
-          <ul className="space-y-3 text-sm">
-            {auffaelligkeiten.map((a, i) => (
-              <li key={i}>
-                <strong>{a.title}</strong>
-                <p className="text-bmw-gray-text">{a.detail}</p>
-                <p className="text-xs text-bmw-blue mt-1">{a.tip}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      <section className="bg-white border border-bmw-gray-border p-4">
-        <h3 className="font-bold mb-2">Marktpreisvergleich</h3>
-        <p className="text-sm">
-          {preisAmpel.label} (Marktwert ca. {preisAmpel.expected.toLocaleString('de-DE')} €)
-        </p>
-      </section>
-      <section className="bg-white border border-bmw-gray-border p-4">
-        <h3 className="font-bold mb-2">🧠 KI-Analyse</h3>
-        <pre className="whitespace-pre-wrap text-xs font-mono text-bmw-dark">
-          {aiAnalysis.analysis}
-        </pre>
-        <p className="text-[10px] text-bmw-gray-muted mt-2">Model: {aiAnalysis.model}</p>
-      </section>
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-white w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-sm shadow-2xl flex flex-col">
+
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b border-bmw-gray-border px-5 py-4 flex justify-between items-center z-10">
+          <div>
+            <h2 className="text-base font-bold">KI-Analyse — {car.name}</h2>
+            {car.subtitle && <div className="text-xs text-bmw-gray-muted mt-0.5">{car.subtitle} · {car.price.toLocaleString('de-DE')} €</div>}
+          </div>
+          <button onClick={onClose} className="text-bmw-gray-muted hover:text-bmw-dark text-xl leading-none px-1 ml-4">✕</button>
+        </div>
+
+        {/* Body */}
+        <div className="p-5 flex flex-col gap-5 flex-1">
+
+          {state.kind === 'loading' && (
+            <div className="text-center py-10 text-bmw-gray-muted text-sm">Analysiere…</div>
+          )}
+
+          {state.kind === 'error' && (
+            <div className="border border-bmw-gray-border p-4 text-sm text-bmw-gray-text">{state.message}</div>
+          )}
+
+          {state.kind === 'ready' && (
+            <>
+              {/* Summary bar */}
+              <div className="bg-bmw-gray-bg border border-bmw-gray-border flex divide-x divide-bmw-gray-border">
+                {car.accidents.length > 0 && (
+                  <div className="flex-1 text-center py-2.5 px-2">
+                    <div className="text-base font-bold">{car.accidents.length}</div>
+                    <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Unfall</div>
+                  </div>
+                )}
+                <div className="flex-1 text-center py-2.5 px-2">
+                  <div className="text-base font-bold">{car.km.toLocaleString('de-DE')}</div>
+                  <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">km</div>
+                </div>
+                <div className="flex-1 text-center py-2.5 px-2">
+                  <div className="text-base font-bold">{car.owners}</div>
+                  <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Vorbesitzer</div>
+                </div>
+                <div className="flex-1 text-center py-2.5 px-2">
+                  <div className="text-base font-bold">{state.data.preisAmpel.expected.toLocaleString('de-DE')} €</div>
+                  <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Marktwert</div>
+                </div>
+                <div className="flex-1 text-center py-2.5 px-2">
+                  <div className="text-base font-bold">
+                    {state.data.preisAmpel.diff > 0 ? '+' : ''}{state.data.preisAmpel.diff}%
+                  </div>
+                  <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Preisposition</div>
+                </div>
+              </div>
+
+              {/* Findings — neutral, thin blue border only */}
+              {allFindings.length > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Prüfpunkte</div>
+                  <div className="flex flex-col gap-2">
+                    {allFindings.map((f, i) => (
+                      <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                        <div className="text-xs font-semibold">{f.flag}</div>
+                        <div className="text-xs text-bmw-gray-text mt-0.5">{f.message}</div>
+                        {f.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{f.tip}</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Full AI text */}
+              <div>
+                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Vollständige Analyse</div>
+                <div className="bg-bmw-gray-bg border border-bmw-gray-border p-4">
+                  <pre className="whitespace-pre-wrap text-xs leading-relaxed text-bmw-dark font-sans">
+                    {state.data.aiAnalysis.analysis}
+                  </pre>
+                  <p className="text-[10px] text-bmw-gray-muted mt-3">Modell: {state.data.aiAnalysis.model}</p>
+                </div>
+              </div>
+
+              {/* Chat nudge */}
+              <div className="bg-blue-50 border border-blue-200 p-3 flex gap-3 items-start">
+                <span className="text-lg flex-shrink-0">💬</span>
+                <p className="text-xs text-bmw-gray-text leading-relaxed">
+                  Noch Fragen zum Fahrzeug?{' '}
+                  <strong className="text-bmw-blue">Nutzen Sie den Chat</strong> — unser KI-Assistent
+                  beantwortet alles zu Motor, Unfall, Kosten und Verhandlung. Einfach auf das Chat-Symbol klicken.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="sticky bottom-0 bg-white border-t border-bmw-gray-border px-5 py-3 text-right">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 text-sm border border-bmw-gray-border hover:bg-bmw-gray-bg rounded-sm transition-colors"
+          >
+            Schließen
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

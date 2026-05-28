@@ -5,7 +5,6 @@ import type { Car } from '@/lib/cars/types';
 import { Header } from '@/components/Header';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { CarDetail } from '@/components/CarDetail';
-import { AnalysisPanel } from '@/components/AnalysisPanel';
 import { ChatWidget } from '@/components/ChatWidget';
 
 export default async function CarDetailPage({
@@ -35,7 +34,6 @@ export default async function CarDetailPage({
       />
       <main className="max-w-layout mx-auto px-6 py-6 space-y-6">
         <CarDetail car={car} />
-        <AnalysisPanel car={car} />
         <ChatWidget car={car} />
       </main>
     </>
