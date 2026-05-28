@@ -110,12 +110,35 @@ If the car has accidents: show `"N Unfall repariert · Reparatur: X €"` as sma
 
 ---
 
-## 3. Chat Improvements
+## 3. KI-Analyse Popup — Content Style
+
+### Analysis text format
+`lib/ai/demo-analysis.ts` currently produces text with "SCHRITT 1:", "SCHRITT 2:", "SCHRITT 3:" headers. Remove these — rewrite as natural paragraphs (see mockup). The content stays but flows as readable prose, not a numbered procedure.
+
+### `AnalysisPanel` popup structure (final)
+1. **Header:** car name + subtitle + price
+2. **Summary bar:** neutral number chips (Unfall count, km, Vorbesitzer, Marktwert, Preisposition)
+3. **Prüfpunkte:** each finding as a card with thin bmw-blue left border, bold title, plain text, grey tip — **no red/orange/green backgrounds, no emoji symbols**
+4. **Vollständige Analyse:** AI text in a light grey box, plain paragraphs, bullet points with `·`
+5. **Chat nudge:** light blue box at bottom — "Noch Fragen? Nutzen Sie den Chat — unser KI-Assistent beantwortet alles zu Motor, Unfall, Kosten und Verhandlung."
+
+---
+
+## 4. Chat Improvements
 
 ### Problem A — Markdown not rendered
 `ChatWidget.tsx` renders `{m.content}` as plain text. Responses use `**bold**`, `\n` line breaks, and `•` bullet points — these show as raw characters.
 
 **Fix:** Add a `renderMarkdown(text: string): React.ReactNode[]` helper in `ChatWidget.tsx` that returns React elements — no `dangerouslySetInnerHTML`, no HTML strings. Parse the text into lines, then within each line split on `**...**` to produce alternating plain/`<strong>` spans. Return a `<>` fragment with `<br />` between lines. Lines starting with `•` get a small left indent via className. This is a whitelist-only renderer: only `**bold**` and line breaks are handled; all other characters are rendered as plain text nodes, so injected HTML or `<script>` tags are inert.
+
+### Chat persona — solution-oriented, transparent, sales-friendly
+Every chat response must follow this principle: **be honest about the issue, then immediately give a concrete solution or workaround**. Never just list problems. Examples:
+- Euro 5 emission risk → "Kein Problem: eine Feinstaubplakette kostet ~10 € und deckt viele Städte ab. Für Fahrverbotszonen gibt es Tagespässe ab 12 €."
+- High km → "150.000 km klingt viel, aber gut gepflegte Diesel laufen problemlos 300.000 km. Worauf du achten solltest: …"
+- Accident → facts + "Der Schaden ist dokumentiert — das ist ehrlicher als ein unreportierter Schaden. Mit Rechnung und Gutachten bist du auf der sicheren Seite."
+- Missing service record → "Frag nach dem Serviceheft. Wenn ein Eintrag fehlt, kann die Werkstatt oft die Rechnung nachliefern."
+
+Goal: buyer feels informed and confident, not scared off.
 
 ### Problem B — Accident response is informational, not actionable
 
@@ -159,7 +182,8 @@ Current: returns correct "keine bekannte Unfallhistorie". No change needed.
 | `components/CarSVG.tsx` | New — SVG car silhouette component |
 | `components/CarCard.tsx` | Real photo + SVG fallback + badge |
 | `components/CarDetail.tsx` | Full rewrite — gallery, title card, specs, right sidebar with KI button |
-| `components/AnalysisPanel.tsx` | Convert to modal popup (no inline rendering) |
+| `components/AnalysisPanel.tsx` | Modal popup — neutral style, no colors/symbols, chat nudge |
+| `lib/ai/demo-analysis.ts` | Remove SCHRITT headers, rewrite as natural paragraphs |
 | `app/cars/[id]/page.tsx` | Simplified — CarDetail + floating ChatWidget only |
 | `components/ChatWidget.tsx` | Convert to floating bubble + popup; add `renderMarkdown` helper |
 | `lib/ai/demo-chat.ts` | New negotiation trigger + improved accident action-plan response |
