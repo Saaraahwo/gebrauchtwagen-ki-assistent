@@ -30,6 +30,16 @@ export interface Car {
   featureGroups?: Record<string, string[]>;
   polster?: string;
   interiorColor?: string;
+  colorHex?: string;
+  imgExterior?: string;
+  imgInterior?: string;
+  erstzulassung?: string;
+  drive?: string;
+  hu?: string;
+  doors?: number;
+  seats?: number;
+  badge?: string;
+  description?: string;
 }
 
 export type Severity = 'red' | 'orange' | 'green';

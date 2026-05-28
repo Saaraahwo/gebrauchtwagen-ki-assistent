@@ -491,7 +491,7 @@
     "doors": 5,
     "seats": 5,
     "badge": null,
-    "imgExterior": "/pink-car.avif",
+    "imgExterior": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1553818501-e9926ea1ea8f?w=800&q=80&auto=format&fit=crop",
     "description": "Günstigster Einstieg. Sonderfarbe Lipstick Rosa mit Rosé-Polsterung – ein echter Hingucker. Euro 5."
   }
