@@ -38,7 +38,7 @@ export interface Car {
   hu?: string;
   doors?: number;
   seats?: number;
-  badge?: string;
+  badge?: string | null;
   description?: string;
 }
 
