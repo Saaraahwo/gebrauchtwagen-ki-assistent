@@ -61,6 +61,39 @@ export function generateDemoChatResponse(
     return `**Exterieur – ${carData.name}**\n\nAußenfarbe: ${carData.color || '–'}\nPolster: ${carData.polster || '–'} · Innenfarbe: ${carData.interiorColor || '–'}\n\n${(carData.color||'').toLowerCase().includes('individual')||(carData.color||'').toLowerCase().includes('sonder') ? 'Sonderfarbe: Beim Weiterverkauf etwas mehr Verhandlungszeit einplanen – aber für Liebhaber sehr attraktiv.' : 'Standardfarbe – gute Wiederverkäuflichkeit.'}`;
   }
 
+  // ── Unfall: Käuferstrategie / Verhandlung ──
+  if (r('umgang|wie soll ich|was tun|strategie|ratschlag|vorgehen|wie gehe ich|was mache ich')) {
+    if (!hasAccidents) {
+      return `Der ${carData.name} hat keine bekannte Unfallhistorie.\n\nEmpfehlung: Lackschichtdicke messen lassen (unter 120 μm = original). Bei der Probefahrt auf ungewöhnliche Geräusche und ungleichmäßige Spaltmaße achten.`;
+    }
+    const acc = carData.accidents[0];
+    const totalRepair = carData.accidents.reduce((s, a) => s + (a.repairCost || 0), 0);
+    const repairStr = totalRepair > 0 ? `${totalRepair.toLocaleString('de-DE')} €` : 'dokumentiert';
+    const discountMin = totalRepair > 0 ? Math.max(500, Math.round(totalRepair * 0.8 / 100) * 100) : 1000;
+    const damageChecks: Partial<Record<string, string>> = {
+      heck: 'Kofferraumklappe auf Spaltmaße, PDC-Sensoren testen, Stoßfänger und Dichtungen prüfen',
+      front: 'Kühlergrill, Scheinwerfer, Achsverhalten bei Geradeausfahrt, Kühlwasserstand',
+      seite: 'Türen öffnen/schließen, Windgeräusche bei Fahrt, Spaltmaße Kotflügel und A-Säule',
+      motor: 'Motorraum auf Ölflecken, Kaltstart, Kompression und Steuerkette testen lassen',
+      struktur: 'Achsvermessung zwingend, Karosserievermessung beim Fachbetrieb',
+    };
+    const checkTip = (acc.damageKey && damageChecks[acc.damageKey as string]) ?? 'Spaltmaße, Lackbild und reparierte Stellen auf Unregelmäßigkeiten prüfen';
+    return `**So gehst du mit dem Unfallschaden um**\n\n` +
+      `Dieser ${carData.name} hat **${carData.accidents.length} Unfall${carData.accidents.length > 1 ? 'schäden' : ''}** (Reparatur: ${repairStr}). So gehst du vor:\n\n` +
+      `**1. Dokumente verlangen**\n` +
+      `• Original-Reparaturrechnung vom Betrieb\n` +
+      `• Fotos vor/nach der Reparatur\n` +
+      `• DEKRA-Gutachten, falls vorhanden\n\n` +
+      `**2. Preisverhandlung**\n` +
+      `Unfallwagen verlieren **10–20 %** Marktwert. Sage: „Der Schaden mindert den Wiederverkaufswert — ich erwarte einen Abzug von mind. ${discountMin.toLocaleString('de-DE')} €."\n\n` +
+      `**3. Vor Ort prüfen**\n` +
+      `• ${checkTip}\n` +
+      `• Lackschichtdicke messen: über 180 μm deutet auf Umlackierung hin\n\n` +
+      `**4. Gutachten empfohlen**\n` +
+      `DEKRA/TÜV für 200–400 € — lohnt sich bei diesem Preis.\n\n` +
+      `💡 Ein dokumentierter Schaden ist ehrlicher als ein unreportierter. Mit Rechnung und Gutachten bist du auf der sicheren Seite.`;
+  }
+
   // ── Unfall & Schäden ──
   if (r('unfall|schaden|reparatur|langzeit')) {
     if (!hasAccidents) return `Der ${carData.name} hat keine bekannte Unfallhistorie.\n\nEmpfehlung: Lackschichtdicke messen lassen (unter 120 μm = Original). Bei der Probefahrt auf ungewöhnliche Geräusche und ungleichmäßige Spaltmaße achten.`;
@@ -250,11 +283,20 @@ export function generateDemoChatResponse(
   }
 
   // ── Auffälligkeiten ──
-  if (r('auffällig|besonderheit|scheinwerfer|laser|fahrverbot|emission|plakette')) {
+  if (r('auffällig|besonderheit|scheinwerfer|laser|fahrverbot|emission|plakette|euro')) {
     const auff = detectAuffaelligkeiten(carData);
     if (!auff.length) return `Beim ${carData.name} (${carData.yearBuilt}, ${carData.km.toLocaleString('de-DE')} km) wurden keine besonderen Auffälligkeiten erkannt.`;
     let reply = `**Hinweise zum ${carData.name}**\n\n`;
-    auff.forEach(a => { reply += `${a.title}\n${a.tip}\n\n`; });
+    auff.forEach(a => {
+      reply += `**${a.title}**\n`;
+      reply += `${a.detail}\n`;
+      if (a.flag === 'FAHRVERBOT_RISIKO') {
+        reply += `Lösung: Eine grüne Feinstaubplakette kostet ca. 10 € und deckt viele Städte ab. Für Fahrverbotszonen gibt es Tagespässe ab 12 €. Für die meisten Fahrten bleibt das Fahrzeug alltagstauglich.\n`;
+      } else {
+        reply += `${a.tip}\n`;
+      }
+      reply += '\n';
+    });
     return reply.trim();
   }
 

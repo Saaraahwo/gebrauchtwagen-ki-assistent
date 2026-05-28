@@ -43,3 +43,33 @@ describe('generateDemoChatResponse', () => {
     expect(r).toMatch(/keine bekannte Unfallhistorie/i);
   });
 });
+
+const carWithAccident: Car = {
+  ...car,
+  accidents: [{ type: 'Heckschaden', damage: 'Stoßfänger', damageKey: 'heck', repairCost: 1500, date: '2022-06' }],
+};
+
+describe('negotiation branch', () => {
+  it('returns 4-step action plan for "wie gehe ich mit dem Unfall um"', () => {
+    const r = generateDemoChatResponse(carWithAccident, [], 'wie gehe ich mit dem Unfall um');
+    expect(r).toMatch(/Dokumente verlangen/);
+    expect(r).toMatch(/Preisverhandlung/);
+    expect(r).toMatch(/Gutachten/);
+  });
+
+  it('returns action plan for "was tun beim Unfall"', () => {
+    const r = generateDemoChatResponse(carWithAccident, [], 'was tun beim Unfall');
+    expect(r).toMatch(/Dokumente verlangen/);
+  });
+
+  it('factual accident question returns facts, not action plan', () => {
+    const r = generateDemoChatResponse(carWithAccident, [], 'Hatte er einen Unfall?');
+    expect(r).toMatch(/Unfallhistorie|Heckschaden/i);
+    expect(r).not.toMatch(/Dokumente verlangen/);
+  });
+
+  it('no accidents + negotiation trigger returns clean response', () => {
+    const r = generateDemoChatResponse(car, [], 'wie gehe ich mit dem Unfall um');
+    expect(r).toMatch(/keine bekannte Unfallhistorie|kein.*Unfall/i);
+  });
+});
