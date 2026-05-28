@@ -1,0 +1,373 @@
+import type { Car } from '@/lib/cars/types';
+import { SCHADEN_DB, getSchadenFolgen } from '@/lib/cars/damage-db';
+import { detectAuffaelligkeiten } from '@/lib/cars/anomaly-detection';
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export function generateDemoChatResponse(
+  carData: Car,
+  messages: ChatMessage[],
+  userMessage: string,
+): string {
+  const age = new Date().getFullYear() - carData.yearBuilt;
+  const kmPerYear = Math.round(carData.km / Math.max(1, age));
+  const hasAccidents = (carData.accidents || []).length > 0;
+  const r = (pattern: string) => new RegExp(pattern, 'i').test(userMessage);
+
+  // ── Ausstattung & Features (vor allen anderen, da Begriffe wie "sitz" sonst zu früh matchen) ──
+  if (r('ausstatt|hat.*navi|gibt.*navi|navi.*vorhand|sitzheiz|hat.*sitzheiz|hat.*leder|hat.*pano|hat.*laser|hat.*kamera|hat.*parkassist|hat.*standheiz|hat.*harman|hat.*bang|hat.*bowers|hat.*tempomat|hat.*head.up|hat.*fahrassist|hat.*ambient|hat.*soft.close|hat.*bluetooth|hat.*usb|welche.*features|was.*drin|was.*ausgestattet|wie.*ausgestattet|vorhanden|ausstattungliste|was.*hat.*auto')) {
+    const features = carData.features || [];
+    const polster = carData.polster || '–';
+    const interior = carData.interiorColor || '–';
+    const checks: [string, string][] = [
+      ['navi|navigation', 'Navigation / Navi Business'],
+      ['sitzheiz', 'Sitzheizung'],
+      ['klimaaut', 'Klimaautomatik'],
+      ['pano|glasdach|schiebedach', 'Panoramadach / Glasdach'],
+      ['laser|led.*scheinwer|scheinwer', 'LED / Laser-Scheinwerfer'],
+      ['kamera|rückfahr', 'Rückfahrkamera'],
+      ['parkassist|pdc|einparkhilf', 'Parkassistent / PDC'],
+      ['standheiz', 'Standheizung'],
+      ['harman|bang|bowers|soundsystem', 'Premium-Soundsystem'],
+      ['tempomat', 'Tempomat'],
+      ['head.up|hud', 'Head-Up Display'],
+      ['fahrassist|spurhalt|notbrems|totwinkel', 'Fahrassistent'],
+      ['ambient', 'Ambientes Licht'],
+      ['soft.close|komfortzug', 'Soft-Close / Komfortzugang'],
+      ['bluetooth|usb', 'Bluetooth / USB'],
+    ];
+    const found: string[] = [], notFound: string[] = [];
+    for (const [pat, label] of checks) {
+      if (new RegExp(pat, 'i').test(userMessage)) {
+        const has = features.some(f => new RegExp(pat, 'i').test(f));
+        (has ? found : notFound).push(label);
+      }
+    }
+    if (found.length || notFound.length) {
+      let reply = `**Ausstattungscheck – ${carData.name}**\n\n`;
+      found.forEach(l => { reply += `✓ ${l}: vorhanden\n`; });
+      notFound.forEach(l => { reply += `✗ ${l}: nicht in der Ausstattungsliste\n`; });
+      reply += `\nPolster: ${polster} · Innenfarbe: ${interior}`;
+      return reply;
+    }
+    return `**Ausstattung – ${carData.name}**\n\n${features.map(f => `· ${f}`).join('\n')}\n\nPolster: ${polster} · Innenfarbe: ${interior}\nAußenfarbe: ${carData.color || '–'}`;
+  }
+
+  // ── Farbe & Exterieur ──
+  if (r('farbe|außenfarbe|lackier|exterieur|color')) {
+    return `**Exterieur – ${carData.name}**\n\nAußenfarbe: ${carData.color || '–'}\nPolster: ${carData.polster || '–'} · Innenfarbe: ${carData.interiorColor || '–'}\n\n${(carData.color||'').toLowerCase().includes('individual')||(carData.color||'').toLowerCase().includes('sonder') ? 'Sonderfarbe: Beim Weiterverkauf etwas mehr Verhandlungszeit einplanen – aber für Liebhaber sehr attraktiv.' : 'Standardfarbe – gute Wiederverkäuflichkeit.'}`;
+  }
+
+  // ── Unfall & Schäden ──
+  if (r('unfall|schaden|reparatur|langzeit')) {
+    if (!hasAccidents) return `Der ${carData.name} hat keine bekannte Unfallhistorie.\n\nEmpfehlung: Lackschichtdicke messen lassen (unter 120 μm = Original). Bei der Probefahrt auf ungewöhnliche Geräusche und ungleichmäßige Spaltmaße achten.`;
+    const folgen = getSchadenFolgen(carData.accidents);
+    let reply = `**Unfallhistorie – ${carData.name}**\n\n`;
+    (folgen || []).forEach(({ acc, db }) => {
+      reply += `${acc.type} · ${acc.date}`;
+      if (acc.repairCost) reply += ` · Reparatur: ${acc.repairCost.toLocaleString('de-DE')} €`;
+      reply += `\n${acc.damage}\n`;
+      if (db) reply += `\nWas prüfen: ${db.kurzfristig}\nLangfristig: ${db.langfristig}\nHinweis: ${db.adacTipp}\n`;
+      reply += '\n';
+    });
+    return reply.trim();
+  }
+
+  // ── Karosserie & Lack ──
+  if (r('karosserie|lack|spaltmaß|beul|umlackier|schichtdicke|lackdicke')) {
+    // Kostenfrage zu Umlackierung
+    if (r('umlackier|neulackier') && r('teuer|kost|preis|wie viel|wieviel|was kostet|was würde')) {
+      const db = SCHADEN_DB.lack;
+      return `**Umlackierung – Kosten & Hinweise**\n\n` +
+        `Für ein einzelnes Panel (z.B. Motorhaube, Kotflügel): **800–3.500 €** je nach Werkstatt und Qualität.\n` +
+        `Komplette Neulackierung (ganzes Fahrzeug): **3.500–9.000 €** beim Fachbetrieb, günstiger bei Discountern (meist schlechtere Qualität).\n\n` +
+        `**Worauf achten:**\n` +
+        `Schichtdicke vorher messen: Original BMW < 120 μm, nach Umlackierung > 180 μm.\n` +
+        `Farbabweichung im Schräglicht prüfen – billige Umlackierungen zeigen Farbunterschiede je nach Blickwinkel.\n\n` +
+        `**Langfristig:**\n` +
+        `${db.mittelfristig}\n\n` +
+        `**Wertverlust:** ${db.preisAbzug} bei nachgewiesener Umlackierung.\n` +
+        `**Tipp:** ${db.adacTipp}`;
+    }
+    return `**Karosserie & Lack – ${carData.name}**\n\n` +
+      `Spaltmaße gleichmäßig? Unterschiede über 1 mm deuten auf Vorschäden hin.\n` +
+      `Lackschichtdicke messen (Leihgerät ~10 €): Original BMW unter 120 μm, Umlackierung über 180 μm.\n` +
+      `Schräglicht-Test im Sonnenlicht zeigt Fließlinien und Farbabweichungen.\n` +
+      (hasAccidents ? `\nAchtung: Bei diesem Fahrzeug mit Unfallhistorie ist die Lackprüfung besonders wichtig.\n` : '') +
+      `\nBei ${age} Jahre altem Fahrzeug: Radläufe, Schweller und Türunterkanten auf Rost prüfen.`;
+  }
+
+  // ── Scheiben & Dichtungen ──
+  if (r('scheib|dichtung|\\bglas\\b|windschutz|heckscheib|steinschlag')) {
+    return `**Scheiben & Dichtungen – ${carData.name}**\n\n` +
+      `Steinschläge über 2 cm im Sichtfeld sind HU-relevant (Tausch 150–400 €).\n` +
+      `Türdichtungen befühlen: verhärtet oder rissig deutet auf möglichen Wassereinbruch hin.\n` +
+      `Papiertest: Papier in Türdichtung einlegen, Tür schließen – starker Widerstand beim Ziehen ist gut.\n` +
+      `Kofferraumboden auf Feuchtigkeitsspuren prüfen – häufiges Zeichen für nachlassende Dichtungen.`;
+  }
+
+  // ── Motor & Motorraum ──
+  if (r('motor|motorraum|öl|kaltstart|kompression|kühlwasser|kühler|überhitz')) {
+    return `**Motor – ${carData.name} (${carData.enginePower})**\n\n` +
+      `Kaltstart ohne Vorwärmen: Blaue Abgase = Ölverbrennung, weiße Abgase = Kühlwasser im Motor.\n` +
+      `Öleinfülldeckel: weiße Ablagerungen deuten auf Kopfdichtungsproblem hin.\n` +
+      `Kettenrasseln in den ersten Sekunden = verschlissene Steuerkette.\n` +
+      (carData.km > 100000 ? `\nBei ${carData.km.toLocaleString('de-DE')} km: Zahnriemen bzw. Steuerkette prüfen lassen (200–600 €).` : '');
+  }
+
+  // ── Getriebe & Kupplung ──
+  if (r('getriebe|kupplung|schalten|schaltung|manuell|gang|steptronic|automatik|ruckeln')) {
+    const isAuto = (carData.transmission || '').toLowerCase().includes('automat') || (carData.transmission || '').toLowerCase().includes('steptronic');
+    return `**Getriebe – ${carData.transmission || carData.name}**\n\n` +
+      (isAuto
+        ? `Alle Fahrstufen (D, R, P, Sport) bei Probefahrt durchschalten.\nKickdown testen: sofortiges Ansprechen? Rucken kann auf Wandlerproblem hinweisen.\nGetriebeöl: Goldgelb ist gut, dunkelbraun oder verbrannt riechend ist bedenklich.`
+        : `Alle Gänge durchschalten – klemmt oder schleift ein Gang?\nKupplung: Greifpunkt zu hoch oben = Scheibe verschlissen.\nRuckeln beim Anfahren kann Kupplung oder Motor sein.`) +
+      `\n\nProbefahrt mindestens 15 Minuten, kalt und warm testen.`;
+  }
+
+  // ── Bremsen ──
+  if (r('bremse|bremsbeläge|bremsscheibe|bremskraft')) {
+    return `**Bremsen – ${carData.name}**\n\n` +
+      `Gleichmäßig bremsen: zieht das Fahrzeug zur Seite, ist die Achsgeometrie zu prüfen.\n` +
+      `Quietschen = Beläge fast durch, Schleifen = Scheibe bereits beschädigt.\n` +
+      `Belagstärke unter 3 mm: sofortiger Wechsel (Beläge 80–200 €, Scheiben 150–400 € pro Achse).\n` +
+      (carData.km > 80000 ? `\nBei ${carData.km.toLocaleString('de-DE')} km: Bremsanlage vorne wahrscheinlich bald fällig.` : `\nBremsflüssigkeit auf Wechseldatum prüfen – alle 2 Jahre vorgeschrieben.`);
+  }
+
+  // ── Fahrwerk & Lenkung ──
+  if (r('fahrwerk|lenkung|stoßdämpfer|federung|achse|spurhalt|geradeauslauf')) {
+    return `**Fahrwerk & Lenkung – ${carData.name}**\n\n` +
+      `Geradeauslauf prüfen: Lenkrad bei gerader Fahrt nicht zentriert = Achsgeometrieproblem (60 €).\n` +
+      `Über Bodenwellen: Knacken = Spurstange, Poltern = Stoßdämpfer.\n` +
+      `Stoßdämpfertest: Ecke runterdrücken – mehr als 2 Nachschwingen = verschlissen.\n` +
+      (hasAccidents ? `\nBei diesem Unfallfahrzeug: Achsvermessung vor dem Kauf unbedingt empfohlen.` : '');
+  }
+
+  // ── Reifen & Felgen ──
+  if (r('reifen|felgen|profil|reifendruck|pneu')) {
+    return `**Reifen & Felgen – ${carData.name}**\n\n` +
+      `Profiltiefe: gesetzlich 1,6 mm, empfohlen über 3 mm (1€-Münze: Goldrand sichtbar = zu wenig).\n` +
+      `Einseitiger Verschleiß deutet auf Achsfehler hin.\n` +
+      `Reifenalter über 6 Jahre: Tausch empfohlen (DOT-Nummer: z.B. 2819 = Woche 28, 2019).\n` +
+      `Reifen-Set einplanen: ca. 400–800 € je nach Modell.`;
+  }
+
+  // ── Innenraum ──
+  if (r('innenraum|polster|geruch|schimmel|\\bsitz\\b|raucher|leder|\\bstoff\\b')) {
+    return `**Innenraum – ${carData.name}**\n\n` +
+      `Geruch beachten: Schimmel deutet auf Wassereinbruch, Tabakgeruch ist kaum zu beseitigen.\n` +
+      `Teppiche und Kofferraumboden auf Feuchtigkeitsflecken prüfen.\n` +
+      `Fahrersitz, Lenkrad und Pedale: Abnutzung sollte dem Kilometerstand entsprechen.\n` +
+      `Klimaanlage mindestens 5 Minuten laufen lassen und auf gleichmäßige Kühlung prüfen.`;
+  }
+
+  // ── Elektronik ──
+  if (r('elektron|elektrik|licht|sensor|batterie|bordcomputer|display|navi|pdc')) {
+    return `**Elektronik – ${carData.name}**\n\n` +
+      `Alle Lichter testen (Abblend-, Fern-, Brems-, Rückfahr-, Blinker, Standlicht).\n` +
+      `PDC und Rückfahrkamera: alle Sensoren gleichmäßig? Kamerabild klar?\n` +
+      `Fehlerspeicher auslesen lassen (OBD-Gerät, ca. 25–30 €) – zeigt versteckte Fehler.\n` +
+      `Batterie kostenfrei in der Werkstatt prüfen lassen – unter 70% Startleistung bald fällig.`;
+  }
+
+  // ── Serviceheft & Papiere ──
+  if (r('service|wartung|heft|scheckheft|papier|dokument|nachweis|stempel')) {
+    if (carData.maintenanceRecords === 0) {
+      return `**Keine Servicenachweise – ${carData.name}**\n\n` +
+        `Ölwechsel, Zahnriemen und Bremsflüssigkeit – Zeitpunkt unbekannt.\n` +
+        `Gewährleistungsansprüche bei späteren Mängeln sind ohne Belege schwer durchsetzbar.\n\n` +
+        `Empfehlung: ADAC-Prüfung vor dem Kauf (100–180 €), 8–12% Preisabzug verhandeln, letzten Service vom Verkäufer schriftlich bestätigen lassen.`;
+    }
+    const expected = Math.max(1, age) * 2;
+    const ok = carData.maintenanceRecords >= expected * 0.8;
+    return `**Servicehistorie – ${carData.name}**\n\n` +
+      `${carData.maintenanceRecords} Einträge vorhanden, erwartet ca. ${expected} für ${age} Jahre.\n\n` +
+      (ok
+        ? `Servicehistorie vollständig. Beim Besichtigungstermin: Scheckheft mit Stempeln, letzte 3 Rechnungen und den HU-Bericht vorlegen lassen.`
+        : `Einige Einträge fehlen. Nachfragen: Welche Services wurden wo durchgeführt? Freie Werkstattrechnungen sind als Nachweis gültig. Lücken rechtfertigen einen Preisnachlass.`);
+  }
+
+  // ── Kilometerstand ──
+  if (r('\\bkm\\b|kilometer|laufleistung|fahrleistung|bewert')) {
+    const bew = kmPerYear < 10000 ? 'unterdurchschnittlich – sehr gut' : kmPerYear < 15000 ? 'normal' : kmPerYear < 20000 ? 'leicht überdurchschnittlich' : 'deutlich überdurchschnittlich – erhöhter Verschleiß';
+    return `**Kilometerstand – ${carData.name}**\n\n` +
+      `${carData.km.toLocaleString('de-DE')} km bei ${age} Jahren = ${kmPerYear.toLocaleString('de-DE')} km/Jahr (${bew}, Ø Deutschland: 13.000 km/J.).\n\n` +
+      (carData.km > 150000 ? `Bei dieser Laufleistung: Getriebe, Kupplung und Wasserpumpe auf Verschleiß prüfen lassen.\n` : '') +
+      (carData.km > 100000 ? `Zahnriemen bzw. Steuerkette prüfen (200–600 €).\n` : '') +
+      (carData.km > 60000 ? `Bremsanlage und Luftfilter kontrollieren.` : `Reifenalter und Profiltiefe prüfen.`);
+  }
+
+  // ── Preis, Verhandlung ──
+  if (r('preis|\\bwert\\b|marktwert|günstig|teuer|rabatt|nachlass|verhandl|angebot|fair|einschätz|preisbewert')) {
+    const flags: string[] = [];
+    const notes: string[] = [];
+    if (hasAccidents) flags.push(`${carData.accidents.length} Unfall (–10–20 %)`);
+    if (carData.owners > Math.ceil(age / 3)) flags.push(`${carData.owners} Vorbesitzer (–5–10 %)`);
+    if (!carData.maintenanceRecords) flags.push('keine Servicenachweise (–8 %)');
+    if (carData.km > age * 18000) flags.push('überdurchschnittliche Laufleistung (–5 %)');
+    if (['Euro 5', 'Euro 4', 'Euro 3'].includes(carData.emission || ''))
+      notes.push(`${carData.emission}: In einigen Innenstädten eingeschränkt – für normale Nutzung alltagstauglich, grüne Plakette (10 €) reicht in den meisten Fällen.`);
+    const unusualColor = ['rosa', 'pink', 'lila', 'türkis', 'gelb', 'individual'].some(c => (carData.color || '').toLowerCase().includes(c));
+    if (unusualColor) notes.push(`Sonderfarbe: Spricht eine kleinere Käufergruppe an – beim Weiterverkauf etwas mehr Zeit einplanen.`);
+    const pct = Math.min(28, flags.length * 8);
+    const maxNachlass = Math.round(carData.price * pct / 100);
+    const erstangebot = Math.round(carData.price * (1 - pct / 100 * 0.6));
+    if (!flags.length) {
+      return `**Preiseinschätzung – ${carData.name}, ${carData.price.toLocaleString('de-DE')} €**\n\n` +
+        `Keine wesentlichen Faktoren, die den Preis stark beeinflussen.\n` +
+        (notes.length ? `\nHinweis: ${notes.join(' ')}\n` : '') +
+        `\nTrotzdem möglich: Marktvergleich (mobile.de / autoscout24) und nach dem letzten Preis fragen – 2–5 % sind oft drin.`;
+    }
+    return `**Preiseinschätzung – ${carData.name}, ${carData.price.toLocaleString('de-DE')} €**\n\n` +
+      `${flags.map(f => '· ' + f).join('\n')}\n\n` +
+      (notes.length ? `Hinweis: ${notes.join(' ')}\n\n` : '') +
+      `Realistischer Nachlass: bis zu ${maxNachlass.toLocaleString('de-DE')} €\n` +
+      `Empfohlenes Erstangebot: ${erstangebot.toLocaleString('de-DE')} €\n\n` +
+      `Tipp: Konkrete Punkte nennen statt pauschal zu verhandeln. Sofortkauf und Barzahlung erhöhen den Spielraum.`;
+  }
+
+  // ── Vorbesitzer ──
+  if (r('vorbesitzer|besitzer|eigentümer|\\bhand\\b')) {
+    const maxNormal = Math.ceil(age / 3);
+    const tooMany = carData.owners > maxNormal;
+    return `**Vorbesitzer – ${carData.name}**\n\n` +
+      `${carData.owners} Vorbesitzer bei ${age} Jahren (üblich: max. ${maxNormal}).\n\n` +
+      (tooMany
+        ? `Häufiger Wechsel kann auf wiederkehrende Probleme hinweisen. Servicehistorie für alle Besitzer prüfen. carVertical.com-Bericht (~20 €) zeigt den Km-Stand-Verlauf.`
+        : `Unauffällig für dieses Alter. Empfehlenswert: Klären, ob Privat- oder Firmenwagen – Firmenwagen sind oft regelmäßiger gewartet.`);
+  }
+
+  // ── ADAC / TÜV ──
+  if (r('adac|tüv|dekra|gutachten|hauptuntersuchung|prüfbericht')) {
+    return `**Prüfungen vor dem Kauf – ${carData.name}**\n\n` +
+      `ADAC-Gebrauchtwagencheck (80–180 €): vollständige Inspektion mit schriftlichem Bericht.\n` +
+      (hasAccidents ? `DEKRA/TÜV-Gutachten (200–400 €): Bei diesem Unfallfahrzeug empfohlen – bewertet die Qualität der Reparatur.\n` : '') +
+      `OBD-Fehlerspeicher auslesen (25–30 €): deckt elektronische Fehler auf, die sonst nicht sichtbar sind.\n` +
+      `HU-Datum prüfen: Steht sie in weniger als 12 Monaten an, die Kosten in die Verhandlung einbeziehen.`;
+  }
+
+  // ── Auffälligkeiten ──
+  if (r('auffällig|besonderheit|scheinwerfer|laser|fahrverbot|emission|plakette')) {
+    const auff = detectAuffaelligkeiten(carData);
+    if (!auff.length) return `Beim ${carData.name} (${carData.yearBuilt}, ${carData.km.toLocaleString('de-DE')} km) wurden keine besonderen Auffälligkeiten erkannt.`;
+    let reply = `**Hinweise zum ${carData.name}**\n\n`;
+    auff.forEach(a => { reply += `${a.title}\n${a.tip}\n\n`; });
+    return reply.trim();
+  }
+
+  // ── Jahreskosten ──
+  if (r('jahreskosten|unterhalt|laufende kosten|kosten.*jahr|wie viel.*kostet')) {
+    const cons = parseFloat((carData.consumption || '7').replace(',', '.'));
+    const fuelP = carData.fuel === 'Diesel' ? 1.75 : carData.fuel === 'Elektro' ? 0.35 : 1.85;
+    const fuel = Math.round(cons * 15000 / 100 * fuelP);
+    const kw = parseInt(carData.enginePower || '100') || 100;
+    const ins = kw < 100 ? 600 : kw < 200 ? 900 : kw < 300 ? 1400 : 2000;
+    const isM = /\bM[2-9]\b|\bM3\b|\bM4\b|\bM5\b/.test(carData.name);
+    const svc = isM ? 1200 : age > 8 ? 800 : 500;
+    const total = fuel + ins + svc;
+    return `**Jahreskosten – ${carData.name} (ca. 15.000 km/Jahr)**\n\n` +
+      `Kraftstoff (${cons} l/100 km): ${fuel.toLocaleString('de-DE')} €\n` +
+      `Versicherung HP+TK (Schätzung): ${ins.toLocaleString('de-DE')} €\n` +
+      `Wartung & Service: ${svc.toLocaleString('de-DE')} €\n\n` +
+      `Gesamt ca. ${total.toLocaleString('de-DE')} € / Jahr (${Math.round(total / 12).toLocaleString('de-DE')} €/Monat)\n\n` +
+      `Zusätzlich: Kfz-Steuer ca. ${Math.round(kw * 1.9)} €/Jahr, Reifen ~400 €/Set alle 40.000 km.` +
+      (hasAccidents ? `\nBei Unfallhistorie: Puffer für mögliche Folgekosten einplanen.` : '');
+  }
+
+  // ── Probefahrt ──
+  if (r('probefahrt|testfahrt|probefahren|testen')) {
+    return `**Probefahrt – ${carData.name}**\n\n` +
+      `Kalt starten (nicht vorwärmen lassen): ruhiger Lauf, keine farbigen Abgase?\n` +
+      `Alle Gänge und Bremsen testen, über Bodenwellen fahren auf Geräusche achten.\n` +
+      `Lenkrad kurz loslassen: fährt das Fahrzeug geradeaus?\n` +
+      `Klimaanlage, Lichter, PDC und alle Assistenzsysteme prüfen.\n` +
+      (hasAccidents ? `\nBei diesem Unfallfahrzeug besonders: ${carData.accidents.map(a => { const k = a.damageKey; if (k==='front') return 'Achsverhalten bei Geradeausfahrt'; if (k==='heck') return 'Kofferraumklappe und PDC'; if (k==='seite') return 'Türen öffnen/schließen, Windgeräusche'; return 'Reparierte Stellen auf Geräusche beobachten'; }).join(', ')}.\n` : '') +
+      `\nMindestens 20 Minuten fahren.`;
+  }
+
+  // ── Pflege ──
+  if (r('pflege|vorbeug|rost.*verhinder|schimmel.*verhinder|wie.*vermeide')) {
+    return `**Pflege & Vorsorge – ${carData.name}**\n\n` +
+      `Hohlraumversiegelung alle 2 Jahre (80–150 €) schützt vor Rost von innen.\n` +
+      `Unterbodenwäsche zweimal jährlich, besonders nach dem Winter.\n` +
+      `Türdichtungen mit Gummipflegemittel behandeln – verhindert Wassereinbruch.\n` +
+      `Klimaanlage jährlich desinfizieren (30–60 €). Batterie alle 3–4 Jahre prüfen lassen.`;
+  }
+
+  // ── Worauf achten (Catch-all) ──
+  if (r('worauf|achten|prüfen|beachten|checken|kontrollieren')) {
+    return `**Wichtigste Prüfpunkte – ${carData.name} (${carData.yearBuilt}, ${carData.km.toLocaleString('de-DE')} km)**\n\n` +
+      (hasAccidents ? `Unfallhistorie vorhanden: DEKRA/TÜV-Gutachten empfohlen, Lackschichtdicke prüfen.\n\n` : '') +
+      `1. Lackschichtdicke messen (unter 120 μm = Original)\n` +
+      `2. Motor kalt starten – Geräusche und Abgasfarbe\n` +
+      `3. Kofferraum und Fußraum auf Feuchtigkeit\n` +
+      `4. Probefahrt mit allen Gängen und Bremsen\n` +
+      `5. Servicebelege prüfen (${carData.maintenanceRecords} Einträge vorhanden)`;
+  }
+
+  // ── Ausstattung (allgemein, catch-all) ──
+  if (r('ausstatt|feature|navi|sitzheiz|leder|stoff|polster|pano|glasdach|laser|fahrassist|klimaaut|schiebedach|standheiz|kamera|sensor|bluetooth|usb|soundsystem|harman|bang|bowers|tempomat|parkassist|rückfahr|head.up|ambient|komfortzug|soft.close|fond')) {
+    const features = carData.features || [];
+    const polster = carData.polster || '–';
+    const interior = carData.interiorColor || '–';
+    const checks: [string, string][] = [
+      ['navi|navigation', 'Navigation / Navi'],
+      ['sitzheiz', 'Sitzheizung'],
+      ['klimaaut', 'Klimaautomatik'],
+      ['pano|glasdach|schiebedach', 'Panoramadach / Glasdach'],
+      ['laser|led.*scheinwer|scheinwer', 'LED / Laser-Scheinwerfer'],
+      ['kamera|rückfahr', 'Rückfahrkamera'],
+      ['parkassist|pdc|einparkhilf', 'Parkassistent / PDC'],
+      ['standheiz', 'Standheizung'],
+      ['harman|bang|bowers|soundsystem', 'Premium-Soundsystem'],
+      ['tempomat|abstandstempomat', 'Tempomat'],
+      ['head.up|hud', 'Head-Up Display'],
+      ['fahrassist|spurhalt|notbrems|totwinkel', 'Fahrassistent'],
+      ['ambient|ambientes licht', 'Ambientes Licht'],
+      ['soft.close|komfortzug|soft close', 'Soft-Close / Komfortzugang'],
+      ['bluetooth|usb', 'Bluetooth / USB'],
+    ];
+    const found: string[] = [];
+    const notFound: string[] = [];
+    for (const [pat, label] of checks) {
+      if (new RegExp(pat, 'i').test(userMessage)) {
+        const has = features.some(f => new RegExp(pat, 'i').test(f));
+        (has ? found : notFound).push(label);
+      }
+    }
+    if (found.length || notFound.length) {
+      let reply = `**Ausstattungscheck – ${carData.name}**\n\n`;
+      found.forEach(l => { reply += `✓ ${l}: vorhanden\n`; });
+      notFound.forEach(l => { reply += `✗ ${l}: nicht in der Ausstattungsliste\n`; });
+      reply += `\nPolster: ${polster} · Innenfarbe: ${interior}`;
+      return reply;
+    }
+    // Allgemeine Ausstattungsfrage
+    return `**Ausstattung – ${carData.name}**\n\n${features.map(f => `· ${f}`).join('\n')}\n\nPolster: ${polster} · Innenfarbe: ${interior}\nFarbe: ${carData.color || '–'}`;
+  }
+
+  // ── Kosten allgemein ──
+  if (r('kost|teuer|wie viel|wieviel|was kostet|preis.*reparatur|reparatur.*preis|was würde')) {
+    return `**Kosten & Preise – ${carData.name}**\n\n` +
+      `Hier einige typische Richtwerte:\n\n` +
+      `· Lackierung (1 Panel): 800–3.500 €\n` +
+      `· Komplette Neulackierung: 3.500–9.000 €\n` +
+      `· Bremsbeläge + Scheiben (1 Achse): 200–600 €\n` +
+      `· Zahnriemen/Steuerkette: 200–600 €\n` +
+      `· Getriebeöl-Wechsel: 150–400 €\n` +
+      `· ADAC-Gebrauchtwagencheck: 80–180 €\n` +
+      `· DEKRA/TÜV-Einzelgutachten: 200–400 €\n` +
+      `· OBD-Fehlerspeicher auslesen: 25–30 €\n\n` +
+      `Zu welchem Bereich möchten Sie genauere Kosteninformationen?`;
+  }
+
+  // ── Default: freie Fragen ──
+  const topics = ['Kilometerstand', 'Preis & Verhandlung', 'Motor', 'Getriebe', 'Bremsen', 'Fahrwerk', 'Innenraum', 'Elektronik', 'Servicehistorie', 'Probefahrt', 'Karosserie & Lack', 'Umlackierungskosten', 'Jahreskosten'];
+  return `**${carData.name} (${carData.yearBuilt}, ${carData.km.toLocaleString('de-DE')} km)**\n\n` +
+    `Ich beantworte gerne Ihre Fragen zu diesem Fahrzeug. Zum Beispiel:\n` +
+    topics.map(t => `· ${t}`).join('\n') +
+    `\n\nOder fragen Sie direkt: z. B. „Wie teuer ist eine Umlackierung?", „Wie ist der Kilometerstand zu bewerten?" oder „Was sollte ich bei der Probefahrt achten?"`;
+}
