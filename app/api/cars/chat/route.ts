@@ -1,0 +1,28 @@
+import { NextResponse, type NextRequest } from 'next/server';
+import { chatWithClaude } from '@/lib/ai/chat';
+import { logQuestion } from '@/lib/questions/log';
+import type { Car } from '@/lib/cars/types';
+import type { ChatMessage } from '@/lib/ai/demo-chat';
+
+interface ChatRequest {
+  carData: Car;
+  messages?: ChatMessage[];
+  message: string;
+}
+
+export async function POST(req: NextRequest) {
+  let body: ChatRequest;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+  const { carData, messages = [], message } = body;
+  if (!carData || !message) {
+    return NextResponse.json({ error: 'carData und message erforderlich' }, { status: 400 });
+  }
+
+  const { reply, model } = await chatWithClaude(carData, messages, message);
+  if (carData.id) logQuestion(carData.id, carData.name, message, reply);
+  return NextResponse.json({ reply, model });
+}
