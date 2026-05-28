@@ -17,6 +17,7 @@ interface AnalysisResponse {
 
 interface AnalysisPanelProps {
   car: Car;
+  onClose?: () => void;
 }
 
 export function AnalysisPanel({ car }: AnalysisPanelProps) {
