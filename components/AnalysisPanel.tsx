@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import type { Car, Findings, Anomaly, PriceAmpel } from '@/lib/cars/types';
-import type { RiskAssessment } from '@/lib/cars/risk';
 import type { DamageDetail } from '@/lib/cars/buyer-guide';
 import type { FeatureExplanation } from '@/lib/cars/feature-glossary';
 
 interface AnalysisData {
   carData: Car;
-  risk: RiskAssessment;
   findings: Findings;
   auffaelligkeiten: Anomaly[];
   preisAmpel: PriceAmpel;
@@ -17,12 +15,6 @@ interface AnalysisData {
   featureExplanations: FeatureExplanation[];
   aiAnalysis: { analysis: string; model: string };
 }
-
-const RISK_LABEL: Record<RiskAssessment['level'], string> = {
-  hoch: 'Risiko: hoch',
-  mittel: 'Risiko: mittel',
-  niedrig: 'Risiko: niedrig',
-};
 
 interface AnalysisPanelProps {
   car: Car;
@@ -80,10 +72,24 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
 
           {state.kind === 'ready' && (
             <>
-              {/* Risk banner — short verdict for the buyer (neutral grey) */}
-              <div className="bg-bmw-gray-bg border border-bmw-gray-border p-3">
-                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest">{RISK_LABEL[state.data.risk.level]}</div>
-                <div className="text-sm font-semibold text-bmw-dark mt-0.5">{state.data.risk.headline}</div>
+              {/* Besonderheiten & Atypisches — the highlights for THIS car (first) */}
+              <div>
+                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Besonderheiten &amp; Atypisches</div>
+                {state.data.auffaelligkeiten.length === 0 ? (
+                  <div className="text-xs text-bmw-gray-text bg-bmw-gray-bg border border-bmw-gray-border p-3">
+                    Keine Besonderheiten erkannt — ein unauffälliges, marktübliches Fahrzeug.
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {state.data.auffaelligkeiten.map((a, i) => (
+                      <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                        <div className="text-xs font-semibold">{a.title}</div>
+                        <div className="text-xs text-bmw-gray-text mt-0.5">{a.detail}</div>
+                        {a.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{a.tip}</div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Summary bar */}
@@ -112,26 +118,6 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                   </div>
                   <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Preisposition</div>
                 </div>
-              </div>
-
-              {/* Besonderheiten & Atypisches — what's unusual about THIS car */}
-              <div>
-                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Besonderheiten &amp; Atypisches</div>
-                {state.data.auffaelligkeiten.length === 0 ? (
-                  <div className="text-xs text-bmw-gray-text bg-bmw-gray-bg border border-bmw-gray-border p-3">
-                    Keine Besonderheiten erkannt — ein unauffälliges, marktübliches Fahrzeug.
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-2">
-                    {state.data.auffaelligkeiten.map((a, i) => (
-                      <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
-                        <div className="text-xs font-semibold">{a.title}</div>
-                        <div className="text-xs text-bmw-gray-text mt-0.5">{a.detail}</div>
-                        {a.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{a.tip}</div>}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Findings — neutral, thin blue border only */}
