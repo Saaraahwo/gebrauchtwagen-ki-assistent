@@ -73,6 +73,13 @@ describe('buildConcerns', () => {
     const c = buildConcerns({ ...base, id: 512, color: 'Lipstick Rosa (Sonderfarbe Individual)' });
     expect(c.some(x => x.includes('Sonderfarbe'))).toBe(true);
   });
+
+  it('maps the M-model sport-use anomaly to readable text (no raw flag leaks)', () => {
+    const c = buildConcerns({ ...base, id: 515, name: 'BMW M5', owners: 4, enginePower: '460 kW (625 PS)' });
+    expect(c.some(x => x.toLowerCase().includes('sportliche nutzung'))).toBe(true);
+    // No concern should be a raw ALL-CAPS flag token (catches any unmapped flag).
+    expect(c.every(x => !/^[A-ZÄÖÜ_ ]{6,}$/.test(x))).toBe(true);
+  });
 });
 
 describe('buildCustomerQuestions', () => {

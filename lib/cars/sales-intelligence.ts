@@ -87,6 +87,8 @@ function concernLine(flag: string): string {
       return 'Sonderfarbe — als individuelles Alleinstellungsmerkmal positionieren';
     case 'SCHEINWERFER_ZULASSUNG':
       return 'Scheinwerfer-Zulassung — Eintragung im Fahrzeugschein nachweisen';
+    case 'SPORTLICHE NUTZUNGSHISTORIE':
+      return 'Sportliche Nutzung vermutet (M-Modell) — Bremsen/Fahrwerk-Check anbieten und Pflegezustand belegen';
     case 'ATTRAKTIVES ANGEBOT':
       return 'Sehr günstiger Preis weckt Skepsis — Zustand und Historie transparent zeigen';
     case 'INDIVIDUALISIERUNG':
