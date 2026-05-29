@@ -1,3 +1,7 @@
+import initSqlJs, { type Database } from 'sql.js';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
+
 export interface QuestionEntry {
   articleNr: string;
   carName: string;
@@ -12,7 +16,36 @@ export interface FaqEntry {
   count: number;
 }
 
-const log: Record<number, QuestionEntry[]> = {};
+// In tests we keep the DB purely in memory (no file load/persist) so runs stay
+// hermetic. In dev/prod the question log is persisted to data/questions.db and
+// survives server restarts.
+const isTest = !!process.env.VITEST;
+const DB_PATH = join(process.cwd(), 'data', 'questions.db');
+
+// sql.js is WASM and initialises asynchronously. Top-level await runs it once at
+// module load, which lets the exported functions stay synchronous — so callers
+// (and downstream sales-intelligence/dashboard code) need no changes.
+const SQL = await initSqlJs({
+  locateFile: (file: string) => join(process.cwd(), 'node_modules', 'sql.js', 'dist', file),
+});
+
+const db: Database = !isTest && existsSync(DB_PATH)
+  ? new SQL.Database(readFileSync(DB_PATH))
+  : new SQL.Database();
+
+db.run(`CREATE TABLE IF NOT EXISTS questions (
+  car_id   INTEGER NOT NULL,
+  car_name TEXT    NOT NULL,
+  question TEXT    NOT NULL,
+  answer   TEXT    NOT NULL,
+  ts       TEXT    NOT NULL
+)`);
+
+function persist(): void {
+  if (isTest) return;
+  mkdirSync(dirname(DB_PATH), { recursive: true });
+  writeFileSync(DB_PATH, Buffer.from(db.export()));
+}
 
 export function articleNr(carId: number): string {
   return `BMW-GW-${String(carId).padStart(3, '0')}`;
@@ -24,14 +57,11 @@ export function logQuestion(
   question: string,
   answer: string,
 ): void {
-  if (!log[carId]) log[carId] = [];
-  log[carId].push({
-    articleNr: articleNr(carId),
-    carName,
-    question,
-    answer,
-    ts: new Date().toISOString(),
-  });
+  db.run(
+    'INSERT INTO questions (car_id, car_name, question, answer, ts) VALUES (?, ?, ?, ?, ?)',
+    [carId, carName, question, answer, new Date().toISOString()],
+  );
+  persist();
 }
 
 export function getQuestionsForCar(carId: number): {
@@ -39,7 +69,23 @@ export function getQuestionsForCar(carId: number): {
   logs: QuestionEntry[];
   faq: FaqEntry[];
 } {
-  const logs = log[carId] || [];
+  const stmt = db.prepare(
+    'SELECT car_id, car_name, question, answer, ts FROM questions WHERE car_id = ? ORDER BY rowid ASC',
+  );
+  stmt.bind([carId]);
+  const logs: QuestionEntry[] = [];
+  while (stmt.step()) {
+    const row = stmt.getAsObject();
+    logs.push({
+      articleNr: articleNr(Number(row.car_id)),
+      carName: String(row.car_name),
+      question: String(row.question),
+      answer: String(row.answer),
+      ts: String(row.ts),
+    });
+  }
+  stmt.free();
+
   const counts: Record<string, FaqEntry> = {};
   for (const entry of logs) {
     const key = entry.question.toLowerCase().trim();
@@ -52,7 +98,8 @@ export function getQuestionsForCar(carId: number): {
   return { articleNr: articleNr(carId), logs, faq };
 }
 
-// Test helper — do not call from production code.
+// Test helper — clears all rows. Do not call from production code.
 export function _resetLog(): void {
-  for (const k of Object.keys(log)) delete log[Number(k)];
+  db.run('DELETE FROM questions');
+  persist();
 }

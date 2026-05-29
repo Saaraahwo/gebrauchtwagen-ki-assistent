@@ -27,6 +27,9 @@
 # claude code plugin cache
 /.superpowers/
 
+# persisted question log (sql.js sqlite file)
+/data/questions.db
+
 # debug
 npm-debug.log*
 yarn-debug.log*
