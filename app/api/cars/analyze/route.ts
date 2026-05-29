@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { runRulesEngine } from '@/lib/cars/rules-engine';
 import { detectAuffaelligkeiten } from '@/lib/cars/anomaly-detection';
 import { calcPreisAmpel } from '@/lib/cars/price-calculator';
+import { assessRisk } from '@/lib/cars/risk';
+import { buildDamageDetails, buildBuyerChecklist } from '@/lib/cars/buyer-guide';
 import { analyzeCarWithClaude } from '@/lib/ai/analysis';
 import type { Car } from '@/lib/cars/types';
 
@@ -19,15 +21,21 @@ export async function POST(req: NextRequest) {
   const findings = runRulesEngine(carData);
   const auffaelligkeiten = detectAuffaelligkeiten(carData);
   const preisAmpel = calcPreisAmpel(carData);
+  const risk = assessRisk(findings, preisAmpel);
+  const damageDetails = buildDamageDetails(carData.accidents);
+  const checklist = buildBuyerChecklist(carData);
   const aiAnalysis = await analyzeCarWithClaude(carData, findings);
 
   return NextResponse.json({
     success: true,
     analysis: {
       carData,
+      risk,
       findings,
       auffaelligkeiten,
       preisAmpel,
+      damageDetails,
+      checklist,
       aiAnalysis,
       timestamp: new Date().toISOString(),
     },

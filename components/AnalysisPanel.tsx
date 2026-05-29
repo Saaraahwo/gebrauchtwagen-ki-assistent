@@ -2,14 +2,30 @@
 
 import { useEffect, useState } from 'react';
 import type { Car, Findings, Anomaly, PriceAmpel } from '@/lib/cars/types';
+import { findingLabel, type RiskAssessment } from '@/lib/cars/risk';
+import type { DamageDetail } from '@/lib/cars/buyer-guide';
 
 interface AnalysisData {
   carData: Car;
+  risk: RiskAssessment;
   findings: Findings;
   auffaelligkeiten: Anomaly[];
   preisAmpel: PriceAmpel;
+  damageDetails: DamageDetail[];
+  checklist: string[];
   aiAnalysis: { analysis: string; model: string };
 }
+
+const RISK_STYLE: Record<RiskAssessment['level'], string> = {
+  hoch: 'bg-red-50 border-flag-red text-flag-red',
+  mittel: 'bg-amber-50 border-flag-orange text-flag-orange',
+  niedrig: 'bg-green-50 border-flag-green text-flag-green',
+};
+const RISK_LABEL: Record<RiskAssessment['level'], string> = {
+  hoch: 'Risiko: hoch',
+  mittel: 'Risiko: mittel',
+  niedrig: 'Risiko: niedrig',
+};
 
 interface AnalysisPanelProps {
   car: Car;
@@ -67,6 +83,15 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
 
           {state.kind === 'ready' && (
             <>
+              {/* Risk banner — honest, plain-language verdict for the buyer */}
+              <div className={`border-l-4 p-3 ${RISK_STYLE[state.data.risk.level]}`}>
+                <div className="text-xs font-bold uppercase tracking-wide">{RISK_LABEL[state.data.risk.level]}</div>
+                <div className="text-sm font-semibold text-bmw-dark mt-0.5">{state.data.risk.headline}</div>
+                {state.data.risk.reasons.length > 0 && (
+                  <div className="text-xs text-bmw-gray-text mt-1">{state.data.risk.reasons.join(' · ')}</div>
+                )}
+              </div>
+
               {/* Summary bar */}
               <div className="bg-bmw-gray-bg border border-bmw-gray-border flex divide-x divide-bmw-gray-border">
                 {car.accidents.length > 0 && (
@@ -129,12 +154,49 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                   <div className="flex flex-col gap-2">
                     {allFindings.map((f, i) => (
                       <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
-                        <div className="text-xs font-semibold">{f.flag}</div>
+                        <div className="text-xs font-semibold">{findingLabel(f.flag)}</div>
                         <div className="text-xs text-bmw-gray-text mt-0.5">{f.message}</div>
-                        {f.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{f.tip}</div>}
+                        {f.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">Händler-Hinweis: {f.tip}</div>}
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Schäden im Detail — full transparency for the buyer */}
+              {state.data.damageDetails.length > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Schäden im Detail</div>
+                  <div className="flex flex-col gap-3">
+                    {state.data.damageDetails.map((d, i) => (
+                      <div key={i} className="border border-bmw-gray-border p-3">
+                        <div className="text-xs font-bold">
+                          {d.name} · {d.date}
+                          {typeof d.repairCost === 'number' && (
+                            <span className="text-bmw-gray-muted font-normal"> · Reparatur: {d.repairCost.toLocaleString('de-DE')} €</span>
+                          )}
+                        </div>
+                        <dl className="mt-2 space-y-1 text-[11px] text-bmw-gray-text">
+                          <div><dt className="inline font-semibold">Jetzt prüfen: </dt><dd className="inline">{d.pruefung}</dd></div>
+                          <div><dt className="inline font-semibold">Langfristig: </dt><dd className="inline">{d.langfristig}</dd></div>
+                          <div><dt className="inline font-semibold">Typische Folgekosten: </dt><dd className="inline">{d.kosten}</dd></div>
+                          <div><dt className="inline font-semibold">ADAC-Tipp: </dt><dd className="inline">{d.adacTipp}</dd></div>
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Checkliste für den Kauf — buyer takes this to the dealer */}
+              {state.data.checklist.length > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Checkliste für den Kauf</div>
+                  <ul className="bg-bmw-gray-bg border border-bmw-gray-border p-3 space-y-1.5 text-xs text-bmw-gray-text">
+                    {state.data.checklist.map((c, i) => (
+                      <li key={i} className="flex gap-2"><span className="text-bmw-blue">☐</span><span>{c}</span></li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
