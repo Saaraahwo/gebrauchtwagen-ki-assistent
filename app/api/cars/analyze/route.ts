@@ -4,6 +4,7 @@ import { detectAuffaelligkeiten } from '@/lib/cars/anomaly-detection';
 import { calcPreisAmpel } from '@/lib/cars/price-calculator';
 import { assessRisk } from '@/lib/cars/risk';
 import { buildDamageDetails, buildBuyerChecklist } from '@/lib/cars/buyer-guide';
+import { explainCarFeatures } from '@/lib/cars/feature-glossary';
 import { analyzeCarWithClaude } from '@/lib/ai/analysis';
 import type { Car } from '@/lib/cars/types';
 
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
   const risk = assessRisk(findings, preisAmpel);
   const damageDetails = buildDamageDetails(carData.accidents);
   const checklist = buildBuyerChecklist(carData);
+  const featureExplanations = explainCarFeatures(carData);
   const aiAnalysis = await analyzeCarWithClaude(carData, findings);
 
   return NextResponse.json({
@@ -36,6 +38,7 @@ export async function POST(req: NextRequest) {
       preisAmpel,
       damageDetails,
       checklist,
+      featureExplanations,
       aiAnalysis,
       timestamp: new Date().toISOString(),
     },

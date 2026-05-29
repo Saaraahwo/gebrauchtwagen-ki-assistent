@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { Car, Findings, Anomaly, PriceAmpel } from '@/lib/cars/types';
 import type { RiskAssessment } from '@/lib/cars/risk';
 import type { DamageDetail } from '@/lib/cars/buyer-guide';
+import type { FeatureExplanation } from '@/lib/cars/feature-glossary';
 
 interface AnalysisData {
   carData: Car;
@@ -13,14 +14,10 @@ interface AnalysisData {
   preisAmpel: PriceAmpel;
   damageDetails: DamageDetail[];
   checklist: string[];
+  featureExplanations: FeatureExplanation[];
   aiAnalysis: { analysis: string; model: string };
 }
 
-const RISK_STYLE: Record<RiskAssessment['level'], string> = {
-  hoch: 'bg-red-50 border-flag-red text-flag-red',
-  mittel: 'bg-amber-50 border-flag-orange text-flag-orange',
-  niedrig: 'bg-green-50 border-flag-green text-flag-green',
-};
 const RISK_LABEL: Record<RiskAssessment['level'], string> = {
   hoch: 'Risiko: hoch',
   mittel: 'Risiko: mittel',
@@ -83,9 +80,9 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
 
           {state.kind === 'ready' && (
             <>
-              {/* Risk banner — short verdict for the buyer */}
-              <div className={`border-l-4 p-3 ${RISK_STYLE[state.data.risk.level]}`}>
-                <div className="text-xs font-bold uppercase tracking-wide">{RISK_LABEL[state.data.risk.level]}</div>
+              {/* Risk banner — short verdict for the buyer (neutral grey) */}
+              <div className="bg-bmw-gray-bg border border-bmw-gray-border p-3">
+                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest">{RISK_LABEL[state.data.risk.level]}</div>
                 <div className="text-sm font-semibold text-bmw-dark mt-0.5">{state.data.risk.headline}</div>
               </div>
 
@@ -126,20 +123,13 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    {state.data.auffaelligkeiten.map((a, i) => {
-                      const border = a.severity === 'critical'
-                        ? 'border-flag-red'
-                        : a.severity === 'warning'
-                          ? 'border-flag-orange'
-                          : 'border-bmw-blue';
-                      return (
-                        <div key={i} className={`border-l-2 ${border} pl-3 py-1 bg-bmw-gray-bg`}>
-                          <div className="text-xs font-semibold">{a.title}</div>
-                          <div className="text-xs text-bmw-gray-text mt-0.5">{a.detail}</div>
-                          {a.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{a.tip}</div>}
-                        </div>
-                      );
-                    })}
+                    {state.data.auffaelligkeiten.map((a, i) => (
+                      <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                        <div className="text-xs font-semibold">{a.title}</div>
+                        <div className="text-xs text-bmw-gray-text mt-0.5">{a.detail}</div>
+                        {a.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{a.tip}</div>}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -154,6 +144,21 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                         <div className="text-xs font-semibold">{f.flag}</div>
                         <div className="text-xs text-bmw-gray-text mt-0.5">{f.message}</div>
                         {f.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{f.tip}</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ausstattung erklärt — what the equipment/package terms mean */}
+              {state.data.featureExplanations.length > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Ausstattung erklärt</div>
+                  <div className="flex flex-col gap-2">
+                    {state.data.featureExplanations.map((f, i) => (
+                      <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                        <div className="text-xs font-semibold">{f.term}</div>
+                        <div className="text-xs text-bmw-gray-text mt-0.5">{f.description}</div>
                       </div>
                     ))}
                   </div>
