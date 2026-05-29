@@ -20,16 +20,25 @@ describe('GET /api/sellers/dashboard', () => {
     expect(res.status).toBe(401);
   });
 
-  it('resolves the seller name from the store (not a hardcoded literal)', async () => {
+  it('returns inventory stats and per-car intelligence', async () => {
     const token = signToken({ sellerId: 'seller-1', email: 'demo@carcheck.de' });
     const res = await GET(reqWithCookie(token));
     expect(res.status).toBe(200);
 
     const data = await res.json();
+    // Name resolved from the store, not a hardcoded literal.
     expect(data.sellerInfo.email).toBe('demo@carcheck.de');
-    // Name comes from sellers['demo@carcheck.de'].name via the store lookup.
     expect(data.sellerInfo.name).toBe('Max Müller');
-    expect(data.statistics.carsAnalyzed).toBe(47);
+    // Aggregate stats present and consistent with the dataset.
+    expect(data.stats.total).toBe(data.cars.length);
+    expect(data.stats.total).toBeGreaterThan(0);
+    expect(Array.isArray(data.stats.priceBuckets)).toBe(true);
+    // Each car carries its sales intelligence.
+    const first = data.cars[0];
+    expect(first.car).toBeTruthy();
+    expect(Array.isArray(first.intelligence.strengths)).toBe(true);
+    expect(first.intelligence.testDrive.headline).toBeTruthy();
+    expect(['red', 'orange', 'green']).toContain(first.condition);
     expect(data.faqPack.downloadUrl).toBe('/api/sellers/faq-pack');
   });
 });

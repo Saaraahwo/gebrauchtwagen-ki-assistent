@@ -1,81 +1,165 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Car } from '@/lib/cars/types';
+import type { InventoryStats } from '@/lib/cars/inventory-stats';
+import type { SalesIntelligence } from '@/lib/cars/sales-intelligence';
+import { StatCard } from './charts/StatCard';
+import { BarRow } from './charts/BarRow';
+import { ConditionBar } from './charts/ConditionBar';
 
-interface DashboardData {
-  sellerInfo: { email: string; name: string };
-  statistics: { carsAnalyzed: number; commonAnomalies: { type: string; count: number }[] };
-  trainingData: Record<string, { title: string; questions: string[]; answers?: Record<string, string> }>;
-  faqPack: { downloadUrl: string; format: string };
+export interface CarIntel {
+  car: Car;
+  intelligence: SalesIntelligence;
+  condition: 'red' | 'orange' | 'green';
 }
 
-export function SellerDashboard() {
-  const router = useRouter();
-  const [data, setData] = useState<DashboardData | null>(null);
+interface Props {
+  sellerName: string;
+  stats: InventoryStats;
+  cars: CarIntel[];
+}
 
-  useEffect(() => {
-    fetch('/api/sellers/dashboard')
-      .then(r => {
-        if (r.status === 401) {
-          router.push('/login');
-          return null;
-        }
-        return r.json();
-      })
-      .then(setData);
-  }, [router]);
+const dot: Record<CarIntel['condition'], string> = {
+  red: 'bg-flag-red',
+  orange: 'bg-flag-orange',
+  green: 'bg-flag-green',
+};
+
+export function SellerDashboard({ sellerName, stats, cars }: Props) {
+  const router = useRouter();
+  const [openId, setOpenId] = useState<number | null>(null);
 
   async function logout() {
     await fetch('/api/sellers/logout', { method: 'POST' });
     router.push('/login');
   }
 
-  if (!data) return <div className="p-8 text-bmw-gray-muted">Lade…</div>;
+  const max = (arr: { count: number }[]) => Math.max(...arr.map(x => x.count), 1);
 
   return (
-    <div className="max-w-layout mx-auto p-6 space-y-6">
+    <div className="max-w-layout mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Verkäufer-Dashboard</h1>
-        <button onClick={logout} className="text-sm text-bmw-blue hover:underline">
-          Abmelden
-        </button>
+        <div>
+          <h1 className="text-2xl font-bold">Verkäufer-Dashboard</h1>
+          <p className="text-xs text-bmw-gray-muted mt-0.5">Angemeldet als {sellerName}</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <a href="/api/sellers/faq-pack" download className="text-sm text-bmw-blue hover:underline">
+            FAQ-Pack
+          </a>
+          <button onClick={logout} className="text-sm text-bmw-blue hover:underline">
+            Abmelden
+          </button>
+        </div>
       </div>
 
-      <section className="bg-white border border-bmw-gray-border p-6">
-        <h2 className="font-bold mb-3">Statistik</h2>
-        <p className="text-sm">
-          Autos analysiert: <strong>{data.statistics.carsAnalyzed}</strong>
-        </p>
-        <ul className="mt-3 space-y-1 text-sm">
-          {data.statistics.commonAnomalies.map(a => (
-            <li key={a.type}>· {a.type}: {a.count}</li>
-          ))}
-        </ul>
+      {/* Überblick */}
+      <section className="space-y-4">
+        <h2 className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest">Überblick</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard label="Fahrzeuge" value={String(stats.total)} />
+          <StatCard label="Ø Preis" value={`${stats.avgPrice.toLocaleString('de-DE')} €`} />
+          <StatCard label="Ø Kilometer" value={stats.avgKm.toLocaleString('de-DE')} />
+          <StatCard label="Ø Alter" value={`${stats.avgAge} J.`} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Panel title="Preisverteilung">
+            {stats.priceBuckets.map(b => (
+              <BarRow key={b.label} label={b.label} count={b.count} max={max(stats.priceBuckets)} />
+            ))}
+          </Panel>
+          <Panel title="Zustand der Flotte">
+            <ConditionBar red={stats.condition.red} orange={stats.condition.orange} green={stats.condition.green} />
+          </Panel>
+          <Panel title="Kraftstoff">
+            {stats.fuelMix.map(b => (
+              <BarRow key={b.label} label={b.label} count={b.count} max={max(stats.fuelMix)} />
+            ))}
+          </Panel>
+          <Panel title="Abgasnorm">
+            {stats.emissionMix.map(b => (
+              <BarRow key={b.label} label={b.label} count={b.count} max={max(stats.emissionMix)} />
+            ))}
+          </Panel>
+        </div>
+        <Panel title="Häufigste Auffälligkeiten in der Flotte">
+          {stats.topAnomalies.length ? (
+            stats.topAnomalies.map(a => (
+              <BarRow key={a.flag} label={a.title} count={a.count} max={max(stats.topAnomalies)} />
+            ))
+          ) : (
+            <p className="text-xs text-bmw-gray-muted">Keine Auffälligkeiten in der Flotte.</p>
+          )}
+        </Panel>
       </section>
 
-      <section className="bg-white border border-bmw-gray-border p-6">
-        <h2 className="font-bold mb-3">Schulung</h2>
-        {Object.entries(data.trainingData).map(([key, td]) => (
-          <div key={key} className="mb-4">
-            <h3 className="text-sm font-semibold">{td.title}</h3>
-            <ul className="text-xs text-bmw-gray-text mt-1 space-y-1">
-              {td.questions.map((q, i) => <li key={i}>· {q}</li>)}
-            </ul>
-          </div>
+      {/* Fahrzeuge — Verkaufs-Briefing */}
+      <section className="space-y-3">
+        <h2 className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest">
+          Fahrzeuge — Verkaufs-Briefing
+        </h2>
+        <div className="flex flex-col gap-2">
+          {cars.map(({ car, intelligence, condition }) => {
+            const open = openId === car.id;
+            return (
+              <div key={car.id} className="bg-white border border-bmw-gray-border">
+                <button
+                  onClick={() => setOpenId(open ? null : car.id)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-bmw-gray-bg"
+                >
+                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dot[condition]}`} />
+                  <span className="font-semibold text-sm flex-1">
+                    {car.name} <span className="text-bmw-gray-muted font-normal">{car.subtitle}</span>
+                  </span>
+                  <span className="text-sm font-bold">{car.price.toLocaleString('de-DE')} €</span>
+                  <span className="text-bmw-gray-muted text-xs w-4 text-center">{open ? '▲' : '▼'}</span>
+                </button>
+                {open && (
+                  <div className="border-t border-bmw-gray-border p-4 grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <Block title="✓ Stärken" items={intelligence.strengths} accent="text-flag-green" />
+                    <Block title="⚠ Warum Käufer zögern" items={intelligence.concerns} accent="text-flag-orange" />
+                    <Block title="❓ Kundenfragen" items={intelligence.customerQuestions} accent="text-bmw-blue" />
+                    <div>
+                      <div className="text-xs font-bold text-bmw-blue mb-1">
+                        🏁 Probefahrt: {intelligence.testDrive.headline}
+                      </div>
+                      <ol className="text-xs text-bmw-gray-text space-y-1 list-decimal list-inside">
+                        {intelligence.testDrive.steps.map((s, i) => (
+                          <li key={i}>{s}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white border border-bmw-gray-border p-4">
+      <div className="text-xs font-semibold mb-3">{title}</div>
+      <div className="space-y-2">{children}</div>
+    </div>
+  );
+}
+
+function Block({ title, items, accent }: { title: string; items: string[]; accent: string }) {
+  return (
+    <div>
+      <div className={`text-xs font-bold mb-1 ${accent}`}>{title}</div>
+      <ul className="text-xs text-bmw-gray-text space-y-1">
+        {items.map((it, i) => (
+          <li key={i}>· {it}</li>
         ))}
-      </section>
-
-      <section className="bg-white border border-bmw-gray-border p-6">
-        <h2 className="font-bold mb-3">FAQ-Pack</h2>
-        <a
-          href={data.faqPack.downloadUrl}
-          className="inline-block px-4 py-2 bg-bmw-blue text-white text-sm rounded-sm"
-          download
-        >
-          FAQ-Pack herunterladen
-        </a>
-      </section>
+      </ul>
     </div>
   );
 }

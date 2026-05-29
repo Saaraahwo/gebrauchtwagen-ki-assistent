@@ -7,13 +7,20 @@ export function detectAuffaelligkeiten(car: Car): Anomaly[] {
     .concat(Object.values(car.featureGroups || {}).flat())
     .map(f => f.toLowerCase());
 
-  // Laser-Scheinwerfer → AT/CH Hinweis
-  if (allFeatures.some(f => f.includes('laser'))) {
+  // Scheinwerfer-Zulassung: Laser/Xenon/Nachrüst/getönt/farbig → Eintragung & ECE prüfen.
+  // Serien-LED/Halogen löst NICHT aus.
+  const specialLightTerms = ['laser', 'xenon', 'nachrüst', 'nachruest', 'getönt', 'getoent', 'tuning'];
+  const hasColoredLight = allFeatures.some(f =>
+    /(scheinwerfer|licht|leuchte)/.test(f) && /(rosa|pink|farb|getönt|getoent|blau|rot)/.test(f)
+  );
+  const hasSpecialLight =
+    allFeatures.some(f => specialLightTerms.some(t => f.includes(t))) || hasColoredLight;
+  if (hasSpecialLight) {
     auff.push({
-      flag: 'LASER_SCHEINWERFER',
-      title: 'Laser-Scheinwerfer: Länder-Hinweis',
-      detail: 'In Österreich und der Schweiz unterliegen Laser-Scheinwerfer strengeren Zulassungsanforderungen (ECE R149). Bei regelmäßigen Fahrten ins Ausland: Konformität im Fahrzeugschein prüfen lassen.',
-      tip: 'Kostenfrei: KFZ-Werkstatt den Zulassungsbereich im Fahrzeugschein prüfen lassen.',
+      flag: 'SCHEINWERFER_ZULASSUNG',
+      title: 'Scheinwerfer – Zulassung prüfen',
+      detail: 'Spezielle oder nachgerüstete Scheinwerfer (Laser, Xenon-Nachrüstung, getönte/farbige Scheinwerfer) müssen im Fahrzeugschein eingetragen und typzugelassen sein (StVZO/ECE). Laser-Scheinwerfer unterliegen in Österreich und der Schweiz strengeren Anforderungen (ECE R149). Serien-LED oder Halogen ist unproblematisch.',
+      tip: 'Kostenfrei: KFZ-Werkstatt prüfen lassen, ob die Scheinwerfer typzugelassen und im Fahrzeugschein eingetragen sind.',
       severity: 'info'
     });
   }
@@ -88,6 +95,18 @@ export function detectAuffaelligkeiten(car: Car): Anomaly[] {
       detail: 'Bei ' + car.km.toLocaleString('de-DE') + ' km und ' + age + ' Jahren lohnt sich ein Rundum-Service als Einstieg. Typische Wartungskosten für die ersten 2 Jahre: ca. 1.000–2.500 € – gut planbar und für dieses Fahrzeugsegment üblich.',
       tip: 'ADAC-Komplettprüfung (100–180 €) empfohlen – perfekte Grundlage für Ihre Kaufentscheidung.',
       severity: 'warning'
+    });
+  }
+
+  // Fahrzeugalter – gereifte Technik (nur wenn nicht schon als "erfahrenes Fahrzeug" markiert)
+  const isExperienced = age >= 12 && car.km > 250000;
+  if (age >= 10 && !isExperienced) {
+    auff.push({
+      flag: 'FAHRZEUGALTER',
+      title: `${age} Jahre – gereifte Technik`,
+      detail: 'In diesem Alter lohnt ein Blick auf Verschleißteile (Gummis, Dichtungen, Elektronik) sowie Rost an Schwellern und Radläufen. Ersatzteile sind gut verfügbar und die Wartung ist gut planbar.',
+      tip: 'Kurzer Vorab-Check (ADAC/Werkstatt, ca. 100–180 €) gibt Sicherheit.',
+      severity: 'info'
     });
   }
 

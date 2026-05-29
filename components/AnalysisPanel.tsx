@@ -95,6 +95,33 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                 </div>
               </div>
 
+              {/* Besonderheiten & Atypisches — what's unusual about THIS car */}
+              <div>
+                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Besonderheiten &amp; Atypisches</div>
+                {state.data.auffaelligkeiten.length === 0 ? (
+                  <div className="text-xs text-bmw-gray-text bg-bmw-gray-bg border border-bmw-gray-border p-3">
+                    Keine Besonderheiten erkannt — ein unauffälliges, marktübliches Fahrzeug.
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {state.data.auffaelligkeiten.map((a, i) => {
+                      const border = a.severity === 'critical'
+                        ? 'border-flag-red'
+                        : a.severity === 'warning'
+                          ? 'border-flag-orange'
+                          : 'border-bmw-blue';
+                      return (
+                        <div key={i} className={`border-l-2 ${border} pl-3 py-1 bg-bmw-gray-bg`}>
+                          <div className="text-xs font-semibold">{a.title}</div>
+                          <div className="text-xs text-bmw-gray-text mt-0.5">{a.detail}</div>
+                          {a.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{a.tip}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* Findings — neutral, thin blue border only */}
               {allFindings.length > 0 && (
                 <div>

@@ -8,9 +8,36 @@ const baseCar: Car = {
 };
 
 describe('detectAuffaelligkeiten', () => {
-  it('flags Laser-Scheinwerfer', () => {
+  it('flags laser headlights for type-approval check', () => {
     const a = detectAuffaelligkeiten({ ...baseCar, features: ['Laser-Scheinwerfer'] });
-    expect(a.some(x => x.flag === 'LASER_SCHEINWERFER')).toBe(true);
+    expect(a.some(x => x.flag === 'SCHEINWERFER_ZULASSUNG')).toBe(true);
+  });
+
+  it('flags xenon retrofit for type-approval check', () => {
+    const a = detectAuffaelligkeiten({ ...baseCar, features: ['Xenon-Nachrüstung'] });
+    expect(a.some(x => x.flag === 'SCHEINWERFER_ZULASSUNG')).toBe(true);
+  });
+
+  it('does NOT flag standard LED headlights', () => {
+    const a = detectAuffaelligkeiten({ ...baseCar, features: ['LED-Scheinwerfer'] });
+    expect(a.some(x => x.flag === 'SCHEINWERFER_ZULASSUNG')).toBe(false);
+  });
+
+  it('flags notable age (>=10) as gereifte Technik', () => {
+    const old = new Date().getFullYear() - 10;
+    const a = detectAuffaelligkeiten({ ...baseCar, yearBuilt: old, km: 90000 });
+    expect(a.some(x => x.flag === 'FAHRZEUGALTER')).toBe(true);
+  });
+
+  it('does not double-flag age when already an experienced (old + high-km) vehicle', () => {
+    const a = detectAuffaelligkeiten({ ...baseCar, yearBuilt: 2010, km: 300000 });
+    expect(a.some(x => x.flag === 'ERFAHRENES FAHRZEUG')).toBe(true);
+    expect(a.some(x => x.flag === 'FAHRZEUGALTER')).toBe(false);
+  });
+
+  it('flags the BMW 116i special pink color', () => {
+    const a = detectAuffaelligkeiten({ ...baseCar, color: 'Lipstick Rosa (Sonderfarbe Individual)' });
+    expect(a.some(x => x.flag === 'SONDERFARBE')).toBe(true);
   });
 
   it('flags Euro 5 emission risk', () => {
