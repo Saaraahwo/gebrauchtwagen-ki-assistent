@@ -42,6 +42,20 @@ describe('generateDemoChatResponse', () => {
     const r = generateDemoChatResponse(car, [], 'Hatte er einen Unfall?');
     expect(r).toMatch(/keine bekannte Unfallhistorie/i);
   });
+
+  it('answers repaint COST (not the colour description) for "was kostet eine andere Farbe"', () => {
+    const r = generateDemoChatResponse(car, [], 'Wie viel kostet eine andere Farbe? Umlackierung?');
+    expect(r).toMatch(/Umlackierung/i);
+    expect(r).toMatch(/€/);
+    expect(r).not.toMatch(/^\*\*Exterieur/);
+  });
+
+  it('explains what an OLD car means for the buyer', () => {
+    const r = generateDemoChatResponse(car, [], 'Das Auto ist alt, was bedeutet das für mich?');
+    expect(r).toMatch(/Fahrzeugalter/);
+    expect(r).toMatch(/Verschleißteile|Rost/);
+    expect(r).not.toMatch(/Ich beantworte gerne Ihre Fragen/); // not the default fallback
+  });
 });
 
 const carWithAccident: Car = {

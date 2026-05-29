@@ -128,9 +128,33 @@ export function generateDemoChatResponse(
     return `**Ausstattung – ${carData.name}**\n\n${features.map(f => `· ${f}`).join('\n')}\n\nPolster: ${polster} · Innenfarbe: ${interior}\nAußenfarbe: ${carData.color || '–'}`;
   }
 
+  // ── Umlackierung / Farbwechsel: Kosten (vor der allgemeinen Farb-Antwort) ──
+  if (r('umlackier|neulackier|lackieren|andere farbe|farbe ?wechsel|umfärb') || (r('farbe') && r('kost|teuer|preis|wie ?viel|wieviel|was kostet|was würde'))) {
+    const db = SCHADEN_DB.lack;
+    return `**Umlackierung / andere Farbe – Kosten – ${carData.name}**\n\n` +
+      `Einzelnes Teil (Motorhaube, Kotflügel, Tür): **800–3.500 €**.\n` +
+      `Komplette Neulackierung (ganzes Fahrzeug): **3.500–9.000 €** beim Fachbetrieb.\n` +
+      `Echter Farbwechsel (mit Türfalzen, Kanten und Motorraum): am oberen Ende bzw. darüber.\n\n` +
+      `**Worauf achten:** Schichtdicke messen (Original < 120 μm, nachlackiert > 180 μm), Farbabweichung im Schräglicht prüfen.\n` +
+      `**Wertverlust:** ${db.preisAbzug} bei nachweisbarer Umlackierung.\n` +
+      `**Tipp:** ${db.adacTipp}`;
+  }
+
   // ── Farbe & Exterieur ──
   if (r('farbe|außenfarbe|lackier|exterieur|color')) {
     return `**Exterieur – ${carData.name}**\n\nAußenfarbe: ${carData.color || '–'}\nPolster: ${carData.polster || '–'} · Innenfarbe: ${carData.interiorColor || '–'}\n\n${(carData.color||'').toLowerCase().includes('individual')||(carData.color||'').toLowerCase().includes('sonder') ? 'Sonderfarbe: Beim Weiterverkauf etwas mehr Verhandlungszeit einplanen – aber für Liebhaber sehr attraktiv.' : 'Standardfarbe – gute Wiederverkäuflichkeit.'}`;
+  }
+
+  // ── Fahrzeugalter: Was bedeutet ein älteres Auto für mich? ──
+  if (r('\\balt\\b|\\balt[er]|baujahr|gereift|veraltet|wie alt|jahre alt|zu alt')) {
+    return `**Fahrzeugalter – ${carData.name} (${carData.yearBuilt}, ${age} Jahre)**\n\n` +
+      `Was ein höheres Alter für Sie bedeutet:\n` +
+      `• Verschleißteile altern mit: Gummis, Dichtungen, Schläuche, Stoßdämpfer und Batterie sind eher fällig.\n` +
+      `• Elektronik/Sensoren können vereinzelt Aussetzer haben – Fehlerspeicher auslesen lassen (ca. 25–30 €).\n` +
+      `• Rost prüfen: Schweller, Radläufe, Türunterkanten und Unterboden.\n` +
+      `• Positiv: Ersatzteile sind gut verfügbar und meist günstig, der stärkste Wertverlust ist längst vorbei.\n\n` +
+      (carData.maintenanceRecords ? `Mit ${carData.maintenanceRecords} Service-Einträgen ist die Historie ${carData.maintenanceRecords >= age ? 'solide' : 'nur teilweise'} dokumentiert.\n\n` : '') +
+      `Empfehlung: Ein kurzer Vorab-Check (ADAC/Werkstatt, 100–180 €) gibt Sicherheit. Für dieses Alter sind über die ersten 2 Jahre ca. 1.000–2.500 € Wartung üblich – gut planbar.`;
   }
 
   // ── Unfall: Käuferstrategie / Verhandlung ──
