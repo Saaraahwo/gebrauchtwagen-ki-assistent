@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { requireSellerFromRequest, AuthError } from '@/lib/auth/require-seller';
+import { sellers } from '@/lib/auth/sellers';
 
 export async function GET(req: NextRequest) {
   let seller;
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
   const dashboardData = {
     sellerInfo: {
       email: seller.email,
-      name: 'Max Müller',
+      name: sellers[seller.email]?.name ?? seller.email,
     },
     statistics: {
       carsAnalyzed: 47,

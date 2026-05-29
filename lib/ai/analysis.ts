@@ -63,7 +63,7 @@ export async function analyzeCarWithClaude(
       messages: [{ role: 'user', content: buildUserPrompt(carData, findings) }],
     });
     const textBlock = msg.content[0];
-    const analysis = textBlock.type === 'text' ? textBlock.text : '';
+    const analysis = textBlock?.type === 'text' ? textBlock.text : '';
     return {
       analysis,
       model: CLAUDE_MODEL,

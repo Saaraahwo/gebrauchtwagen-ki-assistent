@@ -42,7 +42,7 @@ export async function chatWithClaude(
       messages: chatMessages,
     });
     const block = response.content[0];
-    const reply = block.type === 'text' ? block.text : '';
+    const reply = block?.type === 'text' ? block.text : '';
     return { reply, model: CLAUDE_MODEL };
   } catch {
     return {

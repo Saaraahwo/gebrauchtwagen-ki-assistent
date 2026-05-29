@@ -5,7 +5,7 @@ export function generateDemoAnalysis(carData: Car, findings: Findings): string {
   const age = new Date().getFullYear() - carData.yearBuilt;
   const expectedKm = age * 12000;
   const kmDiff = carData.km - expectedKm;
-  const kmPerYear = Math.round(carData.km / age);
+  const kmPerYear = Math.round(carData.km / Math.max(1, age));
   const hasAccidents = carData.accidents && carData.accidents.length > 0;
   const totalRepairCost = hasAccidents
     ? carData.accidents.reduce((sum, a) => sum + (a.repairCost || 0), 0)
