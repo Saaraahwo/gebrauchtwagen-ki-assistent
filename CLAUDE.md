@@ -49,7 +49,8 @@ Next.js App Router app with TypeScript and Tailwind. Server and client live in o
 - **Demo mode**: Fully functional without an API key. `lib/ai/claude-client.ts` exports `hasApiKey`; every Claude call checks it and falls back to `generateDemoAnalysis` / `generateDemoChatResponse`.
 - **Auth**: JWT in an HTTP-only cookie `seller_token`. `lib/auth/require-seller.ts` provides `requireSellerFromRequest()` for route handlers and `getSellerFromCookies()` for server components.
 - **Plain-text demo password**: `sellers.passwordHash` is misleadingly named — it's a placeholder. Login compares against the literal `'demo123'` in `lib/auth/sellers.ts`. Intentional for MVP demos.
-- **In-memory state**: `questionLog` and seller data are lost on server restart. No database.
+- **Question log persistence**: `lib/questions/log.ts` stores the chat question log in `data/questions.db` via **sql.js** (WASM SQLite — no native build toolchain). WASM init uses top-level await so the exported functions stay synchronous. Tests use an in-memory DB (`VITEST`). `sql.js` is in `serverExternalPackages` (next.config). The DB file is gitignored.
+- **In-memory state**: Seller data is still in-memory and resets on restart (no DB).
 - **Article numbers**: `articleNr()` always generates `BMW-GW-XXX` regardless of brand.
 - **Model**: `claude-sonnet-4-6` for both analysis and chat (`lib/ai/claude-client.ts`).
 
