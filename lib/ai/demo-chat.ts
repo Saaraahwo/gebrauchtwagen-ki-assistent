@@ -17,8 +17,79 @@ export function generateDemoChatResponse(
   const hasAccidents = (carData.accidents || []).length > 0;
   const r = (pattern: string) => new RegExp(pattern, 'i').test(userMessage);
 
+  // ── Paket-Erklärungen (was ist X, was bedeutet X, erkläre X) ──
+  if (r('was ist|was bedeutet|was bringt|erkläre|erkläre mir|was umfasst|was enthält|was bietet|was beinhaltet')) {
+    const features = carData.features || [];
+    const hasPkg = (pat: string) => features.some(f => new RegExp(pat, 'i').test(f));
+
+    if (r('m.?sport|sportpaket|sport.paket')) {
+      const hasIt = hasPkg('m.?sport|sportpaket');
+      return `**M Sportpaket – ${carData.name}**\n\n` +
+        (hasIt ? `Dieses Fahrzeug **hat das M Sportpaket**. Es umfasst:\n` : `Dieses Fahrzeug hat das M Sportpaket **nicht** in der Ausstattungsliste.\n\nZur Info, was das M Sportpaket bietet:\n`) +
+        `• Sportliches Exterieur: M-Frontstoßfänger, Seitenschweller, M-Heckstoßfänger\n` +
+        `• M-Lederlenkrad mit Schaltwippen (je nach Modell)\n` +
+        `• Tiefergelegtes Sportfahrwerk (ca. 10 mm)\n` +
+        `• 18" M-Leichtmetallfelgen (oder größer)\n` +
+        `• Schwarze Hochglanz-Zierleisten\n` +
+        `• Sport-Sitze mit M-Stickerei\n\n` +
+        `**Beim Kauf:** Das M Sportpaket erhöht den Wiederverkaufswert um ca. 5–10 %. Beim Weiterverkauf unbedingt hervorheben.`;
+    }
+
+    if (r('advantage|advantage.paket')) {
+      const hasIt = hasPkg('advantage');
+      return `**Advantage Paket – ${carData.name}**\n\n` +
+        (hasIt ? `Dieses Fahrzeug **hat das Advantage Paket**. Es umfasst:\n` : `Dieses Fahrzeug hat das Advantage Paket nicht.\n\nZur Info:\n`) +
+        `• Komfortzugang (schlüsselloses Öffnen)\n` +
+        `• Park Distance Control (PDC) hinten\n` +
+        `• Sitzheizung vorne\n` +
+        `• LED-Scheinwerfer\n\n` +
+        `Gutes Einstiegspaket für Alltagskomfort.`;
+    }
+
+    if (r('luxury|luxury.line')) {
+      return `**Luxury Line – ${carData.name}**\n\n` +
+        `Luxury Line ist BMWs Komfort-Linie:\n` +
+        `• Chrom-Zierrahmen an Fenstern und Nieren\n` +
+        `• Hochwertigere Leder-/Stoff-Kombination innen\n` +
+        `• Aluminium-Zierleisten\n` +
+        `• Dezentere Optik als M Sportpaket — eher für Komfort-Käufer\n\n` +
+        `**Beim Kauf:** Luxury Line spricht eine andere Käufergruppe an als M-Paket. Beide Varianten sind gut wiederverkäuflich.`;
+    }
+
+    if (r('xdrive|allrad')) {
+      return `**xDrive (Allradantrieb) – ${carData.name}**\n\n` +
+        `xDrive ist BMWs intelligentes Allradsystem:\n` +
+        `• Verteilt Antriebskraft zwischen Vorder- und Hinterachse in Millisekunden\n` +
+        `• Bessere Traktion bei Nässe, Schnee und Kurven\n` +
+        `• Ca. 5–10 % höherer Verbrauch als Hinterradantrieb\n\n` +
+        `**Beim Kauf:** xDrive erhöht den Wert um ca. 1.500–3.000 € gegenüber Heckantrieb. Prüfen Sie, ob xDrive auf dem Typenschild steht (nicht nur im Inserat behauptet wird).`;
+    }
+
+    if (r('navi|navigation|navi.business|navi.professional')) {
+      const hasNavi = hasPkg('navi');
+      return `**Navigation – ${carData.name}**\n\n` +
+        (hasNavi ? `Dieses Fahrzeug **hat ein Navigationssystem**.\n\n` : `Kein Navigationssystem in der Ausstattungsliste.\n\n`) +
+        `BMW bietet zwei Navi-Varianten:\n` +
+        `• **Navi Business** (einfacher): Online-Kartendienst, Basisnavigation\n` +
+        `• **Navi Professional** (premium): Echtzeit-Traffic, 3D-Karten, Remote-Software-Update\n\n` +
+        `Karten-Updates: ca. 150–300 € alle 3 Jahre, oder über BMW ConnectedDrive kostenfrei (je nach Modell).`;
+    }
+
+    if (r('laser.*scheinwer|scheinwer|led')) {
+      const hasLaser = hasPkg('laser');
+      const hasLed = hasPkg('led');
+      return `**Scheinwerfer – ${carData.name}**\n\n` +
+        (hasLaser ? `Dieses Fahrzeug hat **Laser-Scheinwerfer** — das ist BMWs Top-Option.\n` : hasLed ? `Dieses Fahrzeug hat **LED-Scheinwerfer**.\n` : `Keine LED/Laser-Scheinwerfer in der Ausstattungsliste.\n`) +
+        `\n**Unterschied:**\n` +
+        `• Halogen: 60–120 m Reichweite, günstig im Tausch\n` +
+        `• LED: 150–200 m, energieeffizienter, kein Tausch nötig\n` +
+        `• Laser: 600 m Reichweite, nur bei Highspeed aktiv\n\n` +
+        `**Beim Kauf:** Laser-Scheinwerfer erhöhen den Wert erheblich (ca. 2.000–4.000 €). In AT/CH gibt es Zulassungsauflagen.`;
+    }
+  }
+
   // ── Ausstattung & Features (vor allen anderen, da Begriffe wie "sitz" sonst zu früh matchen) ──
-  if (r('ausstatt|hat.*navi|gibt.*navi|navi.*vorhand|sitzheiz|hat.*sitzheiz|hat.*leder|hat.*pano|hat.*laser|hat.*kamera|hat.*parkassist|hat.*standheiz|hat.*harman|hat.*bang|hat.*bowers|hat.*tempomat|hat.*head.up|hat.*fahrassist|hat.*ambient|hat.*soft.close|hat.*bluetooth|hat.*usb|welche.*features|was.*drin|was.*ausgestattet|wie.*ausgestattet|vorhanden|ausstattungliste|was.*hat.*auto')) {
+  if (r('ausstatt|sportpaket|m.sport|hat.*navi|gibt.*navi|navi.*vorhand|sitzheiz|hat.*sitzheiz|hat.*leder|hat.*pano|hat.*laser|hat.*kamera|hat.*parkassist|hat.*standheiz|hat.*harman|hat.*bang|hat.*bowers|hat.*tempomat|hat.*head.up|hat.*fahrassist|hat.*ambient|hat.*soft.close|hat.*bluetooth|hat.*usb|welche.*features|was.*drin|was.*ausgestattet|wie.*ausgestattet|vorhanden|ausstattungliste|was.*hat.*auto')) {
     const features = carData.features || [];
     const polster = carData.polster || '–';
     const interior = carData.interiorColor || '–';
@@ -38,6 +109,7 @@ export function generateDemoChatResponse(
       ['ambient', 'Ambientes Licht'],
       ['soft.close|komfortzug', 'Soft-Close / Komfortzugang'],
       ['bluetooth|usb', 'Bluetooth / USB'],
+      ['m.?sport|sportpaket', 'M Sportpaket'],
     ];
     const found: string[] = [], notFound: string[] = [];
     for (const [pat, label] of checks) {
@@ -111,19 +183,21 @@ export function generateDemoChatResponse(
 
   // ── Karosserie & Lack ──
   if (r('karosserie|lack|spaltmaß|beul|umlackier|schichtdicke|lackdicke')) {
-    // Kostenfrage zu Umlackierung
-    if (r('umlackier|neulackier') && r('teuer|kost|preis|wie viel|wieviel|was kostet|was würde')) {
+    // Alles rund um Umlackierung (mit oder ohne Kostenfrage)
+    if (r('umlackier|neulackier')) {
       const db = SCHADEN_DB.lack;
-      return `**Umlackierung – Kosten & Hinweise**\n\n` +
-        `Für ein einzelnes Panel (z.B. Motorhaube, Kotflügel): **800–3.500 €** je nach Werkstatt und Qualität.\n` +
-        `Komplette Neulackierung (ganzes Fahrzeug): **3.500–9.000 €** beim Fachbetrieb, günstiger bei Discountern (meist schlechtere Qualität).\n\n` +
-        `**Worauf achten:**\n` +
-        `Schichtdicke vorher messen: Original BMW < 120 μm, nach Umlackierung > 180 μm.\n` +
-        `Farbabweichung im Schräglicht prüfen – billige Umlackierungen zeigen Farbunterschiede je nach Blickwinkel.\n\n` +
-        `**Langfristig:**\n` +
-        `${db.mittelfristig}\n\n` +
+      const withCost = r('teuer|kost|preis|wie viel|wieviel|was kostet|was würde');
+      return `**Umlackierung – ${withCost ? 'Kosten & Hinweise' : 'Was ist das & was kostet es?'}**\n\n` +
+        `Eine **Umlackierung** bedeutet, dass ein oder mehrere Karosserieteile des Autos neu lackiert wurden — entweder nach einem Unfall, um Kratzer zu beheben, oder um die Farbe zu ändern.\n\n` +
+        `**Kosten:**\n` +
+        `• Einzelnes Panel (Motorhaube, Kotflügel): **800–3.500 €**\n` +
+        `• Ganzes Fahrzeug beim Fachbetrieb: **3.500–9.000 €**\n\n` +
+        `**So erkennt man eine Umlackierung:**\n` +
+        `• Lackschichtdicke messen (Leihgerät ~10 €): Original BMW unter 120 μm, nach Umlackierung über 180 μm\n` +
+        `• Im Schräglicht auf Farbabweichungen prüfen — billige Umlackierungen sehen je nach Winkel anders aus\n` +
+        `• Gummidichtungen an Türen auf Lacknebel prüfen\n\n` +
         `**Wertverlust:** ${db.preisAbzug} bei nachgewiesener Umlackierung.\n` +
-        `**Tipp:** ${db.adacTipp}`;
+        `💡 ${db.adacTipp}`;
     }
     return `**Karosserie & Lack – ${carData.name}**\n\n` +
       `Spaltmaße gleichmäßig? Unterschiede über 1 mm deuten auf Vorschäden hin.\n` +
