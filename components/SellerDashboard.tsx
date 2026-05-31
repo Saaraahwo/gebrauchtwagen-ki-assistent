@@ -131,6 +131,22 @@ export function SellerDashboard({ sellerName, stats, cars }: Props) {
                         ))}
                       </ol>
                     </div>
+
+                    {intelligence.equipment.length > 0 && (
+                      <div className="md:col-span-2 border-t border-bmw-gray-border pt-4">
+                        <div className="text-xs font-bold text-bmw-blue mb-2">
+                          🔧 Ausstattung erklärt — Kunden-Antworten
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-3">
+                          {intelligence.equipment.map((e, i) => (
+                            <div key={i}>
+                              <div className="text-xs font-semibold">{e.term}</div>
+                              <div className="text-[11px] text-bmw-gray-text mt-0.5 leading-relaxed">{e.answer}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { lookupEquipmentAnswer, isEquipmentQuestion } from './equipment-store';
-import { EQUIPMENT } from './equipment-knowledge';
+import { EQUIPMENT, explainCarEquipment } from './equipment-knowledge';
 import type { Car } from './types';
 
 const car: Car = {
@@ -53,6 +53,18 @@ describe('lookupEquipmentAnswer', () => {
   it('returns null for non-definition questions', () => {
     expect(lookupEquipmentAnswer('Hat es xDrive?')).toBeNull();
     expect(lookupEquipmentAnswer('Wie ist der Preis?')).toBeNull();
+  });
+
+  it('explainCarEquipment returns explanations for the car\'s own equipment', () => {
+    const ex = explainCarEquipment(car);
+    const terms = ex.map(e => e.term);
+    expect(terms).toContain('M Fahrwerk Professional');
+    expect(terms).toContain('Head-Up Display');
+    expect(terms).toContain('Competition'); // from subtitle
+    // does NOT include equipment the car lacks
+    expect(terms).not.toContain('Panorama-Glasdach');
+    // each carries its full answer
+    expect(ex.every(e => e.answer.length > 40)).toBe(true);
   });
 
   it('every equipment entry has a non-trivial answer', () => {

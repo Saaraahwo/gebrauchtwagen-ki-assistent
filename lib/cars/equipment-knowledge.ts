@@ -1,3 +1,5 @@
+import type { Car } from './types';
+
 export interface EquipmentEntry {
   /** Display name of the equipment/term. */
   term: string;
@@ -245,3 +247,28 @@ export const EQUIPMENT: EquipmentEntry[] = [
     answer: 'Leichtmetallfelgen (z. B. 18–20 Zoll M-Felgen) verbessern Optik und ungefederte Massen. Größere Räder sehen sportlicher aus, machen die Reifen aber teurer und den Komfort etwas straffer. Beim Kauf: Felgen auf Bordsteinschäden, Schläge (Höhenschlag) und korrekte Reifengröße/-alter prüfen.',
   },
 ];
+
+export interface EquipmentExplanation {
+  term: string;
+  answer: string;
+}
+
+/**
+ * Returns the knowledge-base explanation for each equipment item THIS car has
+ * (matched against its subtitle + features), specific terms before generic.
+ * Pure (no DB) — used by the seller dashboard as a per-car cheat sheet.
+ */
+export function explainCarEquipment(car: Car): EquipmentExplanation[] {
+  const parts = [car.subtitle ?? '', ...(car.features ?? [])];
+  const out: EquipmentExplanation[] = [];
+  const seen = new Set<string>();
+  for (const entry of EQUIPMENT) {
+    if (seen.has(entry.term)) continue;
+    const re = new RegExp(entry.pattern, 'i');
+    if (parts.some(p => re.test(p))) {
+      seen.add(entry.term);
+      out.push({ term: entry.term, answer: entry.answer });
+    }
+  }
+  return out;
+}

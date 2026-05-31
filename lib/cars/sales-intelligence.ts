@@ -3,6 +3,7 @@ import { runRulesEngine } from './rules-engine';
 import { detectAuffaelligkeiten } from './anomaly-detection';
 import { calcPreisAmpel } from './price-calculator';
 import { getQuestionsForCar } from '@/lib/questions/log';
+import { explainCarEquipment, type EquipmentExplanation } from './equipment-knowledge';
 
 export interface TestDrivePlan {
   headline: string;
@@ -14,6 +15,7 @@ export interface SalesIntelligence {
   concerns: string[];
   customerQuestions: string[];
   testDrive: TestDrivePlan;
+  equipment: EquipmentExplanation[];
 }
 
 function ps(car: Car): number {
@@ -215,5 +217,6 @@ export function buildSalesIntelligence(car: Car): SalesIntelligence {
     concerns: buildConcerns(car),
     customerQuestions: buildCustomerQuestions(car),
     testDrive: buildTestDrive(car),
+    equipment: explainCarEquipment(car),
   };
 }

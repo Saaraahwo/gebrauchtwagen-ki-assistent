@@ -96,11 +96,12 @@ describe('buildCustomerQuestions', () => {
 });
 
 describe('buildSalesIntelligence', () => {
-  it('returns all four sections', () => {
-    const intel = buildSalesIntelligence(base);
+  it('returns all sections incl. equipment explanations', () => {
+    const intel = buildSalesIntelligence({ ...base, subtitle: 'xDrive Luxury Line', features: ['Head-Up Display'] });
     expect(intel.strengths.length).toBeGreaterThan(0);
     expect(intel.concerns.length).toBeGreaterThan(0);
     expect(intel.customerQuestions.length).toBeGreaterThan(0);
     expect(intel.testDrive.steps.length).toBeGreaterThan(0);
+    expect(intel.equipment.map(e => e.term)).toContain('Head-Up Display');
   });
 });
