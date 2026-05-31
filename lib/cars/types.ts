@@ -8,6 +8,7 @@ export interface Accident {
   damageKey?: DamageKey;
   repairCost?: number;
   date: string;
+  repaired?: boolean;
 }
 
 export interface Car {
