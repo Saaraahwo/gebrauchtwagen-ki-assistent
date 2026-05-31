@@ -31,6 +31,10 @@
 /data/questions.db
 /data/questions.db.tmp
 
+# seeded equipment knowledge base (sql.js sqlite file)
+/data/equipment.db
+/data/equipment.db.tmp
+
 # debug
 npm-debug.log*
 yarn-debug.log*
