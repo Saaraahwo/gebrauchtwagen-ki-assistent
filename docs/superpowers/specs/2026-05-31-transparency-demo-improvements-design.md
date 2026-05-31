@@ -98,7 +98,7 @@ interface TestDrivePlan {
   featureDemos: { feature: string; when: string }[]; // THIS car's standout features → when to show each
 }
 ```
-- **Route + map:** a per-profile route template anchored to a configurable `DEALER_CITY` constant (default e.g. "München"). `mapsUrl` is a Google Maps directions link seeded with the city + a profile-appropriate destination (e.g. an Autobahnauffahrt for Performance, a ruhige Wohngegend/Schulweg for Familie). Honest note in the UI: "Beispielroute – mit Händleradresse wird daraus die echte lokale Runde."
+- **Route + map:** a per-profile route template anchored to a configurable `DEALER_CITY` constant (default **"Braunschweig"**). `mapsUrl` is a Google Maps directions link seeded with the city + a profile-appropriate destination (e.g. an Autobahnauffahrt for Performance, a ruhige Wohngegend/Schulweg for Familie). Honest note in the UI: "Beispielroute – mit Händleradresse wird daraus die echte lokale Runde."
 - **featureDemos:** map the car's *actual* features (matched via the equipment knowledge base) to a best demo moment. New `FEATURE_DEMO` mapping in `lib/cars/test-drive.ts`, e.g.:
   - Parking Assistant / PDC → "Beim Ein-/Ausparken automatisch einparken lassen"
   - Harman Kardon / Bang & Olufsen / Fond Entertainment → "Bei der Pause: Lieblingssong aufdrehen / Rücksitz-Screens zeigen"
