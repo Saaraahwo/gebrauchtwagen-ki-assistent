@@ -1,5 +1,5 @@
 import initSqlJs, { type Database } from 'sql.js';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 
 export interface QuestionEntry {
@@ -43,8 +43,19 @@ db.run(`CREATE TABLE IF NOT EXISTS questions (
 
 function persist(): void {
   if (isTest) return;
-  mkdirSync(dirname(DB_PATH), { recursive: true });
-  writeFileSync(DB_PATH, Buffer.from(db.export()));
+  // Atomic write: serialise to a temp file, then rename over the real DB so a
+  // crash mid-write can never leave a half-written (corrupt) questions.db.
+  // renameSync replaces the destination on both POSIX and Windows (libuv sets
+  // MOVEFILE_REPLACE_EXISTING). A transient FS/sync lock is logged, not thrown,
+  // so it never 500s the request — the data still lives in the in-memory DB.
+  try {
+    mkdirSync(dirname(DB_PATH), { recursive: true });
+    const tmp = `${DB_PATH}.tmp`;
+    writeFileSync(tmp, Buffer.from(db.export()));
+    renameSync(tmp, DB_PATH);
+  } catch (err) {
+    console.error('Failed to persist question log:', err);
+  }
 }
 
 export function articleNr(carId: number): string {

@@ -29,6 +29,7 @@
 
 # persisted question log (sql.js sqlite file)
 /data/questions.db
+/data/questions.db.tmp
 
 # debug
 npm-debug.log*

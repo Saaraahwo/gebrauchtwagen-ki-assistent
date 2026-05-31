@@ -36,6 +36,16 @@ describe('explainCarFeatures', () => {
     expect(t).toContain('Panorama-Glasdach');
   });
 
+  it('does not show "Carbonpaket" for carbon-ceramic brakes alone', () => {
+    const t = terms({ ...base, features: ['M Carbon Keramikbremse'] });
+    expect(t).toContain('M Carbon Keramikbremse');
+    expect(t).not.toContain('Carbonpaket');
+  });
+
+  it('still shows "Carbonpaket" for the actual package', () => {
+    expect(terms({ ...base, features: ['Carbonpaket extern'] })).toContain('Carbonpaket');
+  });
+
   it('returns nothing for a car with no jargon', () => {
     expect(explainCarFeatures({ ...base, subtitle: 'Limousine', features: ['Bluetooth', 'USB-Anschluss', 'Tempomat'] })).toEqual([]);
   });

@@ -146,7 +146,8 @@ export function generateDemoChatResponse(
   }
 
   // ── Fahrzeugalter: Was bedeutet ein älteres Auto für mich? ──
-  if (r('\\balt\\b|\\balt[er]|baujahr|gereift|veraltet|wie alt|jahre alt|zu alt')) {
+  // (not a tyre/wheel-age question — those defer to the Reifen branch)
+  if (r('\\balte?s?\\b|\\balter\\b|\\bälter|baujahr|gereift|veraltet|fahrzeugalter|jahre alt|zu alt') && !r('reifen|felgen')) {
     return `**Fahrzeugalter – ${carData.name} (${carData.yearBuilt}, ${age} Jahre)**\n\n` +
       `Was ein höheres Alter für Sie bedeutet:\n` +
       `• Verschleißteile altern mit: Gummis, Dichtungen, Schläuche, Stoßdämpfer und Batterie sind eher fällig.\n` +

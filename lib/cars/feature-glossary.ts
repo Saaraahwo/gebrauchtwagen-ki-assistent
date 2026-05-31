@@ -39,7 +39,7 @@ const GLOSSARY: GlossaryEntry[] = [
   { match: /bang ?& ?olufsen|bowers ?& ?wilkins/i, term: 'High-End-Soundsystem', description: 'Soundsystem der Spitzenklasse (teure Aufpreis-Option) – ein echtes Ausstattungs-Highlight.' },
   { match: /fond entertainment/i, term: 'Fond Entertainment', description: 'Bildschirme und Unterhaltung für die Rücksitze – ideal für Familien und lange Fahrten.' },
   { match: /keramik/i, term: 'M Carbon Keramikbremse', description: 'Hochleistungs-Keramikbremse, extrem standfest. Ersatz ist teuer – Zustand der Scheiben prüfen.' },
-  { match: /carbon/i, term: 'Carbonpaket', description: 'Karbon-Zierteile außen/innen für sportliche Optik und etwas Gewichtsersparnis.' },
+  { match: /carbonpaket/i, term: 'Carbonpaket', description: 'Karbon-Zierteile außen/innen für sportliche Optik und etwas Gewichtsersparnis.' },
   { match: /m fahrwerk|adaptives fahrwerk/i, term: 'Adaptives M Fahrwerk', description: 'Elektronisch geregeltes Sportfahrwerk – per Knopfdruck zwischen komfortabel und straff wählbar.' },
   { match: /komfortzugang/i, term: 'Komfortzugang', description: 'Schlüsselloses Öffnen und Starten (Keyless).' },
   { match: /standheizung/i, term: 'Standheizung', description: 'Heizt den Innenraum vor dem Losfahren vor – im Winter besonders wertvoll.' },

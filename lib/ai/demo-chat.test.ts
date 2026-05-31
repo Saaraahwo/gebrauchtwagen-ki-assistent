@@ -56,6 +56,12 @@ describe('generateDemoChatResponse', () => {
     expect(r).toMatch(/Verschleißteile|Rost/);
     expect(r).not.toMatch(/Ich beantworte gerne Ihre Fragen/); // not the default fallback
   });
+
+  it('routes a tyre-AGE question to the Reifen branch, not Fahrzeugalter', () => {
+    const r = generateDemoChatResponse(car, [], 'Wie alt sind die Reifen?');
+    expect(r).toMatch(/Reifen/);
+    expect(r).not.toMatch(/^\*\*Fahrzeugalter/);
+  });
 });
 
 const carWithAccident: Car = {
