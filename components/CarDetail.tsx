@@ -207,6 +207,12 @@ export function CarDetail({ car }: { car: Car }) {
             >
               Probefahrt vereinbaren
             </button>
+            <a
+              href={`/cars/${car.id}/bericht`}
+              className="block w-full mt-2 py-2.5 text-center border border-bmw-gray-border text-sm rounded-sm hover:bg-bmw-gray-bg text-bmw-dark transition-colors"
+            >
+              Fahrzeugbericht ansehen
+            </a>
           </div>
         </div>
       </div>

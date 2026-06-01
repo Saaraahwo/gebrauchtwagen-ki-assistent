@@ -213,7 +213,10 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-bmw-gray-border px-5 py-3 text-right">
+        <div className="sticky bottom-0 bg-white border-t border-bmw-gray-border px-5 py-3 flex justify-between items-center">
+          <a href={`/cars/${car.id}/bericht`} className="text-sm text-bmw-blue hover:underline">
+            Fahrzeugbericht ansehen
+          </a>
           <button
             onClick={onClose}
             className="px-5 py-2 text-sm border border-bmw-gray-border hover:bg-bmw-gray-bg rounded-sm transition-colors"
