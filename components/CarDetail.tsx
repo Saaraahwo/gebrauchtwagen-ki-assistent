@@ -5,6 +5,7 @@ import type { Car } from '@/lib/cars/types';
 import { CarSVG } from './CarSVG';
 import { AnalysisPanel } from './AnalysisPanel';
 import { buildDisclosure } from '@/lib/cars/disclosure';
+import { calcPreisAmpel } from '@/lib/cars/price-calculator';
 
 function svgType(name: string): 'sedan' | 'suv' | 'cabrio' {
   if (/X[0-9]|iX/i.test(name)) return 'suv';
@@ -17,6 +18,7 @@ export function CarDetail({ car }: { car: Car }) {
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
   const [showAnalysis, setShowAnalysis] = useState(false);
   const disclosure = buildDisclosure(car);
+  const preis = calcPreisAmpel(car);
 
   const slides = [
     { url: car.imgExterior, label: 'Exterieur' },
@@ -30,6 +32,7 @@ export function CarDetail({ car }: { car: Car }) {
     <>
       {/* Full-width gallery */}
       <div className="relative h-[340px] bg-bmw-dark overflow-hidden">
+        <span className="absolute top-3 left-3 z-10 bg-black/55 text-white text-[10px] px-2 py-1 rounded-full">Symbolfoto</span>
         {currentUrl && !hasImgError ? (
           <img
             src={currentUrl}
@@ -187,11 +190,14 @@ export function CarDetail({ car }: { car: Car }) {
             <div className="text-xs text-bmw-gray-muted mt-1">
               {car.km.toLocaleString('de-DE')} km · EZ {car.erstzulassung ?? car.yearBuilt}
             </div>
+            <div className="text-xs text-bmw-gray-text mt-1">
+              Marktwert ca. {preis.expected.toLocaleString('de-DE')} € · {preis.label}
+            </div>
             <button
               onClick={() => setShowAnalysis(true)}
               className="w-full mt-4 py-3 bg-bmw-blue text-white font-semibold text-sm hover:bg-blue-700 rounded-sm transition-colors"
             >
-              🤖 KI-Analyse starten
+              Fahrzeug-Check öffnen
             </button>
             <button className="w-full mt-2 py-2.5 border border-bmw-gray-border text-sm rounded-sm hover:bg-bmw-gray-bg text-bmw-dark transition-colors">
               Probefahrt vereinbaren

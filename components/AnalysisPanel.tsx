@@ -53,7 +53,7 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-bmw-gray-border px-5 py-4 flex justify-between items-center z-10">
           <div>
-            <h2 className="text-base font-bold">KI-Analyse — {car.name}</h2>
+            <h2 className="text-base font-bold">Fahrzeug-Check — {car.name}</h2>
             {car.subtitle && <div className="text-xs text-bmw-gray-muted mt-0.5">{car.subtitle} · {car.price.toLocaleString('de-DE')} €</div>}
           </div>
           <button onClick={onClose} className="text-bmw-gray-muted hover:text-bmw-dark text-xl leading-none px-1 ml-4">✕</button>
