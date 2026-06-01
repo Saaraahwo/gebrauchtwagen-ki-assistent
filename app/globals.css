@@ -23,3 +23,10 @@ body {
   font-family: var(--font-sans);
   font-size: 14px;
 }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #ffffff; }
+  /* Avoid the gallery/dark areas bleeding ink; the report is plain on white. */
+  a { color: inherit; text-decoration: none; }
+}
