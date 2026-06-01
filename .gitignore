@@ -35,6 +35,10 @@
 /data/equipment.db
 /data/equipment.db.tmp
 
+# persisted test-drive bookings (sql.js sqlite file)
+/data/bookings.db
+/data/bookings.db.tmp
+
 # debug
 npm-debug.log*
 yarn-debug.log*
