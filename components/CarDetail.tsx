@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Car } from '@/lib/cars/types';
 import { CarSVG } from './CarSVG';
 import { AnalysisPanel } from './AnalysisPanel';
+import { TestDriveModal } from './TestDriveModal';
 import { buildDisclosure } from '@/lib/cars/disclosure';
 import { calcPreisAmpel } from '@/lib/cars/price-calculator';
 
@@ -17,6 +18,7 @@ export function CarDetail({ car }: { car: Car }) {
   const [activeImg, setActiveImg] = useState(0);
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
   const disclosure = buildDisclosure(car);
   const preis = calcPreisAmpel(car);
 
@@ -199,7 +201,10 @@ export function CarDetail({ car }: { car: Car }) {
             >
               Fahrzeug-Check öffnen
             </button>
-            <button className="w-full mt-2 py-2.5 border border-bmw-gray-border text-sm rounded-sm hover:bg-bmw-gray-bg text-bmw-dark transition-colors">
+            <button
+              onClick={() => setShowBooking(true)}
+              className="w-full mt-2 py-2.5 border border-bmw-gray-border text-sm rounded-sm hover:bg-bmw-gray-bg text-bmw-dark transition-colors"
+            >
               Probefahrt vereinbaren
             </button>
           </div>
@@ -208,6 +213,7 @@ export function CarDetail({ car }: { car: Car }) {
 
       {/* KI-Analyse modal — rendered from this component, controlled by local state */}
       {showAnalysis && <AnalysisPanel car={car} onClose={() => setShowAnalysis(false)} />}
+      {showBooking && <TestDriveModal car={car} onClose={() => setShowBooking(false)} />}
     </>
   );
 }
