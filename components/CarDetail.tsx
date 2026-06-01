@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Car } from '@/lib/cars/types';
 import { CarSVG } from './CarSVG';
 import { AnalysisPanel } from './AnalysisPanel';
+import { buildDisclosure } from '@/lib/cars/disclosure';
 
 function svgType(name: string): 'sedan' | 'suv' | 'cabrio' {
   if (/X[0-9]|iX/i.test(name)) return 'suv';
@@ -15,6 +16,7 @@ export function CarDetail({ car }: { car: Car }) {
   const [activeImg, setActiveImg] = useState(0);
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const disclosure = buildDisclosure(car);
 
   const slides = [
     { url: car.imgExterior, label: 'Exterieur' },
@@ -95,6 +97,49 @@ export function CarDetail({ car }: { car: Car }) {
             {car.description && (
               <div className="mt-2.5 text-xs text-bmw-gray-text italic border-t border-bmw-gray-bg pt-2.5">{car.description}</div>
             )}
+          </div>
+
+          {/* Zustand & Historie — trust-critical facts, inline (no popup needed) */}
+          <div className="bg-white border border-bmw-gray-border p-4">
+            <h2 className="text-sm font-bold mb-3">Zustand & Historie</h2>
+            <div className="flex flex-col gap-2 text-xs">
+              {disclosure.accidentFree ? (
+                <div className="flex justify-between gap-3">
+                  <span className="text-bmw-gray-muted">Unfälle</span>
+                  <span className="font-medium text-right">Unfallfrei – keine Schäden dokumentiert</span>
+                </div>
+              ) : (
+                disclosure.accidents.map((a, i) => (
+                  <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                    <div className="font-semibold">{a.type} · {a.date}</div>
+                    <div className="text-bmw-gray-text mt-0.5">{a.damage}</div>
+                    <div className="text-bmw-gray-muted mt-0.5">
+                      {a.repaired ? 'Fachgerecht repariert' : 'Nicht repariert'}
+                      {a.repainted ? ' · umlackiert' : ''}
+                      {typeof a.repairCost === 'number' ? ` · ${a.repairCost.toLocaleString('de-DE')} €` : ''}
+                    </div>
+                  </div>
+                ))
+              )}
+              <div className="flex justify-between gap-3">
+                <span className="text-bmw-gray-muted">Servicehistorie</span>
+                <span className="font-medium text-right">{disclosure.service.label}</span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span className="text-bmw-gray-muted">Hauptuntersuchung</span>
+                <span className="font-medium text-right">{disclosure.hu.label}</span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span className="text-bmw-gray-muted">Vorbesitzer</span>
+                <span className="font-medium text-right">{disclosure.owners}</span>
+              </div>
+              {disclosure.emission && (
+                <div className="flex justify-between gap-3">
+                  <span className="text-bmw-gray-muted">Abgasnorm</span>
+                  <span className="font-medium text-right">{disclosure.emission}</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Tech specs */}
