@@ -15,7 +15,8 @@ export function huStatus(hu: string | undefined, now: Date = new Date()): HuStat
   // new Date(year, month, 0) → last day of `month` (month treated 1-based here).
   const due = new Date(year, month, 0, 23, 59, 59, 999);
   if (due < now) return { label: `HU abgelaufen (${hu})`, state: 'abgelaufen' };
-  const soon = new Date(now.getFullYear(), now.getMonth() + 2, now.getDate());
+  // End of the month ~2 months out (last-day trick avoids day-of-month rollover).
+  const soon = new Date(now.getFullYear(), now.getMonth() + 3, 0, 23, 59, 59, 999);
   if (due <= soon) return { label: `HU bald fällig (${hu})`, state: 'baldFaellig' };
   return { label: `HU gültig bis ${hu}`, state: 'gueltig' };
 }

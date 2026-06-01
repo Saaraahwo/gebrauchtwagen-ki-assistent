@@ -56,7 +56,7 @@ export function TestDriveModal({ car, onClose }: { car: Car; onClose: () => void
                   className="mt-1 w-full px-3 py-2 border border-bmw-gray-border rounded-sm text-sm" />
               </label>
               <label className="text-xs text-bmw-gray-muted">Wunschtermin
-                <input type="date" value={date} onChange={e => setDate(e.target.value)}
+                <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={e => setDate(e.target.value)}
                   className="mt-1 w-full px-3 py-2 border border-bmw-gray-border rounded-sm text-sm" />
               </label>
               <button type="submit" disabled={state === 'sending'}

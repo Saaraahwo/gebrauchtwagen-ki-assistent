@@ -211,7 +211,7 @@ export function CarDetail({ car }: { car: Car }) {
         </div>
       </div>
 
-      {/* KI-Analyse modal — rendered from this component, controlled by local state */}
+      {/* Fahrzeug-Check modal — rendered from this component, controlled by local state */}
       {showAnalysis && <AnalysisPanel car={car} onClose={() => setShowAnalysis(false)} />}
       {showBooking && <TestDriveModal car={car} onClose={() => setShowBooking(false)} />}
     </>
