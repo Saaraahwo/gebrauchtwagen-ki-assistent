@@ -74,3 +74,20 @@ export function buildDisclosure(car: Car, now: Date = new Date()): Disclosure {
     emission: car.emission,
   };
 }
+
+export interface DisclosureItem {
+  item: string;
+  ok: boolean;
+}
+
+/** Per-car disclosure completeness — actionable gaps a dealer can close. */
+export function disclosureChecklist(car: Car, now: Date = new Date()): DisclosureItem[] {
+  const hu = huStatus(car.hu, now);
+  const accidents = car.accidents ?? [];
+  return [
+    { item: 'HU gültig', ok: hu.state === 'gueltig' || hu.state === 'baldFaellig' },
+    { item: 'Servicehistorie hinterlegt', ok: car.maintenanceRecords > 0 },
+    { item: 'Unfälle dokumentiert', ok: accidents.every(a => typeof a.repairCost === 'number') },
+    { item: 'Erstzulassung angegeben', ok: !!car.erstzulassung },
+  ];
+}

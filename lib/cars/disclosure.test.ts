@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { huStatus, serviceStatus, buildDisclosure } from './disclosure';
+import { huStatus, serviceStatus, buildDisclosure, disclosureChecklist } from './disclosure';
 import type { Car } from './types';
 
 const NOW = new Date(2026, 4, 31); // 31 May 2026 (month is 0-based)
@@ -70,5 +70,27 @@ describe('buildDisclosure', () => {
     }, NOW);
     expect(d.accidents[0].repaired).toBe(true);
     expect(d.accidents[0].repainted).toBe(false);
+  });
+});
+
+describe('disclosureChecklist', () => {
+  it('marks all items ok for a clean, complete, valid-HU car', () => {
+    const items = disclosureChecklist({ ...baseCar, maintenanceRecords: 14, hu: '03.2027', erstzulassung: '03.2018', accidents: [] }, NOW);
+    expect(items.every(i => i.ok)).toBe(true);
+  });
+  it('flags an expired HU', () => {
+    const items = disclosureChecklist({ ...baseCar, hu: '06.2025' }, NOW);
+    expect(items.find(i => i.item === 'HU gültig')!.ok).toBe(false);
+  });
+  it('flags missing service history', () => {
+    const items = disclosureChecklist({ ...baseCar, maintenanceRecords: 0 }, NOW);
+    expect(items.find(i => i.item === 'Servicehistorie hinterlegt')!.ok).toBe(false);
+  });
+  it('flags an accident without a documented repair cost', () => {
+    const items = disclosureChecklist({
+      ...baseCar,
+      accidents: [{ type: 'Lackschaden', damage: 'Kratzer', date: '2022' }],
+    }, NOW);
+    expect(items.find(i => i.item === 'Unfälle dokumentiert')!.ok).toBe(false);
   });
 });
