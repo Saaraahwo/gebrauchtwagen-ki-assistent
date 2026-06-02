@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'carData und message erforderlich' }, { status: 400 });
   }
 
-  const { reply, model } = await chatWithClaude(carData, messages, message);
+  const { reply, model, basis } = await chatWithClaude(carData, messages, message);
   if (carData.id) logQuestion(carData.id, carData.name, message, reply);
-  return NextResponse.json({ reply, model });
+  return NextResponse.json({ reply, model, basis });
 }

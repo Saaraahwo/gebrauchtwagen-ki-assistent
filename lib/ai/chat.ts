@@ -2,10 +2,12 @@ import type { Car } from '@/lib/cars/types';
 import { client, hasApiKey, CLAUDE_MODEL } from './claude-client';
 import { generateDemoChatResponse, type ChatMessage } from './demo-chat';
 import { lookupEquipmentAnswer } from '@/lib/cars/equipment-store';
+import { basisForMessage } from './chat-basis';
 
 export interface ChatResult {
   reply: string;
   model: string;
+  basis: string;
 }
 
 function buildSystemPrompt(car: Car): string {
@@ -28,13 +30,14 @@ export async function chatWithClaude(
   // first — deterministic and correct, regardless of whether a live key is set.
   const equipment = lookupEquipmentAnswer(userMessage, carData);
   if (equipment) {
-    return { reply: `**${equipment.term}**\n\n${equipment.answer}`, model: 'wissensdatenbank' };
+    return { reply: `**${equipment.term}**\n\n${equipment.answer}`, model: 'wissensdatenbank', basis: 'Wissensdatenbank' };
   }
 
   if (!hasApiKey || !client) {
     return {
       reply: generateDemoChatResponse(carData, messages, userMessage),
       model: 'demo-mode',
+      basis: basisForMessage(userMessage),
     };
   }
 
@@ -51,11 +54,12 @@ export async function chatWithClaude(
     });
     const block = response.content[0];
     const reply = block?.type === 'text' ? block.text : '';
-    return { reply, model: CLAUDE_MODEL };
+    return { reply, model: CLAUDE_MODEL, basis: 'KI-Modell' };
   } catch {
     return {
       reply: generateDemoChatResponse(carData, messages, userMessage),
       model: 'demo-mode (API Fehler)',
+      basis: basisForMessage(userMessage),
     };
   }
 }
