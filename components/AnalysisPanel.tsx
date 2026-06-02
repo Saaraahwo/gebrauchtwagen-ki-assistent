@@ -195,7 +195,7 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                   <pre className="whitespace-pre-wrap text-xs leading-relaxed text-bmw-dark font-sans">
                     {state.data.aiAnalysis.analysis}
                   </pre>
-                  <p className="text-[10px] text-bmw-gray-muted mt-3">Modell: {state.data.aiAnalysis.model}</p>
+                  <p className="text-[10px] text-bmw-gray-muted mt-3">Grundlage: Fahrzeugdaten, Regelprüfung &amp; Marktvergleich · Quelle: {state.data.aiAnalysis.model}</p>
                 </div>
               </div>
 
