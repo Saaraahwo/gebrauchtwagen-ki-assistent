@@ -109,6 +109,20 @@ export function getQuestionsForCar(carId: number): {
   return { articleNr: articleNr(carId), logs, faq };
 }
 
+export function getTopQuestions(limit = 8): { question: string; count: number }[] {
+  const stmt = db.prepare(
+    'SELECT question, COUNT(*) AS c FROM questions GROUP BY lower(trim(question)) ORDER BY c DESC, question ASC LIMIT ?',
+  );
+  stmt.bind([limit]);
+  const out: { question: string; count: number }[] = [];
+  while (stmt.step()) {
+    const row = stmt.getAsObject();
+    out.push({ question: String(row.question), count: Number(row.c) });
+  }
+  stmt.free();
+  return out;
+}
+
 // Test helper — clears all rows. Do not call from production code.
 export function _resetLog(): void {
   db.run('DELETE FROM questions');

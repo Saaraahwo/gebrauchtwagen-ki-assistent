@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { articleNr, logQuestion, getQuestionsForCar, _resetLog } from './log';
+import { articleNr, logQuestion, getQuestionsForCar, getTopQuestions, _resetLog } from './log';
 
 describe('articleNr', () => {
   it('formats car id to BMW-GW-XXX', () => {
@@ -34,5 +34,26 @@ describe('logQuestion + getQuestionsForCar', () => {
     const out = getQuestionsForCar(999);
     expect(out.logs).toEqual([]);
     expect(out.faq).toEqual([]);
+  });
+});
+
+describe('getTopQuestions', () => {
+  beforeEach(() => { _resetLog(); });
+
+  it('aggregates the most frequent questions across all cars, newest count first', () => {
+    logQuestion(1, 'BMW 320i', 'Wie viele km?', 'A');
+    logQuestion(2, 'BMW X5', 'Wie viele km?', 'A');
+    logQuestion(3, 'BMW M5', 'Hat es Unfälle?', 'B');
+    const top = getTopQuestions(5);
+    expect(top[0].question).toBe('Wie viele km?');
+    expect(top[0].count).toBe(2);
+    expect(top.some(q => q.question === 'Hat es Unfälle?')).toBe(true);
+  });
+
+  it('respects the limit', () => {
+    logQuestion(1, 'A', 'Frage eins', 'x');
+    logQuestion(1, 'A', 'Frage zwei', 'y');
+    logQuestion(1, 'A', 'Frage drei', 'z');
+    expect(getTopQuestions(2)).toHaveLength(2);
   });
 });
