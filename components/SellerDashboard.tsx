@@ -40,6 +40,12 @@ export function SellerDashboard({ sellerName, stats, cars, topQuestions, booking
     router.push('/login');
   }
 
+  async function deleteData() {
+    if (!confirm('Alle gespeicherten Chat-Fragen und Probefahrt-Anfragen löschen?')) return;
+    const res = await fetch('/api/sellers/data', { method: 'DELETE' });
+    if (res.ok) window.location.reload();
+  }
+
   const max = (arr: { count: number }[]) => Math.max(...arr.map(x => x.count), 1);
 
   return (
@@ -53,6 +59,9 @@ export function SellerDashboard({ sellerName, stats, cars, topQuestions, booking
           <a href="/api/sellers/faq-pack" download className="text-sm text-bmw-blue hover:underline">
             FAQ-Pack
           </a>
+          <button onClick={deleteData} className="text-sm text-flag-orange hover:underline">
+            Daten löschen
+          </button>
           <button onClick={logout} className="text-sm text-bmw-blue hover:underline">
             Abmelden
           </button>
