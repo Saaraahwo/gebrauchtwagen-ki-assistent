@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { CarDetail } from '@/components/CarDetail';
 import { ChatWidget } from '@/components/ChatWidget';
+import { Footer } from '@/components/Footer';
 
 export default async function CarDetailPage({
   params,
@@ -33,6 +34,7 @@ export default async function CarDetailPage({
         ]}
       />
       <CarDetail car={car} />
+      <Footer />
       <ChatWidget car={car} />
     </>
   );

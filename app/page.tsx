@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { CarBrowser } from '@/components/CarBrowser';
 import { ValueProp } from '@/components/ValueProp';
+import { Footer } from '@/components/Footer';
 
 export default function HomePage() {
   const cars: Car[] = JSON.parse(
@@ -24,6 +25,7 @@ export default function HomePage() {
         <ValueProp />
         <CarBrowser cars={cars} />
       </main>
+      <Footer />
     </>
   );
 }
