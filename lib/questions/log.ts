@@ -123,6 +123,11 @@ export function getTopQuestions(limit = 8): { question: string; count: number }[
   return out;
 }
 
+export function clearQuestions(): void {
+  db.run('DELETE FROM questions');
+  persist();
+}
+
 // Test helper — clears all rows. Do not call from production code.
 export function _resetLog(): void {
   db.run('DELETE FROM questions');

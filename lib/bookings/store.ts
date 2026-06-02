@@ -66,6 +66,11 @@ export function getBookings(): Booking[] {
   }));
 }
 
+export function clearBookings(): void {
+  db.run('DELETE FROM bookings');
+  persist();
+}
+
 // Test helper — clears all rows. Do not call from production code.
 export function _resetBookings(): void {
   db.run('DELETE FROM bookings');
