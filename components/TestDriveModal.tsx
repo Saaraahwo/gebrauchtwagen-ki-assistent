@@ -7,6 +7,7 @@ export function TestDriveModal({ car, onClose }: { car: Car; onClose: () => void
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [date, setDate] = useState('');
+  const [consent, setConsent] = useState(false);
   const [state, setState] = useState<'form' | 'sending' | 'done' | 'error'>('form');
 
   async function submit(e: React.FormEvent) {
@@ -59,7 +60,11 @@ export function TestDriveModal({ car, onClose }: { car: Car; onClose: () => void
                 <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={e => setDate(e.target.value)}
                   className="mt-1 w-full px-3 py-2 border border-bmw-gray-border rounded-sm text-sm" />
               </label>
-              <button type="submit" disabled={state === 'sending'}
+              <label className="flex items-start gap-2 text-[11px] text-bmw-gray-text">
+                <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-0.5" />
+                <span>Ich willige ein, dass Name und Telefonnummer zur Terminvereinbarung gespeichert werden. (<a href="/datenschutz" className="text-bmw-blue underline">Datenschutz</a>)</span>
+              </label>
+              <button type="submit" disabled={state === 'sending' || !consent}
                 className="mt-1 py-2.5 bg-bmw-blue text-white font-semibold text-sm rounded-sm disabled:opacity-50">
                 {state === 'sending' ? 'Senden…' : 'Probefahrt anfragen'}
               </button>
