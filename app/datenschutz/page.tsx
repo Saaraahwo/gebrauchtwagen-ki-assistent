@@ -8,7 +8,7 @@ export default function DatenschutzPage() {
 
       <section className="mb-4">
         <h2 className="text-sm font-bold mb-1">Chat-Fragen</h2>
-        <p className="text-bmw-gray-text">Gespeichert werden: die gestellte Frage, die Antwort, der Zeitpunkt und die Fahrzeug-Nr. — <strong>keine Kontaktdaten</strong>. Zweck: Beantwortung Ihrer Fragen und Auswertung häufiger Fragen.</p>
+        <p className="text-bmw-gray-text">Gespeichert werden: die gestellte Frage, die Antwort, der Zeitpunkt sowie Fahrzeug-ID und Fahrzeugname — <strong>keine Kontaktdaten</strong>. Zweck: Beantwortung Ihrer Fragen und Auswertung häufiger Fragen.</p>
       </section>
 
       <section className="mb-4">
@@ -18,7 +18,7 @@ export default function DatenschutzPage() {
 
       <section className="mb-4">
         <h2 className="text-sm font-bold mb-1">Speicherort & Weitergabe</h2>
-        <p className="text-bmw-gray-text">Die Daten werden lokal beim Händler in einer Datei (SQLite) gespeichert (Demo-Umgebung). <strong>Keine Weitergabe an Dritte.</strong></p>
+        <p className="text-bmw-gray-text">Die Daten werden lokal beim Händler in SQLite-Dateien gespeichert (Demo-Umgebung). <strong>Keine Weitergabe an Dritte.</strong></p>
       </section>
 
       <section className="mb-4">
