@@ -6,6 +6,8 @@ import type { Car } from '@/lib/cars/types';
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  basis?: string;
+  model?: string;
 }
 
 function renderMarkdown(text: string): React.ReactNode {
@@ -48,7 +50,7 @@ export function ChatWidget({ car }: { car: Car }) {
         body: JSON.stringify({ carData: car, messages, message: userMsg.content }),
       });
       const data = await res.json();
-      setMessages(m => [...m, { role: 'assistant', content: data.reply }]);
+      setMessages(m => [...m, { role: 'assistant', content: data.reply, basis: data.basis, model: data.model }]);
     } catch {
       setMessages(m => [...m, { role: 'assistant', content: 'Fehler beim Senden.' }]);
     } finally {
@@ -74,7 +76,10 @@ export function ChatWidget({ car }: { car: Car }) {
         <div className="fixed bottom-7 right-7 z-50 w-[340px] h-[480px] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-bmw-gray-border">
           {/* Header */}
           <div className="bg-bmw-blue text-white px-4 py-3 flex justify-between items-center flex-shrink-0">
-            <h3 className="text-sm font-bold">💬 Fragen zum Fahrzeug</h3>
+            <div>
+              <h3 className="text-sm font-bold">💬 Fragen zum Fahrzeug</h3>
+              <p className="text-[10px] text-white/80 mt-0.5">Antworten regelbasiert — mit Grundlage.</p>
+            </div>
             <button
               onClick={() => setOpen(false)}
               className="text-white/80 hover:text-white text-lg leading-none"
@@ -99,6 +104,9 @@ export function ChatWidget({ car }: { car: Car }) {
                 }>
                   {m.role === 'assistant' ? renderMarkdown(m.content) : m.content}
                 </div>
+                {m.role === 'assistant' && m.basis && (
+                  <p className="text-[9px] text-bmw-gray-muted mt-0.5 pl-1">Grundlage: {m.basis}{m.model ? ` · Quelle: ${m.model}` : ''}</p>
+                )}
               </div>
             ))}
             {loading && (
@@ -107,7 +115,8 @@ export function ChatWidget({ car }: { car: Car }) {
           </div>
 
           {/* Input */}
-          <form onSubmit={send} className="border-t border-bmw-gray-border p-2 flex gap-2 bg-white flex-shrink-0">
+          <div className="border-t border-bmw-gray-border bg-white flex-shrink-0">
+            <form onSubmit={send} className="p-2 flex gap-2">
             <input
               value={input}
               onChange={e => setInput(e.target.value)}
@@ -121,7 +130,11 @@ export function ChatWidget({ car }: { car: Car }) {
             >
               ➤
             </button>
-          </form>
+            </form>
+            <p className="px-3 pb-2 text-[9px] text-bmw-gray-muted">
+              Ihre Fragen werden gespeichert, um Antworten zu verbessern. Details: <a href="/datenschutz" className="text-bmw-blue underline">Datenschutz</a>.
+            </p>
+          </div>
         </div>
       )}
     </>
