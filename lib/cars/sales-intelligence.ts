@@ -4,11 +4,7 @@ import { detectAuffaelligkeiten } from './anomaly-detection';
 import { calcPreisAmpel } from './price-calculator';
 import { getQuestionsForCar } from '@/lib/questions/log';
 import { explainCarEquipment, type EquipmentExplanation } from './equipment-knowledge';
-
-export interface TestDrivePlan {
-  headline: string;
-  steps: string[];
-}
+import { buildTestDrive, type TestDrivePlan } from './test-drive';
 
 export interface SalesIntelligence {
   strengths: string[];
@@ -136,79 +132,6 @@ export function buildCustomerQuestions(car: Car): string[] {
   qs.push('Ist der Preis verhandelbar?');
   qs.push('Kann ich eine Probefahrt machen?');
   return [...new Set(qs)];
-}
-
-export function buildTestDrive(car: Car): TestDrivePlan {
-  const power = ps(car);
-  const feat = (car.features || []).join(' ').toLowerCase();
-  const name = (car.name + ' ' + (car.subtitle || '')).toLowerCase();
-  const seats = car.seats ?? 5;
-
-  if (name.includes('cabrio')) {
-    return {
-      headline: 'Offenes Fahrerlebnis',
-      steps: [
-        'Verdeck öffnen und das offene Fahren demonstrieren',
-        'Landstraßen-/Panoramaroute wählen',
-        'Windschott und Komfort bei offener Fahrt vorführen',
-      ],
-    };
-  }
-
-  if (isMModel(car) || power >= 300) {
-    return {
-      headline: 'Performance zeigen',
-      steps: [
-        'Zu einer Autobahnauffahrt fahren',
-        'Kontrollierte Beschleunigung 80→160 km/h demonstrieren',
-        'Bremsverhalten und Fahrwerk auf der Landstraße zeigen',
-        'Sound und Sport-Fahrmodi vorführen',
-      ],
-    };
-  }
-
-  if (/touring|tourer|\bx[1-7]\b/.test(name) || seats >= 7) {
-    return {
-      headline: 'Familientauglichkeit',
-      steps: [
-        'Navigation und Entertainment vor der Fahrt aktivieren',
-        'Kofferraum und Platzangebot zeigen',
-        'Ruhige Stadt-/Schulwegroute fahren',
-        'Parkassistent und Komfortfunktionen demonstrieren',
-      ],
-    };
-  }
-
-  if (/leder|head-up|ambiente|komfortzugang|panorama/.test(feat)) {
-    return {
-      headline: 'Komfort erleben',
-      steps: [
-        'Ruhige Boulevard-/Stadtroute wählen',
-        'Sitzkomfort, Head-Up Display und Ambientebeleuchtung vorführen',
-        'Geräuschkomfort bei mittlerem Tempo zeigen',
-      ],
-    };
-  }
-
-  if ((car.fuel || '').toLowerCase() === 'diesel') {
-    return {
-      headline: 'Effizienz beweisen',
-      steps: [
-        'Längere Überlandroute fahren',
-        'Momentan- und Durchschnittsverbrauch im Bordcomputer zeigen',
-        'Laufruhe des Diesels bei Autobahntempo demonstrieren',
-      ],
-    };
-  }
-
-  return {
-    headline: 'Solide Allround-Probefahrt',
-    steps: [
-      'Mischung aus Stadt und Landstraße fahren',
-      'Alle Assistenz- und Komfortfunktionen testen',
-      'Auf Geräusche, Schaltverhalten und Bremsen achten',
-    ],
-  };
 }
 
 export function buildSalesIntelligence(car: Car): SalesIntelligence {
