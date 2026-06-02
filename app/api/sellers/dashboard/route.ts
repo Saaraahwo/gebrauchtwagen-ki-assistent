@@ -6,6 +6,9 @@ import { requireSellerFromRequest, AuthError } from '@/lib/auth/require-seller';
 import { sellers } from '@/lib/auth/sellers';
 import { computeInventoryStats, carCondition } from '@/lib/cars/inventory-stats';
 import { buildSalesIntelligence } from '@/lib/cars/sales-intelligence';
+import { disclosureChecklist } from '@/lib/cars/disclosure';
+import { getTopQuestions } from '@/lib/questions/log';
+import { getBookings } from '@/lib/bookings/store';
 
 const cars: Car[] = JSON.parse(
   readFileSync(join(process.cwd(), 'data', 'cars.json'), 'utf8'),
@@ -27,6 +30,7 @@ export async function GET(req: NextRequest) {
     car,
     intelligence: buildSalesIntelligence(car),
     condition: carCondition(car),
+    disclosure: disclosureChecklist(car),
   }));
 
   return NextResponse.json({
@@ -37,5 +41,7 @@ export async function GET(req: NextRequest) {
     stats,
     cars: carIntel,
     faqPack: { downloadUrl: '/api/sellers/faq-pack', format: 'TXT' },
+    topQuestions: getTopQuestions(8),
+    bookings: getBookings(),
   });
 }
