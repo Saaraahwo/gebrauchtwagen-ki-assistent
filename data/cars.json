@@ -34,7 +34,16 @@
     "badge": "TOP",
     "imgExterior": "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1694352369761-1557b933253d?w=800&q=80&auto=format&fit=crop",
-    "description": "Gepflegter Erstwagen aus erster Hand. Scheckheftgepflegt beim BMW-Händler."
+    "description": "Gepflegter Erstwagen aus erster Hand. Scheckheftgepflegt beim BMW-Händler.",
+    "specs": {
+      "displacement": "1.499 ccm", "cylinders": 3,
+      "powerKw": 103, "powerPs": 140, "torque": 220,
+      "acceleration": 8.5, "topSpeed": 220,
+      "consumptionCity": "7,4 l/100km", "consumptionHighway": "5,3 l/100km", "consumptionCombined": "6,2 l/100km",
+      "co2": 141,
+      "length": 4319, "width": 1799, "height": 1434, "wheelbase": 2670,
+      "weight": 1365, "payload": 485, "bootVolume": 360, "tankVolume": 40, "tireSize": "225/40 R18"
+    }
   },
   {
     "id": 2,
@@ -70,7 +79,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1549064233-945d7063292f?w=800&q=80&auto=format&fit=crop",
-    "description": "Höherer Kilometerstand, aber vollständig scheckheftgepflegt."
+    "description": "Höherer Kilometerstand, aber vollständig scheckheftgepflegt.",
+    "specs": {
+      "displacement": "1.995 ccm", "cylinders": 4,
+      "powerKw": 140, "powerPs": 190, "torque": 400,
+      "acceleration": 7.1, "topSpeed": 235,
+      "consumptionCity": "6,0 l/100km", "consumptionHighway": "4,4 l/100km", "consumptionCombined": "5,1 l/100km",
+      "co2": 134,
+      "length": 4633, "width": 1811, "height": 1429, "wheelbase": 2851,
+      "weight": 1625, "payload": 545, "bootVolume": 480, "tankVolume": 59, "tireSize": "225/45 R17"
+    }
   },
   {
     "id": 3,
@@ -113,7 +131,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1652890041546-2de2829c43b5?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1494363608357-c7fa659e7325?w=800&q=80&auto=format&fit=crop",
-    "description": "Heckschaden repariert. Dichtungen und Rückfahrsensoren prüfen."
+    "description": "Heckschaden repariert. Dichtungen und Rückfahrsensoren prüfen.",
+    "specs": {
+      "displacement": "1.995 ccm", "cylinders": 4,
+      "powerKw": 140, "powerPs": 190, "torque": 400,
+      "acceleration": 7.4, "topSpeed": 232,
+      "consumptionCity": "6,2 l/100km", "consumptionHighway": "4,7 l/100km", "consumptionCombined": "5,3 l/100km",
+      "co2": 139,
+      "length": 4936, "width": 1868, "height": 1498, "wheelbase": 2975,
+      "weight": 1720, "payload": 560, "bootVolume": 570, "bootVolumeMax": 1700, "tankVolume": 66, "tireSize": "225/55 R17"
+    }
   },
   {
     "id": 4,
@@ -148,7 +175,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1603189617530-6d32306f57c5?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1601673632676-12f89e430aa3?w=800&q=80&auto=format&fit=crop",
-    "description": "3 Besitzer in 3 Jahren – für einen M3 ungewöhnlich viel."
+    "description": "3 Besitzer in 3 Jahren – für einen M3 ungewöhnlich viel.",
+    "specs": {
+      "displacement": "2.993 ccm", "cylinders": 6,
+      "powerKw": 375, "powerPs": 510, "torque": 650,
+      "acceleration": 3.5, "topSpeed": 290,
+      "consumptionCity": "13,2 l/100km", "consumptionHighway": "7,9 l/100km", "consumptionCombined": "10,9 l/100km",
+      "co2": 248,
+      "length": 4794, "width": 1903, "height": 1433, "wheelbase": 2851,
+      "weight": 1730, "payload": 470, "bootVolume": 480, "tankVolume": 59, "tireSize": "275/35 R19"
+    }
   },
   {
     "id": 5,
@@ -184,7 +220,16 @@
     "badge": "TOP",
     "imgExterior": "https://images.unsplash.com/photo-1717082842911-9e55aeaf80cb?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1553818501-e9926ea1ea8f?w=800&q=80&auto=format&fit=crop",
-    "description": "Durchgängig BMW-Händler gepflegt. Nichtraucherfahrzeug."
+    "description": "Durchgängig BMW-Händler gepflegt. Nichtraucherfahrzeug.",
+    "specs": {
+      "displacement": "2.993 ccm", "cylinders": 6,
+      "powerKw": 210, "powerPs": 286, "torque": 650,
+      "acceleration": 6.1, "topSpeed": 235,
+      "consumptionCity": "8,4 l/100km", "consumptionHighway": "6,3 l/100km", "consumptionCombined": "7,2 l/100km",
+      "co2": 190,
+      "length": 4922, "width": 2004, "height": 1745, "wheelbase": 2975,
+      "weight": 2100, "payload": 640, "bootVolume": 650, "bootVolumeMax": 1870, "tankVolume": 83, "tireSize": "255/50 R20"
+    }
   },
   {
     "id": 6,
@@ -217,7 +262,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1600268330186-76564be81357?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1519120433933-22bc753101f3?w=800&q=80&auto=format&fit=crop",
-    "description": "Nur ein Besitzer, aber keinerlei Servicenachweise vorhanden."
+    "description": "Nur ein Besitzer, aber keinerlei Servicenachweise vorhanden.",
+    "specs": {
+      "displacement": "1.499 ccm", "cylinders": 3,
+      "powerKw": 103, "powerPs": 140, "torque": 220,
+      "acceleration": 8.7, "topSpeed": 218,
+      "consumptionCity": "7,5 l/100km", "consumptionHighway": "5,5 l/100km", "consumptionCombined": "6,4 l/100km",
+      "co2": 146,
+      "length": 4319, "width": 1799, "height": 1434, "wheelbase": 2670,
+      "weight": 1335, "payload": 465, "bootVolume": 360, "tankVolume": 40, "tireSize": "205/55 R16"
+    }
   },
   {
     "id": 7,
@@ -251,7 +305,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1612545667889-b061512d0dfa?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1582519366734-82dac0fcc12d?w=800&q=80&auto=format&fit=crop",
-    "description": "15 Jahre alt, über 300.000 km. Hohe Unterhaltskosten zu erwarten."
+    "description": "15 Jahre alt, über 300.000 km. Hohe Unterhaltskosten zu erwarten.",
+    "specs": {
+      "displacement": "4.395 ccm", "cylinders": 8,
+      "powerKw": 300, "powerPs": 408, "torque": 600,
+      "acceleration": 5.0, "topSpeed": 250,
+      "consumptionCity": "15,4 l/100km", "consumptionHighway": "8,9 l/100km", "consumptionCombined": "11,8 l/100km",
+      "co2": 275,
+      "length": 5212, "width": 1902, "height": 1479, "wheelbase": 3070,
+      "weight": 2095, "payload": 535, "bootVolume": 500, "tankVolume": 82, "tireSize": "245/45 R19"
+    }
   },
   {
     "id": 8,
@@ -286,7 +349,16 @@
     "badge": "TOP",
     "imgExterior": "https://images.unsplash.com/photo-1603189661342-e45f1374f890?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1694352369761-1557b933253d?w=800&q=80&auto=format&fit=crop",
-    "description": "Kabriolett aus erster Hand, Garagenfahrzeug."
+    "description": "Kabriolett aus erster Hand, Garagenfahrzeug.",
+    "specs": {
+      "displacement": "1.998 ccm", "cylinders": 4,
+      "powerKw": 185, "powerPs": 252, "torque": 400,
+      "acceleration": 5.8, "topSpeed": 250,
+      "consumptionCity": "9,5 l/100km", "consumptionHighway": "6,5 l/100km", "consumptionCombined": "7,8 l/100km",
+      "co2": 177,
+      "length": 4775, "width": 1826, "height": 1399, "wheelbase": 2811,
+      "weight": 1760, "payload": 390, "bootVolume": 300, "tankVolume": 59, "tireSize": "245/35 R19"
+    }
   },
   {
     "id": 9,
@@ -335,7 +407,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1615908397724-6dc711db34a7?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1549064233-945d7063292f?w=800&q=80&auto=format&fit=crop",
-    "description": "Zwei Unfälle, vier Besitzer, wenig Service. Mehrere Risikofaktoren."
+    "description": "Zwei Unfälle, vier Besitzer, wenig Service. Mehrere Risikofaktoren.",
+    "specs": {
+      "displacement": "1.998 ccm", "cylinders": 4,
+      "powerKw": 135, "powerPs": 184, "torque": 290,
+      "acceleration": 7.4, "topSpeed": 210,
+      "consumptionCity": "8,8 l/100km", "consumptionHighway": "6,4 l/100km", "consumptionCombined": "7,4 l/100km",
+      "co2": 168,
+      "length": 4716, "width": 1891, "height": 1673, "wheelbase": 2864,
+      "weight": 1740, "payload": 565, "bootVolume": 550, "bootVolumeMax": 1600, "tankVolume": 67, "tireSize": "245/45 R18"
+    }
   },
   {
     "id": 10,
@@ -377,7 +458,16 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1601673632676-12f89e430aa3?w=800&q=80&auto=format&fit=crop",
-    "description": "BMW M5 Competition zu auffällig niedrigem Preis. Motorwechsel + 6 Besitzer."
+    "description": "BMW M5 Competition zu auffällig niedrigem Preis. Motorwechsel + 6 Besitzer.",
+    "specs": {
+      "displacement": "4.395 ccm", "cylinders": 8,
+      "powerKw": 460, "powerPs": 625, "torque": 750,
+      "acceleration": 3.3, "topSpeed": 305,
+      "consumptionCity": "13,3 l/100km", "consumptionHighway": "7,7 l/100km", "consumptionCombined": "10,5 l/100km",
+      "co2": 239,
+      "length": 4962, "width": 1903, "height": 1459, "wheelbase": 2975,
+      "weight": 1880, "payload": 490, "bootVolume": 530, "tankVolume": 68, "tireSize": "275/35 R20"
+    }
   },
   {
     "id": 11,
@@ -456,7 +546,16 @@
     "badge": "TOP",
     "imgExterior": "https://images.unsplash.com/photo-1635990716619-7710162ea073?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1494363608357-c7fa659e7325?w=800&q=80&auto=format&fit=crop",
-    "description": "Wie neu. Erstzulassung 04/2023. Vollausstattung M Sport + Premium Paket. Scheckheftgepflegt."
+    "description": "Wie neu. Erstzulassung 04/2023. Vollausstattung M Sport + Premium Paket. Scheckheftgepflegt.",
+    "specs": {
+      "displacement": "1.499 ccm", "cylinders": 3,
+      "powerKw": 100, "powerPs": 136, "torque": 230,
+      "acceleration": 9.1, "topSpeed": 210,
+      "consumptionCity": "7,6 l/100km", "consumptionHighway": "5,5 l/100km", "consumptionCombined": "6,4 l/100km",
+      "co2": 146,
+      "length": 4358, "width": 1845, "height": 1576, "wheelbase": 2670,
+      "weight": 1480, "payload": 510, "bootVolume": 468, "bootVolumeMax": 1405, "tankVolume": 50, "tireSize": "225/45 R17"
+    }
   },
   {
     "id": 12,
@@ -493,6 +592,15 @@
     "badge": null,
     "imgExterior": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80&auto=format&fit=crop",
     "imgInterior": "https://images.unsplash.com/photo-1553818501-e9926ea1ea8f?w=800&q=80&auto=format&fit=crop",
-    "description": "Günstigster Einstieg. Sonderfarbe Lipstick Rosa mit Rosé-Polsterung – ein echter Hingucker. Euro 5."
+    "description": "Günstigster Einstieg. Sonderfarbe Lipstick Rosa mit Rosé-Polsterung – ein echter Hingucker. Euro 5.",
+    "specs": {
+      "displacement": "1.598 ccm", "cylinders": 4,
+      "powerKw": 100, "powerPs": 136, "torque": 220,
+      "acceleration": 9.3, "topSpeed": 215,
+      "consumptionCity": "7,6 l/100km", "consumptionHighway": "5,6 l/100km", "consumptionCombined": "6,5 l/100km",
+      "co2": 149,
+      "length": 4324, "width": 1765, "height": 1421, "wheelbase": 2690,
+      "weight": 1290, "payload": 460, "bootVolume": 360, "tankVolume": 52, "tireSize": "205/55 R16"
+    }
   }
 ]
