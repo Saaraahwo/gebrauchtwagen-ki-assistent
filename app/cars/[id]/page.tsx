@@ -5,6 +5,7 @@ import type { Car } from '@/lib/cars/types';
 import { Header } from '@/components/Header';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { CarDetail } from '@/components/CarDetail';
+import { TechSpecs } from '@/components/TechSpecs';
 import { ChatWidget } from '@/components/ChatWidget';
 import { Footer } from '@/components/Footer';
 
@@ -34,6 +35,7 @@ export default async function CarDetailPage({
         ]}
       />
       <CarDetail car={car} />
+      <TechSpecs car={car} />
       <Footer />
       <ChatWidget car={car} />
     </>
