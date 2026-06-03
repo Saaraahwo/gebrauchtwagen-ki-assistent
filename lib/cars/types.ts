@@ -11,6 +11,30 @@ export interface Accident {
   repaired?: boolean;
 }
 
+export interface CarSpecs {
+  displacement: string;
+  cylinders: number;
+  powerKw: number;
+  powerPs: number;
+  torque: number;
+  acceleration: number;
+  topSpeed: number;
+  consumptionCity: string;
+  consumptionHighway: string;
+  consumptionCombined: string;
+  co2: number;
+  length: number;
+  width: number;
+  height: number;
+  wheelbase: number;
+  weight: number;
+  payload: number;
+  bootVolume: number;
+  bootVolumeMax?: number;
+  tankVolume: number;
+  tireSize: string;
+}
+
 export interface Car {
   id: number;
   name: string;
@@ -41,6 +65,7 @@ export interface Car {
   seats?: number;
   badge?: string | null;
   description?: string;
+  specs?: CarSpecs;
 }
 
 export type Severity = 'red' | 'orange' | 'green';
