@@ -122,27 +122,29 @@ export function detectAuffaelligkeiten(car: Car): Anomaly[] {
     });
   }
 
-  // Spec-triggered: high fuel consumption
+  // Spec-triggered: high fuel consumption and CO₂ emissions
   // consumptionCombined uses German locale ("6,2 l/100km") so replace comma before parsing
-  if (car.specs && parseFloat(car.specs.consumptionCombined.replace(',', '.')) > 9.0) {
-    auff.push({
-      flag: 'HOHER_VERBRAUCH',
-      title: `Hoher Kraftstoffverbrauch — ${car.specs.consumptionCombined} kombiniert`,
-      detail: `Der kombinierte WLTP-Verbrauch von ${car.specs.consumptionCombined} liegt deutlich über dem Durchschnitt vergleichbarer Fahrzeuge. Kraftstoffkosten bei 15.000 km/Jahr und aktuellem Preis von ca. 1,80 €/l: rund ${Math.round(parseFloat(car.specs.consumptionCombined.replace(',', '.')) * 15000 / 100 * 1.8).toLocaleString('de-DE')} € pro Jahr.`,
-      tip: 'Fahrverhalten und regelmäßige Reifendruckkontrolle können den Verbrauch um bis zu 10 % reduzieren.',
-      severity: 'info',
-    });
-  }
+  if (car.specs) {
+    const consumptionL = parseFloat(car.specs.consumptionCombined.replace(',', '.'));
+    if (consumptionL > 9.0) {
+      auff.push({
+        flag: 'HOHER_VERBRAUCH',
+        title: `Hoher Kraftstoffverbrauch — ${car.specs.consumptionCombined} kombiniert`,
+        detail: `Der kombinierte WLTP-Verbrauch von ${car.specs.consumptionCombined} liegt deutlich über dem Durchschnitt vergleichbarer Fahrzeuge. Kraftstoffkosten bei 15.000 km/Jahr und aktuellem Preis von ca. 1,80 €/l: rund ${Math.round(consumptionL * 15000 / 100 * 1.8).toLocaleString('de-DE')} € pro Jahr.`,
+        tip: 'Fahrverhalten und regelmäßige Reifendruckkontrolle können den Verbrauch um bis zu 10 % reduzieren.',
+        severity: 'info',
+      });
+    }
 
-  // Spec-triggered: high CO₂
-  if (car.specs && car.specs.co2 > 180) {
-    auff.push({
-      flag: 'CO2_EMISSIONEN',
-      title: `CO₂-Emissionen ${car.specs.co2} g/km — über EU-Richtwert`,
-      detail: `Mit ${car.specs.co2} g/km liegt dieses Fahrzeug über dem EU-Richtwert von 180 g/km. In manchen Kommunen können höhere Parkgebühren oder Umweltzonen-Regelungen gelten. Für Vielfahrer lohnt ein Vergleich mit verbrauchsärmeren Alternativen.`,
-      tip: 'CO₂-abhängige Kfz-Steuer prüfen — bei hohen Emissionen kann die Jahressteuer deutlich steigen.',
-      severity: 'info',
-    });
+    if (car.specs.co2 > 180) {
+      auff.push({
+        flag: 'CO2_EMISSIONEN',
+        title: `CO₂-Emissionen ${car.specs.co2} g/km — über EU-Richtwert`,
+        detail: `Mit ${car.specs.co2} g/km liegt dieses Fahrzeug über dem EU-Richtwert von 180 g/km. In manchen Kommunen können höhere Parkgebühren oder Umweltzonen-Regelungen gelten. Für Vielfahrer lohnt ein Vergleich mit verbrauchsärmeren Alternativen.`,
+        tip: 'CO₂-abhängige Kfz-Steuer prüfen — bei hohen Emissionen kann die Jahressteuer deutlich steigen.',
+        severity: 'info',
+      });
+    }
   }
 
   return auff;
