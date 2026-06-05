@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Car } from '@/lib/cars/types';
 import type { InventoryStats } from '@/lib/cars/inventory-stats';
@@ -366,6 +366,13 @@ function OverviewView({ stats, cars, onDeleteData }: { stats: InventoryStats; ca
 
 function VehiclesView({ cars, openId, setOpenId }: { cars: CarIntel[]; openId: number | null; setOpenId: (id: number | null) => void }) {
   const selected = cars.find(c => c.car.id === openId);
+  const briefingRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (openId !== null) {
+      briefingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [openId]);
 
   return (
     <>
@@ -435,7 +442,7 @@ function VehiclesView({ cars, openId, setOpenId }: { cars: CarIntel[]; openId: n
       </div>
 
       {selected && (
-        <div style={{ marginTop: 14 }}>
+        <div ref={briefingRef} style={{ marginTop: 14, scrollMarginTop: 16 }}>
           <CarBriefing intel={selected} onClose={() => setOpenId(null)} />
         </div>
       )}
