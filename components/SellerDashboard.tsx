@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Car } from '@/lib/cars/types';
 import type { InventoryStats } from '@/lib/cars/inventory-stats';
@@ -366,13 +366,6 @@ function OverviewView({ stats, cars, onDeleteData }: { stats: InventoryStats; ca
 
 function VehiclesView({ cars, openId, setOpenId }: { cars: CarIntel[]; openId: number | null; setOpenId: (id: number | null) => void }) {
   const selected = cars.find(c => c.car.id === openId);
-  const briefingRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (openId !== null) {
-      briefingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [openId]);
 
   return (
     <>
@@ -442,8 +435,18 @@ function VehiclesView({ cars, openId, setOpenId }: { cars: CarIntel[]; openId: n
       </div>
 
       {selected && (
-        <div ref={briefingRef} style={{ marginTop: 14, scrollMarginTop: 16 }}>
-          <CarBriefing intel={selected} onClose={() => setOpenId(null)} />
+        <div
+          onClick={() => setOpenId(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(15,23,42,0.45)', padding: '24px 16px' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="w-full"
+            style={{ maxWidth: 880, maxHeight: '90vh', overflowY: 'auto', borderRadius: 14 }}
+          >
+            <CarBriefing intel={selected} onClose={() => setOpenId(null)} />
+          </div>
         </div>
       )}
     </>
@@ -474,7 +477,7 @@ function CarBriefing({ intel, onClose }: { intel: CarIntel; onClose: () => void 
       {/* Test drive */}
       <div className="border-t" style={{ borderColor: '#f1f5f9', paddingTop: 20, marginTop: 20 }}>
         <div className="font-semibold uppercase" style={{ color: '#1c69d4', fontSize: 10, letterSpacing: '0.12em', marginBottom: 4 }}>
-          Probefahrt-Drehbuch
+          Probefahrt
         </div>
         <div className="font-semibold" style={{ color: '#1e293b', fontSize: 13, marginBottom: 8 }}>
           {intelligence.testDrive.headline}
