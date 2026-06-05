@@ -15,6 +15,6 @@ export const sellers: Record<string, Seller> = {
     id: 'seller-1',
     email: 'demo@carcheck.de',
     passwordHash: 'hashed-password-demo',
-    name: 'Max Müller',
+    name: 'Sarah Wohlert',
   },
 };

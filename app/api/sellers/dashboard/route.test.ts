@@ -28,7 +28,7 @@ describe('GET /api/sellers/dashboard', () => {
     const data = await res.json();
     // Name resolved from the store, not a hardcoded literal.
     expect(data.sellerInfo.email).toBe('demo@carcheck.de');
-    expect(data.sellerInfo.name).toBe('Max Müller');
+    expect(data.sellerInfo.name).toBe('Sarah Wohlert');
     // Aggregate stats present and consistent with the dataset.
     expect(data.stats.total).toBe(data.cars.length);
     expect(data.stats.total).toBeGreaterThan(0);
