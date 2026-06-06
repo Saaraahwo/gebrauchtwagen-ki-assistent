@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Teil 2 – App-Konzept &amp; Features · KI-Kaufassistent</title>
+<style>
+  :root {
+    --bmw-blue: #003399;
+    --bmw-blue-deep: #002a7a;
+    --bmw-blue-soft: #3b6fd0;
+    --grey-bg: #f4f6fb;
+    --grey-panel: #e8ebf2;
+    --grey-line: #d8deea;
+    --ink: #1a2336;
+    --muted: #5c6884;
+    --white: #ffffff;
+    --font: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: #0b1020;
+    font-family: var(--font);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  /* ---------- Slide frame ---------- */
+  .slide {
+    position: fixed;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: 4.2vh 5vw;
+    background: var(--white);
+  }
+  .slide.active { display: flex; }
+
+  /* Header strip on content slides */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.6vh;
+    border-bottom: 2px solid var(--bmw-blue);
+    margin-bottom: 3vh;
+  }
+  .topbar .sec {
+    font-size: clamp(13px, 1.5vw, 20px);
+    font-weight: 700;
+    color: var(--bmw-blue);
+    letter-spacing: 0.02em;
+  }
+  .topbar .brand {
+    font-size: clamp(10px, 1.05vw, 14px);
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1.slide-title {
+    font-size: clamp(24px, 3.1vw, 46px);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 2.4vh;
+  }
+  h1.slide-title .accent { color: var(--bmw-blue); }
+
+  .lead {
+    font-size: clamp(15px, 1.6vw, 23px);
+    color: var(--muted);
+    margin-bottom: 2.6vh;
+    max-width: 60ch;
+  }
+
+  ul.bullets { list-style: none; display: flex; flex-direction: column; gap: 1.5vh; }
+  ul.bullets li {
+    position: relative;
+    padding-left: 1.7em;
+    font-size: clamp(15px, 1.7vw, 25px);
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  ul.bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.42em;
+    width: 0.62em; height: 0.62em;
+    background: var(--bmw-blue);
+    border-radius: 2px;
+  }
+  ul.bullets li .sub {
+    display: block;
+    font-size: 0.78em;
+    color: var(--muted);
+    margin-top: 0.25em;
+    line-height: 1.3;
+  }
+
+  /* Two-column layout */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4vw; flex: 1; align-content: start; }
+  .panel {
+    background: var(--grey-bg);
+    border: 1px solid var(--grey-line);
+    border-left: 5px solid var(--bmw-blue);
+    border-radius: 10px;
+    padding: 2.4vh 1.8vw;
+  }
+  .panel.alt { border-left-color: var(--bmw-blue-soft); }
+  .panel h3 {
+    font-size: clamp(15px, 1.55vw, 22px);
+    color: var(--bmw-blue);
+    margin-bottom: 1.4vh;
+    font-weight: 700;
+  }
+  .panel ul.bullets li { font-size: clamp(13px, 1.35vw, 19px); }
+  .panel ul.bullets li::before { top: 0.4em; width: 0.5em; height: 0.5em; }
+
+  .goal {
+    margin-top: auto;
+    padding-top: 2vh;
+    font-size: clamp(13px, 1.45vw, 20px);
+    color: var(--bmw-blue-deep);
+    font-weight: 600;
+  }
+  .goal span { color: var(--muted); font-weight: 400; }
+
+  /* Phase number badge */
+  .phase-head { display: flex; align-items: center; gap: 1.2vw; margin-bottom: 2.4vh; }
+  .phase-num {
+    flex: none;
+    width: clamp(42px, 4.4vw, 70px);
+    height: clamp(42px, 4.4vw, 70px);
+    border-radius: 14px;
+    background: var(--bmw-blue);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(20px, 2.4vw, 36px);
+    font-weight: 800;
+  }
+  .phase-head h1 { margin: 0; }
+
+  /* ---------- Section / cover slides ---------- */
+  .slide.kind-cover, .slide.kind-section {
+    background: var(--bmw-blue);
+    color: #fff;
+    justify-content: center;
+    padding: 6vh 7vw;
+  }
+  .kicker {
+    font-size: clamp(13px, 1.4vw, 19px);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #9fc0ff;
+    margin-bottom: 2.2vh;
+  }
+  .slide.kind-cover h1, .slide.kind-section h1 {
+    font-size: clamp(30px, 4.4vw, 66px);
+    font-weight: 800;
+    line-height: 1.05;
+    max-width: 22ch;
+  }
+  .accent-bar { width: 86px; height: 7px; background: #fff; margin: 3vh 0; border-radius: 4px; }
+  .slide.kind-cover .meta, .slide.kind-section .meta {
+    font-size: clamp(14px, 1.5vw, 21px);
+    color: #cfe0ff;
+    line-height: 1.7;
+  }
+  .time-pill {
+    display: inline-block;
+    margin-top: 2.4vh;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    font-size: clamp(12px, 1.25vw, 17px);
+    font-weight: 600;
+    padding: 0.5em 1.1em;
+    border-radius: 999px;
+  }
+  .agenda { margin-top: 3vh; display: flex; flex-direction: column; gap: 1vh; }
+  .agenda div { font-size: clamp(13px,1.4vw,20px); color: #dfe9ff; }
+  .agenda b { color: #fff; }
+
+  /* ---------- Chrome: progress, counter, notes ---------- */
+  .progress {
+    position: fixed; left: 0; bottom: 0; height: 5px;
+    background: var(--bmw-blue-soft); width: 0;
+    transition: width 0.25s ease; z-index: 40;
+  }
+  .slide.kind-cover ~ .progress { }
+  .counter {
+    position: fixed; right: 18px; bottom: 14px;
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    background: rgba(255,255,255,0.85); padding: 3px 9px; border-radius: 6px;
+    z-index: 40;
+  }
+  .slide.kind-cover.active ~ .counter,
+  .slide.kind-section.active ~ .counter { color: #cfe0ff; background: rgba(0,0,0,0.18); }
+
+  .hint {
+    position: fixed; left: 18px; bottom: 12px;
+    font-size: 11px; color: var(--muted);
+    z-index: 40; opacity: 0.8;
+  }
+  .slide.kind-cover.active ~ .hint,
+  .slide.kind-section.active ~ .hint { color: #cfe0ff; }
+
+  .notes {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-height: 42vh; overflow-y: auto;
+    background: #0d1530; color: #e7ecf7;
+    border-top: 4px solid var(--bmw-blue-soft);
+    padding: 20px 26px 26px;
+    transform: translateY(100%);
+    transition: transform 0.28s ease;
+    z-index: 50;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.4);
+  }
+  .notes.show { transform: translateY(0); }
+  .notes .nlabel {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #8fb0ff; font-weight: 700; margin-bottom: 8px;
+  }
+  .notes .nbody { font-size: 15px; line-height: 1.55; max-width: 110ch; }
+  .notes .nbody p { margin-bottom: 8px; }
+  .notes .nbody strong { color: #fff; }
+
+  /* ---------- Print: all slides + notes ---------- */
+  @media print {
+    html, body { overflow: visible; background: #fff; }
+    .slide {
+      position: relative; inset: auto; display: flex;
+      width: 100%; min-height: 100vh;
+      page-break-after: always; break-after: page;
+    }
+    .progress, .counter, .hint { display: none; }
+    .notes {
+      position: relative; transform: none; max-height: none;
+      page-break-before: avoid; break-before: avoid;
+      background: #f0f3fa; color: #1a2336; border-top: 2px solid var(--bmw-blue);
+    }
+    .notes .nlabel { color: var(--bmw-blue); }
+    .notes .nbody strong { color: var(--bmw-blue); }
+  }
+</style>
+</head>
+<body>
+
+<!-- 1 · COVER -->
+<section class="slide kind-cover active">
+  <div class="kicker">Teil 2</div>
+  <h1>App-Konzept &amp; Features</h1>
+  <div class="accent-bar"></div>
+  <div class="meta">
+    KI-gestützter Gebrauchtwagen-Kaufassistent · BMW OEM-Kontext<br />
+    Fallstudie · Präsentation: Wirtschaftsinformatik
+  </div>
+  <div class="agenda">
+    <div><b>2.1</b> &nbsp;Lösungsüberblick</div>
+    <div><b>2.2</b> &nbsp;User Journey</div>
+    <div><b>2.3</b> &nbsp;KI-Funktionen im Detail</div>
+    <div><b>2.4</b> &nbsp;App-Demo / Mockup-Walkthrough</div>
+  </div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p><strong>Einstieg (15 Sek.):</strong> „In Teil 2 wird das Konzept konkret – wir zeigen, was die App tatsächlich kann und wie sie den Kaufprozess begleitet."</p>
+    <p>Kurz die vier Unterpunkte ankündigen, dann zügig zu 2.1. Gesamtdauer dieses Blocks ca. 15 Minuten.</p>
+  </div></aside>
+</section>
+
+<!-- 2 · 2.1 SECTION -->
+<section class="slide kind-section">
+  <div class="kicker">2.1</div>
+  <h1>Lösungsüberblick</h1>
+  <div class="accent-bar"></div>
+  <div class="meta">Was ist die App – und was ist sie bewusst nicht?</div>
+  <span class="time-pill">⏱ ca. 2 Min.</span>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Überleitung: „Bevor wir in die einzelnen Phasen gehen, das große Bild."</p>
+    <p>Zwei Kernaussagen vorbereiten: <strong>(1)</strong> ein Begleiter über den gesamten Prozess, <strong>(2)</strong> Ergänzung statt Ersatz des Verkäufers.</p>
+  </div></aside>
+</section>
+
+<!-- 3 · 2.1 content: assistant -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.1 · Lösungsüberblick</div><div class="brand">KI-Kaufassistent</div></div>
+  <h1 class="slide-title">Der digitale <span class="accent">KI-Assistent</span></h1>
+  <p class="lead">Ein Begleiter über den gesamten Kaufprozess – von der Fahrzeugsuche bis zur Probefahrt.</p>
+  <ul class="bullets">
+    <li>Drei Phasen, ein Assistent: <strong>Vor dem Kauf</strong> · <strong>Besichtigung</strong> · <strong>Probefahrt</strong></li>
+    <li>Bündelt Fahrzeugdaten, Marktpreise, Forenwissen und Prüfregeln an einem Ort
+      <span class="sub">Kein Suchen über zehn Tabs – ein konsistentes Bild pro Fahrzeug</span></li>
+    <li>Schafft Transparenz und Vertrauen – gerade beim Gebrauchtwagen, wo Unsicherheit am größten ist</li>
+    <li>Jede Aussage ist mit Quelle hinterlegt (z. B. ADAC, Fahrzeugdaten, WLTP, Forenzitate)</li>
+  </ul>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p><strong>Kernbotschaft:</strong> Das Problem beim Gebrauchtwagenkauf ist Informationsasymmetrie – der Verkäufer weiß mehr als der Käufer. Die App schließt diese Lücke.</p>
+    <p>Den Quellen-Punkt betonen: Das unterscheidet uns von einer reinen „Chatbot-Spielerei" – Nachvollziehbarkeit schafft Vertrauen.</p>
+  </div></aside>
+</section>
+
+<!-- 4 · 2.1 content: positioning -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.1 · Lösungsüberblick</div><div class="brand">KI-Kaufassistent</div></div>
+  <h1 class="slide-title">Positionierung: <span class="accent">Ergänzung statt Ersatz</span></h1>
+  <div class="cols">
+    <div class="panel">
+      <h3>Der Assistent übernimmt</h3>
+      <ul class="bullets">
+        <li>Datenarbeit &amp; Faktenrecherche</li>
+        <li>Preisbewertung &amp; Marktvergleich</li>
+        <li>Prüf-Checklisten &amp; Mängelhinweise</li>
+        <li>Modellspezifisches Erfahrungswissen</li>
+      </ul>
+    </div>
+    <div class="panel alt">
+      <h3>Der Verkäufer bleibt</h3>
+      <ul class="bullets">
+        <li>Berater &amp; Vertrauensperson</li>
+        <li>Verantwortlich für Beziehung &amp; Abschluss</li>
+        <li>Einordnung im persönlichen Gespräch</li>
+        <li>Entscheider bei Verhandlung &amp; Service</li>
+      </ul>
+    </div>
+  </div>
+  <div class="goal">Win-win: <span>informierter Kunde, entlasteter Verkäufer – mehr Zeit für echte Beratung statt Datensuche.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Diese Folie ist wichtig für die OEM-/Händler-Akzeptanz: Verkäufer haben Angst, ersetzt zu werden. Klarstellen: Die App nimmt die <strong>lästige Datenarbeit</strong> ab, nicht die Beratung.</p>
+    <p>Analogie nutzen: „Wie ein Navigationssystem – es fährt nicht für Sie, aber Sie kommen entspannter und sicherer an."</p>
+  </div></aside>
+</section>
+
+<!-- 5 · 2.2 SECTION -->
+<section class="slide kind-section">
+  <div class="kicker">2.2</div>
+  <h1>User Journey</h1>
+  <div class="accent-bar"></div>
+  <div class="meta">Drei Phasen entlang des realen Kaufprozesses</div>
+  <span class="time-pill">⏱ ca. 6 Min.</span>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Ankündigen: „Wir gehen den Weg, den ein Kunde wirklich geht – chronologisch in drei Phasen." Pro Phase ca. 2 Minuten.</p>
+  </div></aside>
+</section>
+
+<!-- 6 · Phase 1 -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.2 · User Journey</div><div class="brand">Phase 1 von 3</div></div>
+  <div class="phase-head"><div class="phase-num">1</div><h1 class="slide-title">Vor dem Kauf</h1></div>
+  <ul class="bullets">
+    <li><strong>Fahrzeugvergleich &amp; Preisbewertung</strong> – Preis-Ampel zeigt: marktüblich oder auffällig günstig
+      <span class="sub">Erwarteter Marktpreis vs. Angebotspreis, transparent gegenübergestellt</span></li>
+    <li><strong>Ausstattungs-Check</strong> – was ist an Bord, was fehlt – inkl. ungewöhnlicher Details</li>
+    <li><strong>Importwarnung</strong> – EU-Import oder abweichende Länder-Ausstattung früh erkennen</li>
+  </ul>
+  <div class="goal">Ziel: <span>richtige Vorauswahl treffen und mit realistischer Preiserwartung ins Gespräch gehen.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Hier entsteht der erste „Aha-Moment": Der Kunde versteht <strong>warum</strong> ein Auto kostet, was es kostet – noch bevor er beim Händler ist.</p>
+    <p>Beispiel nennen: zwei gleiche 118i, 2.000 € Unterschied → die App erklärt die Differenz (Laufleistung, Ausstattung, Sonderfarbe).</p>
+  </div></aside>
+</section>
+
+<!-- 7 · Phase 2 -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.2 · User Journey</div><div class="brand">Phase 2 von 3</div></div>
+  <div class="phase-head"><div class="phase-num">2</div><h1 class="slide-title">Während der Besichtigung</h1></div>
+  <ul class="bullets">
+    <li><strong>Mängel-Check</strong> – regelbasierte Prüfpunkte zu Unfall, Lack, Service-Historie</li>
+    <li><strong>Highlight-Zusammenfassung</strong> – Stärken und Kaufhemmnisse auf einen Blick</li>
+    <li><strong>Zustandsbewertung</strong> – Ampel rot / gelb / grün, jeweils mit Quellenangabe
+      <span class="sub">Nachvollziehbar statt Bauchgefühl – jede Bewertung ist belegt</span></li>
+  </ul>
+  <div class="goal">Ziel: <span>nichts übersehen und vor Ort eine fundierte Entscheidung treffen.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Betonen: Die Besichtigung ist der Moment der höchsten Unsicherheit. Die App gibt dem Käufer eine <strong>strukturierte Checkliste</strong> an die Hand – wie ein Sachverständiger in der Tasche.</p>
+    <p>Auf die Ampel + Quelle verweisen (greift später die Demo wieder auf).</p>
+  </div></aside>
+</section>
+
+<!-- 8 · Phase 3 -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.2 · User Journey</div><div class="brand">Phase 3 von 3</div></div>
+  <div class="phase-head"><div class="phase-num">3</div><h1 class="slide-title">Probefahrt</h1></div>
+  <ul class="bullets">
+    <li><strong>Echtzeit-Funktionserklärungen</strong> – Assistenzsysteme und Bedienung situativ erklärt</li>
+    <li><strong>Optimierungshinweise</strong> – worauf bei genau dieser Modellreihe zu achten ist</li>
+    <li><strong>Probefahrt-Leitfaden</strong> – empfohlene Route und Punkte, die der Verkäufer demonstrieren kann</li>
+  </ul>
+  <div class="goal">Ziel: <span>Funktionen erlebbar machen und offene Fragen direkt im Fahrzeug klären.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Die Probefahrt ist emotional entscheidend. Die App sorgt dafür, dass kein wichtiges Feature ungezeigt bleibt – <strong>für Kunde und Verkäufer</strong> ein roter Faden.</p>
+    <p>Überleitung zu 2.3: „Wie funktioniert das technisch? Schauen wir auf die KI dahinter."</p>
+  </div></aside>
+</section>
+
+<!-- 9 · 2.3 SECTION -->
+<section class="slide kind-section">
+  <div class="kicker">2.3</div>
+  <h1>KI-Funktionen im Detail</h1>
+  <div class="accent-bar"></div>
+  <div class="meta">Was die Intelligenz hinter den Antworten leistet</div>
+  <span class="time-pill">⏱ ca. 5 Min.</span>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Hier wird die Wirtschaftsinformatik-Brille aufgesetzt: vier konkrete KI-Bausteine, je ca. 1 Minute. Technisch, aber verständlich bleiben.</p>
+  </div></aside>
+</section>
+
+<!-- 10 · 2.3 content A -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.3 · KI-Funktionen</div><div class="brand">Wissen &amp; Preis</div></div>
+  <h1 class="slide-title">Wissens- &amp; <span class="accent">Preis-Intelligenz</span></h1>
+  <div class="cols">
+    <div class="panel">
+      <h3>Scraping von Forenbeiträgen &amp; Erfahrungsberichten</h3>
+      <ul class="bullets">
+        <li>Modellspezifisch ausgewertet</li>
+        <li>Aggregiert echte Halter-Erfahrungen</li>
+        <li>Typische Schwachstellen je Modell &amp; Baujahr</li>
+      </ul>
+    </div>
+    <div class="panel alt">
+      <h3>Erklärung der Preiszusammensetzung</h3>
+      <ul class="bullets">
+        <li>„Günstig, weil …" – nachvollziehbar gemacht</li>
+        <li>Ungewöhnliche Ausstattung, hohe Laufleistung</li>
+        <li>Sonderfarbe, Vorbesitzerzahl, Service-Lücken</li>
+      </ul>
+    </div>
+  </div>
+  <div class="goal">Roh-Daten werden zu <span>verständlichen, belegten Aussagen – das ist der eigentliche KI-Mehrwert.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p><strong>Scraping:</strong> kurz erklären, dass öffentlich verfügbare Forenbeiträge strukturiert und modellbezogen verdichtet werden – das ist Wissen, das ein einzelner Verkäufer nie komplett im Kopf hat.</p>
+    <p><strong>Preiszusammensetzung:</strong> das ist der stärkste „Wow"-Faktor – ein günstiger Preis ist kein Zufall, die KI benennt die Gründe.</p>
+  </div></aside>
+</section>
+
+<!-- 11 · 2.3 content B -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.3 · KI-Funktionen</div><div class="brand">Prognose &amp; Schutz</div></div>
+  <h1 class="slide-title">Prognose &amp; <span class="accent">Käuferschutz</span></h1>
+  <div class="cols">
+    <div class="panel">
+      <h3>Langzeit-Reparaturprognose</h3>
+      <ul class="bullets">
+        <li>Erwartbare Verschleißteile über die nächsten Jahre</li>
+        <li>Grobe Kostenfenster statt böser Überraschungen</li>
+        <li>Basis: Modellhistorie + Laufleistung + Alter</li>
+      </ul>
+    </div>
+    <div class="panel alt">
+      <h3>Importfahrzeug-Warnung</h3>
+      <ul class="bullets">
+        <li>EU-Import zuverlässig erkennen</li>
+        <li>Folgen: abweichende Ausstattung, Garantie, Wiederverkauf</li>
+        <li>Frühe, klare Risiko-Kennzeichnung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="goal">Transparenzprinzip: <span>jede KI-Aussage trägt ihre Quelle – nachprüfbar, nicht „Blackbox".</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p><strong>Reparaturprognose:</strong> realistisch einordnen – keine Glaskugel, sondern eine datenbasierte Erwartung. Schützt den Kunden vor versteckten Folgekosten.</p>
+    <p><strong>Importwarnung:</strong> ethisch relevant (passt zum Kurskontext „Unternehmensethik") – die App deckt aktiv auf, was sonst gern verschwiegen wird.</p>
+    <p>Abschlusssatz: „Transparenz ist hier kein Add-on, sondern Designprinzip."</p>
+  </div></aside>
+</section>
+
+<!-- 12 · 2.4 SECTION -->
+<section class="slide kind-section">
+  <div class="kicker">2.4</div>
+  <h1>App-Demo / Mockup-Walkthrough</h1>
+  <div class="accent-bar"></div>
+  <div class="meta">Klickbarer Prototyp durch die drei Phasen</div>
+  <span class="time-pill">⏱ ca. 2 Min.</span>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Jetzt vom Konzept zum Sichtbaren wechseln. Wenn der Live-Prototyp läuft: hier in die App wechseln. Sonst die Screens der Reihe nach zeigen.</p>
+  </div></aside>
+</section>
+
+<!-- 13 · 2.4 content -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">2.4 · App-Demo</div><div class="brand">Walkthrough</div></div>
+  <h1 class="slide-title">Drei Phasen im <span class="accent">Klick-Prototyp</span></h1>
+  <ul class="bullets">
+    <li><strong>Phase 1 – Vor dem Kauf:</strong> Fahrzeugliste → Detailseite mit Preis-Ampel &amp; Ausstattung</li>
+    <li><strong>Phase 2 – Besichtigung:</strong> „Fahrzeug-Check"-Popup mit Prüfpunkten, Besonderheiten &amp; Quellen</li>
+    <li><strong>Phase 3 – Probefahrt:</strong> KI-Chat beantwortet modellspezifische Fragen in Echtzeit</li>
+    <li><strong>Bonus – Verkäufer-Sicht:</strong> Dashboard mit Kundenfragen, Probefahrten &amp; Flottengesundheit</li>
+  </ul>
+  <div class="goal">Figma-Screens bzw. klickbarer Prototyp – <span>der Konzeptweg wird unmittelbar erlebbar.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Roter Faden: dieselben drei Phasen wie in 2.2, jetzt visuell. So schließt sich der Bogen.</p>
+    <p>Das Dashboard kurz zeigen, um die „Ergänzung statt Ersatz"-These (2.1) zu belegen: der Verkäufer bekommt echten Mehrwert.</p>
+    <p><strong>Übergang zu Teil 3:</strong> „Soviel zum Konzept – im nächsten Teil geht es um [Geschäftsmodell / Bewertung / Ausblick]."</p>
+  </div></aside>
+</section>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">1 / 13</div>
+<div class="hint">← → blättern · <b>N</b> Notizen · <b>F</b> Vollbild · <b>P</b> Drucken</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  let i = 0;
+
+  function render() {
+    slides.forEach((s, n) => s.classList.toggle('active', n === i));
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    // keep the visible slide's notes panel in sync (re-show if currently open)
+    const open = document.querySelector('.notes.show');
+    if (open) { open.classList.remove('show'); toggleNotes(true); }
+  }
+
+  function go(n) { i = Math.max(0, Math.min(slides.length - 1, n)); render(); }
+
+  function toggleNotes(forceOpen) {
+    const note = slides[i].querySelector('.notes');
+    if (!note) return;
+    if (forceOpen) { note.classList.add('show'); return; }
+    note.classList.toggle('show');
+  }
+
+  document.addEventListener('keydown', (e) => {
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': case ' ': go(i + 1); e.preventDefault(); break;
+      case 'ArrowLeft': case 'PageUp': go(i - 1); e.preventDefault(); break;
+      case 'Home': go(0); break;
+      case 'End': go(slides.length - 1); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'f': case 'F':
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+        break;
+      case 'p': case 'P': window.print(); break;
+    }
+  });
+
+  // Click right/left half of screen to navigate (ignore clicks inside notes)
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.notes')) return;
+    go(i + (e.clientX > window.innerWidth / 2 ? 1 : -1));
+  });
+
+  render();
+</script>
+</body>
+</html>
