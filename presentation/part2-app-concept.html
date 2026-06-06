@@ -9,12 +9,16 @@
     --bmw-blue: #003399;
     --bmw-blue-deep: #002a7a;
     --bmw-blue-soft: #3b6fd0;
+    --m-lblue: #2ea8e0;
+    --m-dblue: #003e7e;
+    --m-red:   #e2001a;
     --grey-bg: #f4f6fb;
     --grey-line: #d8deea;
     --ink: #1a2336;
     --muted: #5c6884;
     --white: #ffffff;
     --font: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mstripe: linear-gradient(90deg, var(--m-lblue) 0 33.3%, var(--m-dblue) 33.3% 66.6%, var(--m-red) 66.6% 100%);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,216 +37,112 @@
     inset: 0;
     display: none;
     flex-direction: column;
-    padding: 4.2vh 5vw;
+    padding: 4.6vh 5vw 4.2vh;
     background: var(--white);
   }
-  .slide.active { display: flex; }
+  .slide.active { display: flex; animation: fadeUp 0.45s cubic-bezier(.22,.61,.36,1); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  /* M-tricolor edge on every slide */
+  .slide::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--mstripe); z-index: 5;
+  }
 
   .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 1.6vh;
-    border-bottom: 2px solid var(--bmw-blue);
-    margin-bottom: 3vh;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 1.6vh; border-bottom: 2px solid var(--bmw-blue); margin-bottom: 3vh;
   }
-  .topbar .sec {
-    font-size: clamp(13px, 1.5vw, 20px);
-    font-weight: 700;
-    color: var(--bmw-blue);
-    letter-spacing: 0.02em;
-  }
-  .topbar .brand {
-    font-size: clamp(10px, 1.05vw, 14px);
-    font-weight: 600;
-    color: var(--muted);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
+  .topbar .sec { font-size: clamp(13px, 1.5vw, 20px); font-weight: 700; color: var(--bmw-blue); letter-spacing: 0.02em; }
+  .topbar .brand { font-size: clamp(10px, 1.05vw, 14px); font-weight: 600; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
 
-  h1.slide-title {
-    font-size: clamp(24px, 3.1vw, 46px);
-    font-weight: 800;
-    color: var(--ink);
-    line-height: 1.1;
-    margin-bottom: 2.4vh;
-  }
+  h1.slide-title { font-size: clamp(24px, 3.1vw, 46px); font-weight: 800; color: var(--ink); line-height: 1.1; margin-bottom: 2.4vh; }
   h1.slide-title .accent { color: var(--bmw-blue); }
 
-  .lead {
-    font-size: clamp(15px, 1.6vw, 23px);
-    color: var(--muted);
-    margin-bottom: 2.6vh;
-    max-width: 64ch;
-  }
+  .lead { font-size: clamp(15px, 1.6vw, 23px); color: var(--muted); margin-bottom: 2.6vh; max-width: 64ch; }
 
   ul.bullets { list-style: none; display: flex; flex-direction: column; gap: 1.5vh; }
-  ul.bullets li {
-    position: relative;
-    padding-left: 1.7em;
-    font-size: clamp(15px, 1.7vw, 25px);
-    line-height: 1.35;
-    color: var(--ink);
-  }
-  ul.bullets li::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 0.42em;
-    width: 0.62em; height: 0.62em;
-    background: var(--bmw-blue);
-    border-radius: 2px;
-  }
-  ul.bullets li .sub {
-    display: block;
-    font-size: 0.78em;
-    color: var(--muted);
-    margin-top: 0.25em;
-    line-height: 1.3;
-  }
+  ul.bullets li { position: relative; padding-left: 1.7em; font-size: clamp(15px, 1.7vw, 25px); line-height: 1.35; color: var(--ink); }
+  ul.bullets li::before { content: ""; position: absolute; left: 0; top: 0.42em; width: 0.62em; height: 0.62em; background: var(--bmw-blue); border-radius: 2px; }
+  ul.bullets li .sub { display: block; font-size: 0.78em; color: var(--muted); margin-top: 0.25em; line-height: 1.3; }
 
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4vw; flex: 1; align-content: start; }
+  /* ---------- Panels & columns ---------- */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2vw; flex: 1; align-content: start; }
   .panel {
-    background: var(--grey-bg);
-    border: 1px solid var(--grey-line);
-    border-left: 5px solid var(--bmw-blue);
-    border-radius: 10px;
-    padding: 2.4vh 1.8vw;
+    background: var(--grey-bg); border: 1px solid var(--grey-line);
+    border-left: 5px solid var(--bmw-blue); border-radius: 12px; padding: 2.4vh 1.8vw;
+    box-shadow: 0 6px 20px rgba(15, 30, 60, 0.06);
   }
   .panel.alt { border-left-color: var(--bmw-blue-soft); }
-  .panel h3 {
-    font-size: clamp(15px, 1.55vw, 22px);
-    color: var(--bmw-blue);
-    margin-bottom: 0.6vh;
-    font-weight: 700;
-  }
-  .panel .where {
-    font-size: clamp(11px, 1.05vw, 14px);
-    color: var(--muted);
-    margin-bottom: 1.3vh;
-  }
+  .panel h3 { font-size: clamp(15px, 1.55vw, 22px); color: var(--bmw-blue); margin-bottom: 0.6vh; font-weight: 700; }
+  .panel .where { font-size: clamp(11px, 1.05vw, 14px); color: var(--muted); margin-bottom: 1.3vh; }
   .panel ul.bullets li { font-size: clamp(13px, 1.35vw, 19px); }
   .panel ul.bullets li::before { top: 0.4em; width: 0.5em; height: 0.5em; }
 
-  .goal {
-    margin-top: auto;
-    padding-top: 2vh;
-    font-size: clamp(13px, 1.45vw, 20px);
-    color: var(--bmw-blue-deep);
-    font-weight: 600;
+  /* ---------- Comparison layout ---------- */
+  .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.4vw; flex: 1; align-content: start; }
+  .vs { align-self: center; }
+  .vs-badge {
+    width: clamp(40px, 3.6vw, 58px); height: clamp(40px, 3.6vw, 58px); border-radius: 50%;
+    background: linear-gradient(135deg, var(--bmw-blue), #001a52); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: clamp(11px, 1.15vw, 15px); letter-spacing: 0.04em;
+    box-shadow: 0 8px 22px rgba(0, 51, 153, 0.4);
   }
+  .panel.neg { background: #f3f4f7; border-left-color: #c2c9d6; box-shadow: none; }
+  .panel.neg h3 { color: #8a93a6; }
+  .panel.pos { background: #eef3fc; border-left-color: var(--bmw-blue); box-shadow: 0 10px 30px rgba(0, 51, 153, 0.13); }
+  .panel.pos h3 { color: var(--bmw-blue); }
+  ul.marks { list-style: none; display: flex; flex-direction: column; gap: 1.15vh; }
+  ul.marks li { display: flex; gap: 0.55em; align-items: flex-start; font-size: clamp(13px, 1.35vw, 19px); line-height: 1.3; color: var(--ink); }
+  ul.marks .m { flex: none; font-weight: 800; font-size: 1.05em; line-height: 1.2; }
+  .m.pos { color: #16a34a; }
+  .m.neg { color: #cf5a73; }
+  .panel.neg ul.marks li { color: #6b7488; }
+
+  .goal { margin-top: auto; padding-top: 2vh; font-size: clamp(13px, 1.45vw, 20px); color: var(--bmw-blue-deep); font-weight: 600; }
   .goal span { color: var(--muted); font-weight: 400; }
   .goal.big { font-size: clamp(16px, 1.95vw, 28px); line-height: 1.25; }
 
   .phase-head { display: flex; align-items: center; gap: 1.2vw; margin-bottom: 2.4vh; }
-  .phase-num {
-    flex: none;
-    width: clamp(42px, 4.4vw, 70px);
-    height: clamp(42px, 4.4vw, 70px);
-    border-radius: 14px;
-    background: var(--bmw-blue);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: clamp(20px, 2.4vw, 36px);
-    font-weight: 800;
-  }
+  .phase-num { flex: none; width: clamp(42px, 4.4vw, 70px); height: clamp(42px, 4.4vw, 70px); border-radius: 14px; background: var(--bmw-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 2.4vw, 36px); font-weight: 800; }
   .phase-head h1 { margin: 0; }
 
   /* ---------- Section / cover slides ---------- */
   .slide.kind-cover, .slide.kind-section {
-    background: var(--bmw-blue);
-    color: #fff;
-    justify-content: center;
-    padding: 6vh 7vw;
+    color: #fff; justify-content: center; padding: 6vh 7vw;
+    background:
+      radial-gradient(62% 55% at 86% 12%, rgba(46,168,224,0.30), transparent 70%),
+      linear-gradient(140deg, #003fb0 0%, #003399 46%, #001640 100%);
   }
-  .kicker {
-    font-size: clamp(13px, 1.4vw, 19px);
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: #9fc0ff;
-    margin-bottom: 2.2vh;
-  }
-  .slide.kind-cover h1, .slide.kind-section h1 {
-    font-size: clamp(30px, 4.4vw, 66px);
-    font-weight: 800;
-    line-height: 1.05;
-    max-width: 24ch;
-  }
-  .accent-bar { width: 86px; height: 7px; background: #fff; margin: 3vh 0; border-radius: 4px; }
-  .slide.kind-cover .meta, .slide.kind-section .meta {
-    font-size: clamp(14px, 1.5vw, 21px);
-    color: #cfe0ff;
-    line-height: 1.7;
-  }
-  .time-pill {
-    display: inline-block;
-    margin-top: 2.4vh;
-    background: rgba(255,255,255,0.14);
-    border: 1px solid rgba(255,255,255,0.35);
-    color: #fff;
-    font-size: clamp(12px, 1.25vw, 17px);
-    font-weight: 600;
-    padding: 0.5em 1.1em;
-    border-radius: 999px;
-  }
+  .kicker { font-size: clamp(13px, 1.4vw, 19px); letter-spacing: 0.28em; text-transform: uppercase; font-weight: 700; color: #9fc7ff; margin-bottom: 2.2vh; }
+  .slide.kind-cover h1, .slide.kind-section h1 { font-size: clamp(30px, 4.4vw, 66px); font-weight: 800; line-height: 1.05; max-width: 24ch; }
+  .mstripe { width: 118px; height: 7px; border-radius: 4px; margin: 3vh 0; background: var(--mstripe); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+  .slide.kind-cover .meta, .slide.kind-section .meta { font-size: clamp(14px, 1.5vw, 21px); color: #cfe0ff; line-height: 1.7; }
+  .time-pill { display: inline-block; margin-top: 2.4vh; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.35); color: #fff; font-size: clamp(12px, 1.25vw, 17px); font-weight: 600; padding: 0.5em 1.1em; border-radius: 999px; }
   .agenda { margin-top: 3vh; display: flex; flex-direction: column; gap: 1vh; }
   .agenda div { font-size: clamp(13px,1.4vw,20px); color: #dfe9ff; }
   .agenda b { color: #fff; }
 
   /* ---------- Chrome ---------- */
-  .progress {
-    position: fixed; left: 0; bottom: 0; height: 5px;
-    background: var(--bmw-blue-soft); width: 0;
-    transition: width 0.25s ease; z-index: 40;
-  }
-  .counter {
-    position: fixed; right: 18px; bottom: 14px;
-    font-size: 12px; font-weight: 600; color: var(--muted);
-    background: rgba(255,255,255,0.85); padding: 3px 9px; border-radius: 6px;
-    z-index: 40;
-  }
-  .slide.kind-cover.active ~ .counter,
-  .slide.kind-section.active ~ .counter { color: #cfe0ff; background: rgba(0,0,0,0.18); }
-  .hint {
-    position: fixed; left: 18px; bottom: 12px;
-    font-size: 11px; color: var(--muted); z-index: 40; opacity: 0.8;
-  }
-  .slide.kind-cover.active ~ .hint,
-  .slide.kind-section.active ~ .hint { color: #cfe0ff; }
+  .progress { position: fixed; left: 0; bottom: 0; height: 5px; background: var(--mstripe); width: 0; transition: width 0.25s ease; z-index: 40; }
+  .counter { position: fixed; right: 18px; bottom: 14px; font-size: 12px; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.85); padding: 3px 9px; border-radius: 6px; z-index: 40; }
+  .slide.kind-cover.active ~ .counter, .slide.kind-section.active ~ .counter { color: #cfe0ff; background: rgba(0,0,0,0.22); }
+  .hint { position: fixed; left: 18px; bottom: 12px; font-size: 11px; color: var(--muted); z-index: 40; opacity: 0.8; }
+  .slide.kind-cover.active ~ .hint, .slide.kind-section.active ~ .hint { color: #cfe0ff; }
 
-  .notes {
-    position: fixed; left: 0; right: 0; bottom: 0;
-    max-height: 42vh; overflow-y: auto;
-    background: #0d1530; color: #e7ecf7;
-    border-top: 4px solid var(--bmw-blue-soft);
-    padding: 20px 26px 26px;
-    transform: translateY(100%);
-    transition: transform 0.28s ease;
-    z-index: 50;
-    box-shadow: 0 -12px 40px rgba(0,0,0,0.4);
-  }
+  .notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 42vh; overflow-y: auto; background: #0d1530; color: #e7ecf7; border-top: 4px solid var(--bmw-blue-soft); padding: 20px 26px 26px; transform: translateY(100%); transition: transform 0.28s ease; z-index: 50; box-shadow: 0 -12px 40px rgba(0,0,0,0.4); }
   .notes.show { transform: translateY(0); }
-  .notes .nlabel {
-    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: #8fb0ff; font-weight: 700; margin-bottom: 8px;
-  }
+  .notes .nlabel { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #8fb0ff; font-weight: 700; margin-bottom: 8px; }
   .notes .nbody { font-size: 15px; line-height: 1.55; max-width: 110ch; }
   .notes .nbody p { margin-bottom: 8px; }
   .notes .nbody strong { color: #fff; }
 
   @media print {
     html, body { overflow: visible; background: #fff; }
-    .slide {
-      position: relative; inset: auto; display: flex;
-      width: 100%; min-height: 100vh;
-      page-break-after: always; break-after: page;
-    }
+    .slide { position: relative; inset: auto; display: flex; width: 100%; min-height: 100vh; page-break-after: always; break-after: page; animation: none; }
     .progress, .counter, .hint { display: none; }
-    .notes {
-      position: relative; transform: none; max-height: none;
-      page-break-before: avoid; break-before: avoid;
-      background: #f0f3fa; color: #1a2336; border-top: 2px solid var(--bmw-blue);
-    }
+    .notes { position: relative; transform: none; max-height: none; page-break-before: avoid; break-before: avoid; background: #f0f3fa; color: #1a2336; border-top: 2px solid var(--bmw-blue); }
     .notes .nlabel { color: var(--bmw-blue); }
     .notes .nbody strong { color: var(--bmw-blue); }
   }
@@ -254,7 +154,7 @@
 <section class="slide kind-cover active">
   <div class="kicker">Teil 2</div>
   <h1>Der KI-Kaufassistent fürs Autohaus</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">
     Vertrauen als Verkaufsargument — App-Konzept &amp; Features<br />
     Fallstudie · für Autohäuser &amp; Verkaufsplattformen · Wirtschaftsinformatik
@@ -276,7 +176,7 @@
 <section class="slide kind-section">
   <div class="kicker">01</div>
   <h1>Warum wir das bauen</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">Vertrauen ist beim Gebrauchtwagen die härteste Währung.</div>
   <span class="time-pill">⏱ ca. 2 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
@@ -324,11 +224,11 @@
 <section class="slide kind-section">
   <div class="kicker">02</div>
   <h1>Die Lösung — was &amp; wie</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">Eine Transparenz- und Beratungsschicht für das gesamte Autohaus.</div>
   <span class="time-pill">⏱ ca. 3 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Zwei Folgen: erst <strong>was</strong> es ist (zwei Seiten, ein Assistent), dann <strong>wie</strong> es funktioniert (die belegbare Engine). Letzteres ist der Vertrauensbeweis gegenüber technischen Zuhörern.</p>
+    <p>Drei Folgen: <strong>was</strong> es ist (zwei Seiten, ein Assistent), <strong>wie</strong> es funktioniert (die belegbare Engine) und <strong>was uns von einem normalen Chatbot unterscheidet</strong> — der Differenzierungs-Trumpf.</p>
   </div></aside>
 </section>
 
@@ -380,11 +280,43 @@
   </div></aside>
 </section>
 
-<!-- 8 · SECTION: KÄUFER -->
+<!-- 8 · UNTERSCHIED ZUM NORMALEN KI-CHAT -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">02 · Lösung</div><div class="brand">Differenzierung</div></div>
+  <h1 class="slide-title">Kein <span class="accent">gewöhnlicher Chatbot</span></h1>
+  <div class="compare">
+    <div class="panel neg">
+      <h3>Normaler KI-Chat</h3>
+      <ul class="marks">
+        <li><span class="m neg">✕</span> Erfindet Antworten (halluziniert)</li>
+        <li><span class="m neg">✕</span> Keine Quelle — nicht überprüfbar</li>
+        <li><span class="m neg">✕</span> Generisch — kennt das Fahrzeug nicht</li>
+        <li><span class="m neg">✕</span> Redet alles schön</li>
+      </ul>
+    </div>
+    <div class="vs"><div class="vs-badge">VS</div></div>
+    <div class="panel pos">
+      <h3>Unser Assistent</h3>
+      <ul class="marks">
+        <li><span class="m pos">✓</span> Jede Antwort mit sichtbarer Quelle</li>
+        <li><span class="m pos">✓</span> Regelbasiert auf echten Fahrzeugdaten</li>
+        <li><span class="m pos">✓</span> Modellspezifisch — kennt genau dieses Auto</li>
+        <li><span class="m pos">✓</span> Nennt auch die Schwächen offen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="goal">Regeln liefern Fakten &amp; Quelle, die KI die Sprache — <span>Vertrauen statt Bauchgefühl.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p><strong>Differenzierungs-Folie — wichtig.</strong> Ein gewöhnlicher Chatbot ist für ein Autohaus sogar ein Risiko: Er kann falsche Zusagen erfinden (Haftung!) und Kunden trauen ihm nicht.</p>
+    <p>Unser Assistent <strong>kann gar nicht halluzinieren</strong>, weil jede Aussage aus einer Regel + Quelle stammt. Das ist der eigentliche Burggraben — nicht „auch ein Chat", sondern ein belegbarer Berater.</p>
+  </div></aside>
+</section>
+
+<!-- 9 · SECTION: KÄUFER -->
 <section class="slide kind-section">
   <div class="kicker">03</div>
   <h1>Für den Käufer</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">Alles sehen, alles fragen — und ohne Restzweifel kaufen.</div>
   <span class="time-pill">⏱ ca. 3 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
@@ -392,7 +324,7 @@
   </div></aside>
 </section>
 
-<!-- 9 · FÜR DEN KÄUFER -->
+<!-- 10 · FÜR DEN KÄUFER -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">03 · Für den Käufer</div><div class="brand">Käufer-Ansicht</div></div>
   <h1 class="slide-title">Was der Käufer <span class="accent">bekommt</span></h1>
@@ -410,19 +342,51 @@
   </div></aside>
 </section>
 
-<!-- 10 · SECTION: VERKÄUFER -->
+<!-- 11 · SECTION: VERKÄUFER -->
 <section class="slide kind-section">
   <div class="kicker">04</div>
   <h1>Für den Verkäufer</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">Der eigentliche Mehrwert fürs Autohaus — Vorbereitung auf Knopfdruck.</div>
   <span class="time-pill">⏱ ca. 4 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Das ist der Verkaufsblock für die Entscheider. Zwei Folgen: das Verkaufs-Cockpit (Argumente + Einwand-Konter) und die beiden Highlights Probefahrt-Helfer &amp; Käufer-Fragen.</p>
+    <p>Der Verkaufsblock für die Entscheider. Vier Folgen: erst der Unterschied (vorher/nachher), dann das Cockpit, dann die Highlights Probefahrt-Helfer &amp; Käufer-Fragen.</p>
   </div></aside>
 </section>
 
-<!-- 11 · VERKÄUFER-COCKPIT -->
+<!-- 12 · UNTERSCHIED FÜR DEN VERKÄUFER -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">04 · Für den Verkäufer</div><div class="brand">Vorher / Nachher</div></div>
+  <h1 class="slide-title">Der Unterschied für den <span class="accent">Verkäufer</span></h1>
+  <div class="compare">
+    <div class="panel neg">
+      <h3>Ohne Assistent — heute</h3>
+      <ul class="marks">
+        <li><span class="m neg">✕</span> Sucht Fahrzeugdaten mühsam zusammen</li>
+        <li><span class="m neg">✕</span> Startet jedes Gespräch gegen Misstrauen</li>
+        <li><span class="m neg">✕</span> Jede Probefahrt läuft anders</li>
+        <li><span class="m neg">✕</span> Kennt die echten Kundenfragen nicht</li>
+      </ul>
+    </div>
+    <div class="vs"><div class="vs-badge">→</div></div>
+    <div class="panel pos">
+      <h3>Mit Assistent</h3>
+      <ul class="marks">
+        <li><span class="m pos">✓</span> Fertiges Briefing pro Fahrzeug</li>
+        <li><span class="m pos">✓</span> Vertrauen ist der Startpunkt</li>
+        <li><span class="m pos">✓</span> Probefahrt-Drehbuch — immer souverän</li>
+        <li><span class="m pos">✓</span> Sieht, was Kunden wirklich fragen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="goal">Weniger Datensuche, mehr Beratung — <span>der Verkäufer verkauft, statt zu recherchieren.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p><strong>Das ist die ROI-Folie für den Händler.</strong> So formulieren: „Ihre Verkäufer verbringen weniger Zeit mit Datensuche und Einwand-Gestottere — und mehr mit dem Abschluss."</p>
+    <p>Zusatzargument: Auch neue Mitarbeiter sind ab Tag 1 produktiv, weil das Briefing das Fahrzeugwissen mitliefert.</p>
+  </div></aside>
+</section>
+
+<!-- 13 · VERKÄUFER-COCKPIT -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">04 · Für den Verkäufer</div><div class="brand">Verkaufs-Briefing</div></div>
   <h1 class="slide-title">Das <span class="accent">Verkäufer-Cockpit</span></h1>
@@ -447,12 +411,12 @@
   </div>
   <div class="goal">Der Verkäufer geht vorbereitet ins Gespräch — <span>Argumente und Antworten liegen bereit.</span></div>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Das ist der stärkste Nutzen für Entscheider: Jeder Verkäufer — auch ein neuer — bekommt zu jedem Auto ein <strong>fertiges Briefing</strong>. Keine Einarbeitung, keine vergessenen Argumente.</p>
+    <p>Der stärkste Nutzen für Entscheider: Jeder Verkäufer — auch ein neuer — bekommt zu jedem Auto ein <strong>fertiges Briefing</strong>. Keine Einarbeitung, keine vergessenen Argumente.</p>
     <p>Die Einwand-Behandlung ist echtes Verkaufstraining: zu jeder Schwäche liefert das System direkt die passende, ehrliche Antwort.</p>
   </div></aside>
 </section>
 
-<!-- 12 · PROBEFAHRT-HELFER & KÄUFER-FRAGEN -->
+<!-- 14 · PROBEFAHRT-HELFER & KÄUFER-FRAGEN -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">04 · Für den Verkäufer</div><div class="brand">Highlights</div></div>
   <h1 class="slide-title">Probefahrt-Helfer &amp; <span class="accent">Käufer-Fragen</span></h1>
@@ -477,16 +441,15 @@
   <div class="goal">Der Verkäufer weiß vorher, was die Kunden bewegt — <span>und führt die Probefahrt souverän. Plus: Flotten-Überblick mit Gesundheit &amp; Preisen auf einen Blick.</span></div>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p><strong>Probefahrt-Helfer:</strong> verhindert, dass das stärkste Verkaufswerkzeug — die Probefahrt — vom Tagesform des Verkäufers abhängt. Jede Fahrt zeigt die wichtigen Features.</p>
-    <p><strong>Käufer-Fragen:</strong> echtes Marktfeedback. Das Autohaus sieht, was Kunden wirklich umtreibt, und kann Anzeigen, Beratung und FAQ darauf ausrichten. Datengetriebene Verbesserung.</p>
-    <p>Den Flotten-Überblick nur kurz erwähnen — Details in der Demo.</p>
+    <p><strong>Käufer-Fragen:</strong> echtes Marktfeedback. Das Autohaus sieht, was Kunden wirklich umtreibt, und kann Anzeigen, Beratung und FAQ darauf ausrichten.</p>
   </div></aside>
 </section>
 
-<!-- 13 · SECTION: DEMO -->
+<!-- 15 · SECTION: DEMO -->
 <section class="slide kind-section">
   <div class="kicker">05</div>
   <h1>Live-Demo</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">Vom Konzept zum klickbaren Prototyp.</div>
   <span class="time-pill">⏱ ca. 2 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
@@ -494,7 +457,7 @@
   </div></aside>
 </section>
 
-<!-- 14 · DEMO WALKTHROUGH (lean) -->
+<!-- 16 · DEMO WALKTHROUGH (lean) -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">05 · Live-Demo</div><div class="brand">Walkthrough</div></div>
   <h1 class="slide-title">Walkthrough im <span class="accent">Prototyp</span></h1>
@@ -523,7 +486,7 @@
   </div></aside>
 </section>
 
-<!-- 15 · ZUSAMMENFASSUNG -->
+<!-- 17 · ZUSAMMENFASSUNG -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">05 · Zusammenfassung</div><div class="brand">Was das Produkt kann</div></div>
   <h1 class="slide-title">Was das Produkt <span class="accent">kann</span></h1>
@@ -552,11 +515,11 @@
   </div></aside>
 </section>
 
-<!-- 16 · FAZIT / CLOSING -->
+<!-- 18 · FAZIT / CLOSING -->
 <section class="slide kind-section">
   <div class="kicker">Teil 2 · Fazit</div>
   <h1>Transparenz verkauft.</h1>
-  <div class="accent-bar"></div>
+  <div class="mstripe"></div>
   <div class="meta">Gut für den Käufer. Gut für den Verkäufer. Gut für das Autohaus.</div>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Kurz und selbstbewusst stehen lassen. Dann Übergang zu Teil 3: „Soviel zum Produkt — im nächsten Teil geht es um [Geschäftsmodell / Bewertung / Ausblick]."</p>
@@ -564,7 +527,7 @@
 </section>
 
 <div class="progress" id="progress"></div>
-<div class="counter" id="counter">1 / 16</div>
+<div class="counter" id="counter">1 / 18</div>
 <div class="hint">← → blättern · <b>N</b> Notizen · <b>F</b> Vollbild · <b>P</b> Drucken</div>
 
 <script>
