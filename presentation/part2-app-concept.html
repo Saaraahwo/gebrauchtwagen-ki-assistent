@@ -6,134 +6,100 @@
 <title>Teil 2 – App-Konzept &amp; Features · KI-Kaufassistent fürs Autohaus</title>
 <style>
   :root {
-    --bmw-blue: #003399;
-    --bmw-blue-deep: #002a7a;
-    --bmw-blue-soft: #3b6fd0;
+    --ink: #1a2336;
+    --muted: #5c6884;
+    --line: #d8deea;
+    --panel: #f5f6f9;
     --m-lblue: #2ea8e0;
     --m-dblue: #003e7e;
     --m-red:   #e2001a;
-    --grey-bg: #f4f6fb;
-    --grey-line: #d8deea;
-    --ink: #1a2336;
-    --muted: #5c6884;
-    --white: #ffffff;
-    --font: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     --mstripe: linear-gradient(90deg, var(--m-lblue) 0 33.3%, var(--m-dblue) 33.3% 66.6%, var(--m-red) 66.6% 100%);
+    --font: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    height: 100%;
-    background: #0b1020;
-    font-family: var(--font);
-    color: var(--ink);
-    overflow: hidden;
-  }
+  html, body { height: 100%; background: #e6e9f0; font-family: var(--font); color: var(--ink); overflow: hidden; }
 
   /* ---------- Slide frame ---------- */
   .slide {
-    position: fixed;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    padding: 4.6vh 5vw 4.2vh;
-    background: var(--white);
+    position: fixed; inset: 0; display: none; flex-direction: column;
+    padding: 4.6vh 5vw 4.2vh; background: #ffffff;
   }
   .slide.active { display: flex; animation: fadeUp 0.45s cubic-bezier(.22,.61,.36,1); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
   /* M-tricolor edge on every slide */
-  .slide::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-    background: var(--mstripe); z-index: 5;
-  }
+  .slide::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--mstripe); z-index: 5; }
 
-  .topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding-bottom: 1.6vh; border-bottom: 2px solid var(--bmw-blue); margin-bottom: 3vh;
-  }
-  .topbar .sec { font-size: clamp(13px, 1.5vw, 20px); font-weight: 700; color: var(--bmw-blue); letter-spacing: 0.02em; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.6vh; border-bottom: 2px solid var(--ink); margin-bottom: 3vh; }
+  .topbar .sec { font-size: clamp(13px, 1.5vw, 20px); font-weight: 700; color: var(--ink); letter-spacing: 0.02em; }
   .topbar .brand { font-size: clamp(10px, 1.05vw, 14px); font-weight: 600; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
 
   h1.slide-title { font-size: clamp(24px, 3.1vw, 46px); font-weight: 800; color: var(--ink); line-height: 1.1; margin-bottom: 2.4vh; }
-  h1.slide-title .accent { color: var(--bmw-blue); }
+  h1.slide-title .accent {
+    background-image: var(--mstripe); background-repeat: no-repeat;
+    background-position: 0 92%; background-size: 100% 5px; padding-bottom: 4px;
+  }
 
   .lead { font-size: clamp(15px, 1.6vw, 23px); color: var(--muted); margin-bottom: 2.6vh; max-width: 64ch; }
 
   ul.bullets { list-style: none; display: flex; flex-direction: column; gap: 1.5vh; }
   ul.bullets li { position: relative; padding-left: 1.7em; font-size: clamp(15px, 1.7vw, 25px); line-height: 1.35; color: var(--ink); }
-  ul.bullets li::before { content: ""; position: absolute; left: 0; top: 0.42em; width: 0.62em; height: 0.62em; background: var(--bmw-blue); border-radius: 2px; }
+  ul.bullets li::before { content: ""; position: absolute; left: 0; top: 0.42em; width: 0.62em; height: 0.62em; background: var(--ink); border-radius: 2px; }
   ul.bullets li .sub { display: block; font-size: 0.78em; color: var(--muted); margin-top: 0.25em; line-height: 1.3; }
 
   /* ---------- Panels & columns ---------- */
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2vw; flex: 1; align-content: start; }
-  .panel {
-    background: var(--grey-bg); border: 1px solid var(--grey-line);
-    border-left: 5px solid var(--bmw-blue); border-radius: 12px; padding: 2.4vh 1.8vw;
-    box-shadow: 0 6px 20px rgba(15, 30, 60, 0.06);
-  }
-  .panel.alt { border-left-color: var(--bmw-blue-soft); }
-  .panel h3 { font-size: clamp(15px, 1.55vw, 22px); color: var(--bmw-blue); margin-bottom: 0.6vh; font-weight: 700; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--ink); border-radius: 12px; padding: 2.4vh 1.8vw; box-shadow: 0 6px 20px rgba(15, 30, 60, 0.06); }
+  .panel.alt { border-left-color: #9aa3b5; }
+  .panel h3 { font-size: clamp(15px, 1.55vw, 22px); color: var(--ink); margin-bottom: 0.6vh; font-weight: 700; }
   .panel .where { font-size: clamp(11px, 1.05vw, 14px); color: var(--muted); margin-bottom: 1.3vh; }
   .panel ul.bullets li { font-size: clamp(13px, 1.35vw, 19px); }
   .panel ul.bullets li::before { top: 0.4em; width: 0.5em; height: 0.5em; }
 
-  /* ---------- Comparison layout ---------- */
+  /* ---------- Comparison ---------- */
   .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.4vw; flex: 1; align-content: start; }
   .vs { align-self: center; }
-  .vs-badge {
-    width: clamp(40px, 3.6vw, 58px); height: clamp(40px, 3.6vw, 58px); border-radius: 50%;
-    background: linear-gradient(135deg, var(--bmw-blue), #001a52); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: clamp(11px, 1.15vw, 15px); letter-spacing: 0.04em;
-    box-shadow: 0 8px 22px rgba(0, 51, 153, 0.4);
-  }
-  .panel.neg { background: #f3f4f7; border-left-color: #c2c9d6; box-shadow: none; }
+  .vs-badge { width: clamp(40px, 3.6vw, 58px); height: clamp(40px, 3.6vw, 58px); border-radius: 50%; background: linear-gradient(135deg, #1a2336, #000); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: clamp(11px, 1.15vw, 15px); letter-spacing: 0.04em; box-shadow: 0 8px 22px rgba(20, 30, 60, 0.35); }
+  .panel.neg { background: #f0f1f4; border-left-color: #c2c9d6; box-shadow: none; }
   .panel.neg h3 { color: #8a93a6; }
-  .panel.pos { background: #eef3fc; border-left-color: var(--bmw-blue); box-shadow: 0 10px 30px rgba(0, 51, 153, 0.13); }
-  .panel.pos h3 { color: var(--bmw-blue); }
+  .panel.neg ul.marks li { color: #6b7488; }
+  .panel.pos { background: #eef7f0; border-left-color: #16a34a; box-shadow: 0 10px 30px rgba(22, 163, 74, 0.10); }
+  .panel.pos h3 { color: #15803d; }
   ul.marks { list-style: none; display: flex; flex-direction: column; gap: 1.15vh; }
   ul.marks li { display: flex; gap: 0.55em; align-items: flex-start; font-size: clamp(13px, 1.35vw, 19px); line-height: 1.3; color: var(--ink); }
   ul.marks .m { flex: none; font-weight: 800; font-size: 1.05em; line-height: 1.2; }
   .m.pos { color: #16a34a; }
   .m.neg { color: #cf5a73; }
-  .panel.neg ul.marks li { color: #6b7488; }
 
-  .goal { margin-top: auto; padding-top: 2vh; font-size: clamp(13px, 1.45vw, 20px); color: var(--bmw-blue-deep); font-weight: 600; }
+  .goal { margin-top: auto; padding-top: 2vh; font-size: clamp(13px, 1.45vw, 20px); color: var(--ink); font-weight: 600; }
   .goal span { color: var(--muted); font-weight: 400; }
   .goal.big { font-size: clamp(16px, 1.95vw, 28px); line-height: 1.25; }
 
-  .phase-head { display: flex; align-items: center; gap: 1.2vw; margin-bottom: 2.4vh; }
-  .phase-num { flex: none; width: clamp(42px, 4.4vw, 70px); height: clamp(42px, 4.4vw, 70px); border-radius: 14px; background: var(--bmw-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 2.4vw, 36px); font-weight: 800; }
-  .phase-head h1 { margin: 0; }
+  /* ---------- Concept graphic ---------- */
+  .diagram-wrap { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
+  .diagram { width: 100%; height: 100%; max-height: 66vh; }
 
   /* ---------- Section / cover slides ---------- */
-  .slide.kind-cover, .slide.kind-section {
-    color: #fff; justify-content: center; padding: 6vh 7vw;
-    background:
-      radial-gradient(62% 55% at 86% 12%, rgba(46,168,224,0.30), transparent 70%),
-      linear-gradient(140deg, #003fb0 0%, #003399 46%, #001640 100%);
-  }
-  .kicker { font-size: clamp(13px, 1.4vw, 19px); letter-spacing: 0.28em; text-transform: uppercase; font-weight: 700; color: #9fc7ff; margin-bottom: 2.2vh; }
-  .slide.kind-cover h1, .slide.kind-section h1 { font-size: clamp(30px, 4.4vw, 66px); font-weight: 800; line-height: 1.05; max-width: 24ch; }
-  .mstripe { width: 118px; height: 7px; border-radius: 4px; margin: 3vh 0; background: var(--mstripe); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
-  .slide.kind-cover .meta, .slide.kind-section .meta { font-size: clamp(14px, 1.5vw, 21px); color: #cfe0ff; line-height: 1.7; }
-  .time-pill { display: inline-block; margin-top: 2.4vh; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.35); color: #fff; font-size: clamp(12px, 1.25vw, 17px); font-weight: 600; padding: 0.5em 1.1em; border-radius: 999px; }
+  .slide.kind-cover, .slide.kind-section { background: #f5f6f9; color: var(--ink); justify-content: center; padding: 6vh 7vw; }
+  .kicker { font-size: clamp(13px, 1.4vw, 19px); letter-spacing: 0.28em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 2.2vh; }
+  .slide.kind-cover h1, .slide.kind-section h1 { font-size: clamp(30px, 4.4vw, 66px); font-weight: 800; line-height: 1.05; max-width: 24ch; color: var(--ink); }
+  .mstripe { width: 118px; height: 7px; border-radius: 4px; margin: 3vh 0; background: var(--mstripe); }
+  .slide.kind-cover .meta, .slide.kind-section .meta { font-size: clamp(14px, 1.5vw, 21px); color: var(--muted); line-height: 1.7; }
+  .time-pill { display: inline-block; margin-top: 2.4vh; background: #fff; border: 1px solid var(--line); color: var(--ink); font-size: clamp(12px, 1.25vw, 17px); font-weight: 600; padding: 0.5em 1.1em; border-radius: 999px; }
   .agenda { margin-top: 3vh; display: flex; flex-direction: column; gap: 1vh; }
-  .agenda div { font-size: clamp(13px,1.4vw,20px); color: #dfe9ff; }
-  .agenda b { color: #fff; }
+  .agenda div { font-size: clamp(13px,1.4vw,20px); color: var(--ink); }
+  .agenda b { color: var(--m-dblue); }
 
   /* ---------- Chrome ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 5px; background: var(--mstripe); width: 0; transition: width 0.25s ease; z-index: 40; }
   .counter { position: fixed; right: 18px; bottom: 14px; font-size: 12px; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.85); padding: 3px 9px; border-radius: 6px; z-index: 40; }
-  .slide.kind-cover.active ~ .counter, .slide.kind-section.active ~ .counter { color: #cfe0ff; background: rgba(0,0,0,0.22); }
-  .hint { position: fixed; left: 18px; bottom: 12px; font-size: 11px; color: var(--muted); z-index: 40; opacity: 0.8; }
-  .slide.kind-cover.active ~ .hint, .slide.kind-section.active ~ .hint { color: #cfe0ff; }
+  .hint { position: fixed; left: 18px; bottom: 12px; font-size: 11px; color: var(--muted); z-index: 40; opacity: 0.85; }
 
-  .notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 42vh; overflow-y: auto; background: #0d1530; color: #e7ecf7; border-top: 4px solid var(--bmw-blue-soft); padding: 20px 26px 26px; transform: translateY(100%); transition: transform 0.28s ease; z-index: 50; box-shadow: 0 -12px 40px rgba(0,0,0,0.4); }
+  .notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 42vh; overflow-y: auto; background: #0d1530; color: #e7ecf7; border-top: 4px solid #1a2336; padding: 20px 26px 26px; transform: translateY(100%); transition: transform 0.28s ease; z-index: 50; box-shadow: 0 -12px 40px rgba(0,0,0,0.4); }
   .notes.show { transform: translateY(0); }
-  .notes .nlabel { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #8fb0ff; font-weight: 700; margin-bottom: 8px; }
+  .notes .nlabel { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #9fb0d6; font-weight: 700; margin-bottom: 8px; }
   .notes .nbody { font-size: 15px; line-height: 1.55; max-width: 110ch; }
   .notes .nbody p { margin-bottom: 8px; }
   .notes .nbody strong { color: #fff; }
@@ -142,9 +108,9 @@
     html, body { overflow: visible; background: #fff; }
     .slide { position: relative; inset: auto; display: flex; width: 100%; min-height: 100vh; page-break-after: always; break-after: page; animation: none; }
     .progress, .counter, .hint { display: none; }
-    .notes { position: relative; transform: none; max-height: none; page-break-before: avoid; break-before: avoid; background: #f0f3fa; color: #1a2336; border-top: 2px solid var(--bmw-blue); }
-    .notes .nlabel { color: var(--bmw-blue); }
-    .notes .nbody strong { color: var(--bmw-blue); }
+    .notes { position: relative; transform: none; max-height: none; page-break-before: avoid; break-before: avoid; background: #f0f3fa; color: #1a2336; border-top: 2px solid var(--ink); }
+    .notes .nlabel { color: var(--m-dblue); }
+    .notes .nbody strong { color: var(--ink); }
   }
 </style>
 </head>
@@ -228,7 +194,7 @@
   <div class="meta">Eine Transparenz- und Beratungsschicht für das gesamte Autohaus.</div>
   <span class="time-pill">⏱ ca. 3 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Drei Folgen: <strong>was</strong> es ist (zwei Seiten, ein Assistent), <strong>wie</strong> es funktioniert (die belegbare Engine) und <strong>was uns von einem normalen Chatbot unterscheidet</strong> — der Differenzierungs-Trumpf.</p>
+    <p>Vier Folgen: <strong>was</strong> es ist, <strong>wie</strong> es funktioniert, die <strong>Konzept-Grafik</strong> (Datenfluss) und <strong>was uns von einem normalen Chatbot unterscheidet</strong>.</p>
   </div></aside>
 </section>
 
@@ -258,7 +224,7 @@
   </div>
   <div class="goal">Dasselbe Wissen — <span>einmal für den Kunden aufbereitet, einmal als Verkaufshilfe fürs Team.</span></div>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Wichtig: Es sind nicht zwei Produkte, sondern eine Datenbasis mit zwei Oberflächen. Der Käufer sieht die ehrliche Aufbereitung, der Verkäufer dieselben Fakten plus Verkaufs-Strategie.</p>
+    <p>Wichtig: Es sind nicht zwei Produkte, sondern eine Datenbasis mit zwei Oberflächen. Der Käufer sieht die ehrliche Aufbereitung, der Verkäufer dieselben Fakten plus Verkaufs-Strategie. Die nächste Folie zeigt das als Grafik.</p>
   </div></aside>
 </section>
 
@@ -276,11 +242,81 @@
   <div class="goal">Nachprüfbar statt „Blackbox" — <span>genau das macht die Transparenz glaubwürdig.</span></div>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Für die Wirtschaftsinformatik-Brille: Die Intelligenz ist <strong>regelbasiert + KI-Formulierung</strong>. Die Regeln liefern die Fakten und die Quelle, die KI macht daraus Sprache. So kann nichts „erfunden" werden — jeder Satz ist auf eine Quelle zurückführbar.</p>
-    <p>Das ist auch das ethische Fundament (Kurskontext): keine Blackbox, alles belegt.</p>
   </div></aside>
 </section>
 
-<!-- 8 · UNTERSCHIED ZUM NORMALEN KI-CHAT -->
+<!-- 8 · KONZEPT-GRAFIK -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">02 · Lösung</div><div class="brand">Konzept-Grafik</div></div>
+  <h1 class="slide-title">Eine Datenbasis, <span class="accent">zwei Oberflächen</span></h1>
+  <div class="diagram-wrap">
+    <svg class="diagram" viewBox="0 0 1040 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Datenfluss: Datenquellen zum KI-Assistenten, dann zur Käufer-Ansicht und zum Verkäufer-Cockpit">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#6b7488"/>
+        </marker>
+        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1a2336" flood-opacity="0.12"/>
+        </filter>
+      </defs>
+      <style>
+        .b{fill:#fff;stroke:#d8deea;stroke-width:1.5;}
+        .bd{fill:#f4f6fb;stroke:#d8deea;stroke-width:1.5;}
+        .lbl{font:700 15px -apple-system,'Segoe UI',Arial,sans-serif;fill:#8a93a6;letter-spacing:1.5px;}
+        .t{font:600 17px -apple-system,'Segoe UI',Arial,sans-serif;fill:#1a2336;}
+        .tw{font:700 21px -apple-system,'Segoe UI',Arial,sans-serif;fill:#fff;}
+        .sw{font:400 12.5px -apple-system,'Segoe UI',Arial,sans-serif;fill:#c7cede;}
+        .s{font:400 12.5px -apple-system,'Segoe UI',Arial,sans-serif;fill:#5c6884;}
+        .cap{font:600 16px -apple-system,'Segoe UI',Arial,sans-serif;fill:#1a2336;}
+        .con{stroke:#c2c9d6;stroke-width:1.5;fill:none;}
+        .arw{stroke:#6b7488;stroke-width:2;fill:none;}
+      </style>
+      <text x="30" y="118" class="lbl">DATENQUELLEN</text>
+      <rect class="bd" x="30" y="137" width="215" height="58" rx="10"/>
+      <text x="137" y="172" text-anchor="middle" class="t">Fahrzeugdaten</text>
+      <rect class="bd" x="30" y="213" width="215" height="58" rx="10"/>
+      <text x="137" y="248" text-anchor="middle" class="t">Regelprüfung</text>
+      <rect class="bd" x="30" y="289" width="215" height="58" rx="10"/>
+      <text x="137" y="324" text-anchor="middle" class="t">Marktpreisvergleich</text>
+      <rect class="bd" x="30" y="365" width="215" height="58" rx="10"/>
+      <text x="137" y="400" text-anchor="middle" class="t">Foren &amp; Wissens-DB</text>
+      <path class="con" d="M245,166 L330,166"/>
+      <path class="con" d="M245,242 L330,242"/>
+      <path class="con" d="M245,318 L330,318"/>
+      <path class="con" d="M245,394 L330,394"/>
+      <path class="con" d="M330,166 L330,394"/>
+      <path class="arw" d="M330,280 L420,280" marker-end="url(#arr)"/>
+      <rect x="430" y="210" width="250" height="140" rx="14" fill="#1a2336" filter="url(#sh)"/>
+      <rect x="507" y="210" width="32" height="6" fill="#2ea8e0"/>
+      <rect x="539" y="210" width="32" height="6" fill="#003e7e"/>
+      <rect x="571" y="210" width="32" height="6" fill="#e2001a"/>
+      <text x="555" y="272" text-anchor="middle" class="tw">KI-Assistent</text>
+      <text x="555" y="300" text-anchor="middle" class="sw">belegt · jede Aussage</text>
+      <text x="555" y="318" text-anchor="middle" class="sw">mit Quelle</text>
+      <path class="arw" d="M680,255 C716,255 724,205 756,205" marker-end="url(#arr)"/>
+      <path class="arw" d="M680,305 C716,305 724,355 756,355" marker-end="url(#arr)"/>
+      <rect class="b" x="760" y="150" width="250" height="110" rx="12" filter="url(#sh)"/>
+      <rect x="845" y="150" width="26.6" height="6" fill="#2ea8e0"/>
+      <rect x="871.6" y="150" width="26.6" height="6" fill="#003e7e"/>
+      <rect x="898.2" y="150" width="26.8" height="6" fill="#e2001a"/>
+      <text x="885" y="192" text-anchor="middle" class="t">Käufer-Ansicht</text>
+      <text x="885" y="222" text-anchor="middle" class="s">Fahrzeug-Check · Chat · Probefahrt</text>
+      <rect class="b" x="760" y="300" width="250" height="110" rx="12" filter="url(#sh)"/>
+      <rect x="845" y="300" width="26.6" height="6" fill="#2ea8e0"/>
+      <rect x="871.6" y="300" width="26.6" height="6" fill="#003e7e"/>
+      <rect x="898.2" y="300" width="26.8" height="6" fill="#e2001a"/>
+      <text x="885" y="342" text-anchor="middle" class="t">Verkäufer-Cockpit</text>
+      <text x="885" y="372" text-anchor="middle" class="s">Briefing · Einwand-Konter · Fragen</text>
+      <text x="455" y="468" text-anchor="middle" class="cap">Eine Datenbasis  →  zwei Oberflächen</text>
+    </svg>
+  </div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Die Grafik in einem Satz erklären: <strong>Links die Datenquellen</strong>, in der Mitte der <strong>KI-Assistent</strong>, der jede Aussage belegt, rechts die <strong>zwei Oberflächen</strong> — Käufer und Verkäufer aus derselben Quelle.</p>
+    <p>Pointe: derselbe geprüfte Faktenkern, zweimal zielgruppengerecht aufbereitet.</p>
+  </div></aside>
+</section>
+
+<!-- 9 · UNTERSCHIED ZUM NORMALEN KI-CHAT -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">02 · Lösung</div><div class="brand">Differenzierung</div></div>
   <h1 class="slide-title">Kein <span class="accent">gewöhnlicher Chatbot</span></h1>
@@ -312,7 +348,7 @@
   </div></aside>
 </section>
 
-<!-- 9 · SECTION: KÄUFER -->
+<!-- 10 · SECTION: KÄUFER -->
 <section class="slide kind-section">
   <div class="kicker">03</div>
   <h1>Für den Käufer</h1>
@@ -324,7 +360,7 @@
   </div></aside>
 </section>
 
-<!-- 10 · FÜR DEN KÄUFER -->
+<!-- 11 · FÜR DEN KÄUFER -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">03 · Für den Käufer</div><div class="brand">Käufer-Ansicht</div></div>
   <h1 class="slide-title">Was der Käufer <span class="accent">bekommt</span></h1>
@@ -342,7 +378,7 @@
   </div></aside>
 </section>
 
-<!-- 11 · SECTION: VERKÄUFER -->
+<!-- 12 · SECTION: VERKÄUFER -->
 <section class="slide kind-section">
   <div class="kicker">04</div>
   <h1>Für den Verkäufer</h1>
@@ -350,11 +386,11 @@
   <div class="meta">Der eigentliche Mehrwert fürs Autohaus — Vorbereitung auf Knopfdruck.</div>
   <span class="time-pill">⏱ ca. 4 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Der Verkaufsblock für die Entscheider. Vier Folgen: erst der Unterschied (vorher/nachher), dann das Cockpit, dann die Highlights Probefahrt-Helfer &amp; Käufer-Fragen.</p>
+    <p>Der Verkaufsblock für die Entscheider. Drei Folgen: erst der Unterschied (vorher/nachher), dann das Cockpit, dann die Highlights Probefahrt-Helfer &amp; Käufer-Fragen.</p>
   </div></aside>
 </section>
 
-<!-- 12 · UNTERSCHIED FÜR DEN VERKÄUFER -->
+<!-- 13 · UNTERSCHIED FÜR DEN VERKÄUFER -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">04 · Für den Verkäufer</div><div class="brand">Vorher / Nachher</div></div>
   <h1 class="slide-title">Der Unterschied für den <span class="accent">Verkäufer</span></h1>
@@ -386,7 +422,7 @@
   </div></aside>
 </section>
 
-<!-- 13 · VERKÄUFER-COCKPIT -->
+<!-- 14 · VERKÄUFER-COCKPIT -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">04 · Für den Verkäufer</div><div class="brand">Verkaufs-Briefing</div></div>
   <h1 class="slide-title">Das <span class="accent">Verkäufer-Cockpit</span></h1>
@@ -416,7 +452,7 @@
   </div></aside>
 </section>
 
-<!-- 14 · PROBEFAHRT-HELFER & KÄUFER-FRAGEN -->
+<!-- 15 · PROBEFAHRT-HELFER & KÄUFER-FRAGEN -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">04 · Für den Verkäufer</div><div class="brand">Highlights</div></div>
   <h1 class="slide-title">Probefahrt-Helfer &amp; <span class="accent">Käufer-Fragen</span></h1>
@@ -445,7 +481,7 @@
   </div></aside>
 </section>
 
-<!-- 15 · SECTION: DEMO -->
+<!-- 16 · SECTION: DEMO -->
 <section class="slide kind-section">
   <div class="kicker">05</div>
   <h1>Live-Demo</h1>
@@ -457,7 +493,7 @@
   </div></aside>
 </section>
 
-<!-- 16 · DEMO WALKTHROUGH (lean) -->
+<!-- 17 · DEMO WALKTHROUGH (lean) -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">05 · Live-Demo</div><div class="brand">Walkthrough</div></div>
   <h1 class="slide-title">Walkthrough im <span class="accent">Prototyp</span></h1>
@@ -486,7 +522,7 @@
   </div></aside>
 </section>
 
-<!-- 17 · ZUSAMMENFASSUNG -->
+<!-- 18 · ZUSAMMENFASSUNG -->
 <section class="slide kind-content">
   <div class="topbar"><div class="sec">05 · Zusammenfassung</div><div class="brand">Was das Produkt kann</div></div>
   <h1 class="slide-title">Was das Produkt <span class="accent">kann</span></h1>
@@ -515,7 +551,7 @@
   </div></aside>
 </section>
 
-<!-- 18 · FAZIT / CLOSING -->
+<!-- 19 · FAZIT / CLOSING -->
 <section class="slide kind-section">
   <div class="kicker">Teil 2 · Fazit</div>
   <h1>Transparenz verkauft.</h1>
@@ -527,7 +563,7 @@
 </section>
 
 <div class="progress" id="progress"></div>
-<div class="counter" id="counter">1 / 18</div>
+<div class="counter" id="counter">1 / 19</div>
 <div class="hint">← → blättern · <b>N</b> Notizen · <b>F</b> Vollbild · <b>P</b> Drucken</div>
 
 <script>

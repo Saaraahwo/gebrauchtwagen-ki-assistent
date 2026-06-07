@@ -1,0 +1,74 @@
+<svg viewBox="0 0 1040 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Datenfluss: Datenquellen zum KI-Assistenten, dann zur Käufer-Ansicht und zum Verkäufer-Cockpit">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7488"/>
+    </marker>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1a2336" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <style>
+    .b{fill:#fff;stroke:#d8deea;stroke-width:1.5;}
+    .bd{fill:#f4f6fb;stroke:#d8deea;stroke-width:1.5;}
+    .lbl{font:700 15px -apple-system,'Segoe UI',Arial,sans-serif;fill:#8a93a6;letter-spacing:1.5px;}
+    .t{font:600 17px -apple-system,'Segoe UI',Arial,sans-serif;fill:#1a2336;}
+    .tw{font:700 21px -apple-system,'Segoe UI',Arial,sans-serif;fill:#fff;}
+    .sw{font:400 12.5px -apple-system,'Segoe UI',Arial,sans-serif;fill:#c7cede;}
+    .s{font:400 12.5px -apple-system,'Segoe UI',Arial,sans-serif;fill:#5c6884;}
+    .cap{font:600 16px -apple-system,'Segoe UI',Arial,sans-serif;fill:#1a2336;}
+    .con{stroke:#c2c9d6;stroke-width:1.5;fill:none;}
+    .arw{stroke:#6b7488;stroke-width:2;fill:none;}
+  </style>
+
+  <rect width="1040" height="560" fill="#ffffff"/>
+
+  <!-- left: data sources -->
+  <text x="30" y="118" class="lbl">DATENQUELLEN</text>
+  <rect class="bd" x="30" y="137" width="215" height="58" rx="10"/>
+  <text x="137" y="172" text-anchor="middle" class="t">Fahrzeugdaten</text>
+  <rect class="bd" x="30" y="213" width="215" height="58" rx="10"/>
+  <text x="137" y="248" text-anchor="middle" class="t">Regelprüfung</text>
+  <rect class="bd" x="30" y="289" width="215" height="58" rx="10"/>
+  <text x="137" y="324" text-anchor="middle" class="t">Marktpreisvergleich</text>
+  <rect class="bd" x="30" y="365" width="215" height="58" rx="10"/>
+  <text x="137" y="400" text-anchor="middle" class="t">Foren &amp; Wissens-DB</text>
+
+  <!-- bus + arrow to center -->
+  <path class="con" d="M245,166 L330,166"/>
+  <path class="con" d="M245,242 L330,242"/>
+  <path class="con" d="M245,318 L330,318"/>
+  <path class="con" d="M245,394 L330,394"/>
+  <path class="con" d="M330,166 L330,394"/>
+  <path class="arw" d="M330,280 L420,280" marker-end="url(#arr)"/>
+
+  <!-- center: AI assistant -->
+  <rect x="430" y="210" width="250" height="140" rx="14" fill="#1a2336" filter="url(#sh)"/>
+  <rect x="507" y="210" width="32" height="6" fill="#2ea8e0"/>
+  <rect x="539" y="210" width="32" height="6" fill="#003e7e"/>
+  <rect x="571" y="210" width="32" height="6" fill="#e2001a"/>
+  <text x="555" y="272" text-anchor="middle" class="tw">KI-Assistent</text>
+  <text x="555" y="300" text-anchor="middle" class="sw">belegt · jede Aussage</text>
+  <text x="555" y="318" text-anchor="middle" class="sw">mit Quelle</text>
+
+  <!-- arrows to right -->
+  <path class="arw" d="M680,255 C716,255 724,205 756,205" marker-end="url(#arr)"/>
+  <path class="arw" d="M680,305 C716,305 724,355 756,355" marker-end="url(#arr)"/>
+
+  <!-- right: two surfaces -->
+  <rect class="b" x="760" y="150" width="250" height="110" rx="12" filter="url(#sh)"/>
+  <rect x="845" y="150" width="26.6" height="6" fill="#2ea8e0"/>
+  <rect x="871.6" y="150" width="26.6" height="6" fill="#003e7e"/>
+  <rect x="898.2" y="150" width="26.8" height="6" fill="#e2001a"/>
+  <text x="885" y="192" text-anchor="middle" class="t">Käufer-Ansicht</text>
+  <text x="885" y="222" text-anchor="middle" class="s">Fahrzeug-Check · Chat · Probefahrt</text>
+
+  <rect class="b" x="760" y="300" width="250" height="110" rx="12" filter="url(#sh)"/>
+  <rect x="845" y="300" width="26.6" height="6" fill="#2ea8e0"/>
+  <rect x="871.6" y="300" width="26.6" height="6" fill="#003e7e"/>
+  <rect x="898.2" y="300" width="26.8" height="6" fill="#e2001a"/>
+  <text x="885" y="342" text-anchor="middle" class="t">Verkäufer-Cockpit</text>
+  <text x="885" y="372" text-anchor="middle" class="s">Briefing · Einwand-Konter · Fragen</text>
+
+  <!-- caption -->
+  <text x="455" y="468" text-anchor="middle" class="cap">Eine Datenbasis  →  zwei Oberflächen</text>
+</svg>
