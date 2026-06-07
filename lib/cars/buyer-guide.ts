@@ -38,6 +38,43 @@ export function buildDamageDetails(accidents: Accident[] | undefined): DamageDet
   return out;
 }
 
+export interface WarrantyNote {
+  text: string;
+  source: string;
+}
+
+/**
+ * Solution-oriented note for the buyer: future mechanical/electrical repair costs
+ * can be hedged with a BMW used-car warranty. Surfaced when the car has an accident
+ * history or an elevated future-cost profile (high mileage / older car).
+ *
+ * Honesty note: a warranty covers FUTURE defects, not the existing accident repair —
+ * the wording deliberately scopes it to "Folgekosten an Mechanik und Elektrik".
+ * Facts per BMW Premium Selection (bmw.de): 24 months, 100% parts + labour, no
+ * deductible, transferable; eligible up to 12 years / 200,000 km; extendable via
+ * BMW Repair Inclusive (Anschlussgarantie) to 10 years / 150,000 km.
+ */
+export function buildWarrantyNote(car: Car): WarrantyNote | null {
+  const hasAccidents = (car.accidents || []).length > 0;
+  const age = new Date().getFullYear() - car.yearBuilt;
+  const highMileage = car.km > Math.max(1, age) * 15000;
+  if (!hasAccidents && !highMileage && age < 6) return null;
+
+  const eligible = age <= 12 && car.km <= 200000;
+  let text =
+    'Aber: Mögliche Folgekosten an Mechanik und Elektrik lassen sich absichern. ' +
+    'Die BMW Gebrauchtwagengarantie (BMW Premium Selection) deckt 24 Monate alle ' +
+    'mechanischen und elektronischen Teile zu 100 % ab – Material und Arbeit, ohne ' +
+    'Selbstbeteiligung, und ist auf den nächsten Besitzer übertragbar. Verlängerbar ' +
+    'über eine Anschlussgarantie (BMW Repair Inclusive) bis 10 Jahre bzw. 150.000 km.';
+  if (!eligible) {
+    text +=
+      ' Hinweis: BMW Premium Selection gilt bis 12 Jahre / 200.000 km – die ' +
+      'Förderfähigkeit dieses Fahrzeugs bitte beim BMW Partner prüfen.';
+  }
+  return { text, source: 'BMW Premium Selection Garantie (bmw.de)' };
+}
+
 /** Actionable checklist the buyer can take to the dealer / inspection. */
 export function buildBuyerChecklist(car: Car): string[] {
   const out: string[] = [];

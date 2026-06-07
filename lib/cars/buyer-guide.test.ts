@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDamageDetails, buildBuyerChecklist } from './buyer-guide';
+import { buildDamageDetails, buildBuyerChecklist, buildWarrantyNote } from './buyer-guide';
 import type { Car } from './types';
 
 const base: Car = {
@@ -45,5 +45,32 @@ describe('buildBuyerChecklist', () => {
   it('asks about frequent owner changes when owners are high', () => {
     const list = buildBuyerChecklist({ ...base, owners: 6 });
     expect(list.some(x => x.toLowerCase().includes('besitzerwechsel'))).toBe(true);
+  });
+});
+
+describe('buildWarrantyNote', () => {
+  it('returns null for a clean, low-mileage, newish car', () => {
+    expect(buildWarrantyNote({ ...base, yearBuilt: new Date().getFullYear() - 2, km: 20000 })).toBeNull();
+  });
+
+  it('offers the BMW warranty as a solution for an accident car, with a source', () => {
+    const note = buildWarrantyNote({
+      ...base,
+      accidents: [{ type: 'Frontschaden', damage: 'Kühler', damageKey: 'front', date: '2022' }],
+    });
+    expect(note).not.toBeNull();
+    expect(note!.text).toMatch(/Garantie|Premium Selection/);
+    expect(note!.source.toLowerCase()).toContain('bmw');
+  });
+
+  it('surfaces the note for high-mileage cars too', () => {
+    const note = buildWarrantyNote({ ...base, yearBuilt: new Date().getFullYear() - 4, km: 140000 });
+    expect(note).not.toBeNull();
+  });
+
+  it('adds an eligibility caveat when the car exceeds 12 years / 200k km', () => {
+    const note = buildWarrantyNote({ ...base, yearBuilt: new Date().getFullYear() - 14, km: 230000 });
+    expect(note).not.toBeNull();
+    expect(note!.text).toMatch(/12 Jahre|200\.000 km/);
   });
 });

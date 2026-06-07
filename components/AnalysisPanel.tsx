@@ -11,6 +11,7 @@ interface AnalysisData {
   auffaelligkeiten: Anomaly[];
   preisAmpel: PriceAmpel;
   damageDetails: DamageDetail[];
+  warranty: { text: string; source: string } | null;
   checklist: string[];
   featureExplanations: FeatureExplanation[];
   aiAnalysis: { analysis: string; model: string };
@@ -72,10 +73,10 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
 
           {state.kind === 'ready' && (
             <>
-              {/* Besonderheiten & Atypisches — the highlights for THIS car (first) */}
+              {/* Besonderheiten */}
               <div>
-                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Besonderheiten &amp; Atypisches</div>
-                {state.data.auffaelligkeiten.length === 0 ? (
+                <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Besonderheiten</div>
+                {state.data.auffaelligkeiten.length === 0 && (!car.surprises || car.surprises.length === 0) ? (
                   <div className="text-xs text-bmw-gray-text bg-bmw-gray-bg border border-bmw-gray-border p-3">
                     Keine Besonderheiten erkannt — ein unauffälliges, marktübliches Fahrzeug.
                   </div>
@@ -83,9 +84,21 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                   <div className="flex flex-col gap-2">
                     {state.data.auffaelligkeiten.map((a, i) => (
                       <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
-                        <div className="text-xs font-semibold">{a.title}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="text-xs font-semibold">{a.title}</div>
+                          {a.source && <span className="text-[9px] text-bmw-gray-muted border border-bmw-gray-border bg-white px-1.5 py-0.5">Quelle: {a.source}</span>}
+                        </div>
                         <div className="text-xs text-bmw-gray-text mt-0.5">{a.detail}</div>
                         {a.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{a.tip}</div>}
+                      </div>
+                    ))}
+                    {(car.surprises ?? []).map((s, i) => (
+                      <div key={`s-${i}`} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="text-xs font-semibold">{s.text}</div>
+                          <span className="text-[9px] text-bmw-gray-muted border border-bmw-gray-border bg-white px-1.5 py-0.5">Quelle: {s.source}</span>
+                        </div>
+                        <div className="text-xs text-bmw-gray-text mt-0.5">{s.detail}</div>
                       </div>
                     ))}
                   </div>
@@ -111,12 +124,7 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                 <div className="flex-1 text-center py-2.5 px-2">
                   <div className="text-base font-bold">{state.data.preisAmpel.expected.toLocaleString('de-DE')} €</div>
                   <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Marktwert</div>
-                </div>
-                <div className="flex-1 text-center py-2.5 px-2">
-                  <div className="text-base font-bold">
-                    {state.data.preisAmpel.diff > 0 ? '+' : ''}{state.data.preisAmpel.diff}%
-                  </div>
-                  <div className="text-[9px] text-bmw-gray-muted uppercase tracking-wide mt-0.5">Preisposition</div>
+                  <div className="text-[8px] text-bmw-gray-muted mt-0.5">Quelle: Marktpreisvergleich</div>
                 </div>
               </div>
 
@@ -127,7 +135,10 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                   <div className="flex flex-col gap-2">
                     {allFindings.map((f, i) => (
                       <div key={i} className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
-                        <div className="text-xs font-semibold">{f.flag}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="text-xs font-semibold">{f.flag}</div>
+                          {f.source && <span className="text-[9px] text-bmw-gray-muted border border-bmw-gray-border bg-white px-1.5 py-0.5">Quelle: {f.source}</span>}
+                        </div>
                         <div className="text-xs text-bmw-gray-text mt-0.5">{f.message}</div>
                         {f.tip && <div className="text-[11px] text-bmw-gray-muted mt-1">{f.tip}</div>}
                       </div>
@@ -172,6 +183,19 @@ export function AnalysisPanel({ car, onClose }: AnalysisPanelProps) {
                         </dl>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Reparaturkosten absichern — BMW warranty as a solution to future costs */}
+              {state.data.warranty && (
+                <div>
+                  <div className="text-[10px] font-bold text-bmw-gray-muted uppercase tracking-widest mb-2">Reparaturkosten absichern</div>
+                  <div className="border-l-2 border-bmw-blue pl-3 py-1 bg-bmw-gray-bg">
+                    <div className="text-xs text-bmw-gray-text">{state.data.warranty.text}</div>
+                    <span className="inline-block mt-1.5 text-[9px] text-bmw-gray-muted border border-bmw-gray-border bg-white px-1.5 py-0.5">
+                      Quelle: {state.data.warranty.source}
+                    </span>
                   </div>
                 </div>
               )}

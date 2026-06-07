@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { runRulesEngine } from '@/lib/cars/rules-engine';
 import { detectAuffaelligkeiten } from '@/lib/cars/anomaly-detection';
 import { calcPreisAmpel } from '@/lib/cars/price-calculator';
-import { buildDamageDetails, buildBuyerChecklist } from '@/lib/cars/buyer-guide';
+import { buildDamageDetails, buildBuyerChecklist, buildWarrantyNote } from '@/lib/cars/buyer-guide';
 import { explainCarFeatures } from '@/lib/cars/feature-glossary';
 import { analyzeCarWithClaude } from '@/lib/ai/analysis';
 import type { Car } from '@/lib/cars/types';
@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
   const auffaelligkeiten = detectAuffaelligkeiten(carData);
   const preisAmpel = calcPreisAmpel(carData);
   const damageDetails = buildDamageDetails(carData.accidents);
+  const warranty = buildWarrantyNote(carData);
   const checklist = buildBuyerChecklist(carData);
   const featureExplanations = explainCarFeatures(carData);
   const aiAnalysis = await analyzeCarWithClaude(carData, findings);
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
       auffaelligkeiten,
       preisAmpel,
       damageDetails,
+      warranty,
       checklist,
       featureExplanations,
       aiAnalysis,
