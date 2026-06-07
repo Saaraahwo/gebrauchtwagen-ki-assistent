@@ -32,6 +32,16 @@ describe('generateDemoChatResponse', () => {
     expect(r).toMatch(/Preis/i);
   });
 
+  it('offers the BMW warranty solution (with source) for an accident-car repair-cost question', () => {
+    const accidentCar: Car = {
+      ...car,
+      accidents: [{ type: 'Heckschaden', damage: 'Stoßstange', damageKey: 'heck', date: '2022', repairCost: 3000 }],
+    };
+    const r = generateDemoChatResponse(accidentCar, [], 'Welche Reparaturkosten kommen durch den Unfall auf mich zu?');
+    expect(r).toMatch(/Premium Selection|Garantie/);
+    expect(r).toMatch(/bmw\.de/);
+  });
+
   it('returns default topic list for unmatched question', () => {
     const r = generateDemoChatResponse(car, [], 'asdfqwerty');
     expect(r).toMatch(/Kilometerstand/);

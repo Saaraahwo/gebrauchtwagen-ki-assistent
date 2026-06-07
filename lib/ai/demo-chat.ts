@@ -1,10 +1,18 @@
 import type { Car } from '@/lib/cars/types';
 import { SCHADEN_DB, getSchadenFolgen } from '@/lib/cars/damage-db';
 import { detectAuffaelligkeiten } from '@/lib/cars/anomaly-detection';
+import { buildWarrantyNote } from '@/lib/cars/buyer-guide';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+}
+
+/** BMW-warranty solution block, appended to accident/repair-cost answers (empty when not applicable). */
+function warrantyBlock(car: Car): string {
+  const w = buildWarrantyNote(car);
+  if (!w) return '';
+  return `\n\n**Reparaturkosten absichern**\n${w.text}\nQuelle: ${w.source}`;
 }
 
 export function generateDemoChatResponse(
@@ -188,7 +196,8 @@ export function generateDemoChatResponse(
       `• Lackschichtdicke messen: über 180 μm deutet auf Umlackierung hin\n\n` +
       `**4. Gutachten empfohlen**\n` +
       `DEKRA/TÜV für 200–400 € — lohnt sich bei diesem Preis.\n\n` +
-      `💡 Ein dokumentierter Schaden ist ehrlicher als ein unreportierter. Mit Rechnung und Gutachten bist du auf der sicheren Seite.`;
+      `💡 Ein dokumentierter Schaden ist ehrlicher als ein unreportierter. Mit Rechnung und Gutachten bist du auf der sicheren Seite.` +
+      warrantyBlock(carData);
   }
 
   // ── Unfall & Schäden ──
@@ -203,7 +212,7 @@ export function generateDemoChatResponse(
       if (db) reply += `\nWas prüfen: ${db.kurzfristig}\nLangfristig: ${db.langfristig}\nHinweis: ${db.adacTipp}\n`;
       reply += '\n';
     });
-    return reply.trim();
+    return reply.trim() + warrantyBlock(carData);
   }
 
   // ── Karosserie & Lack ──
@@ -502,7 +511,8 @@ export function generateDemoChatResponse(
       `· ADAC-Gebrauchtwagencheck: 80–180 €\n` +
       `· DEKRA/TÜV-Einzelgutachten: 200–400 €\n` +
       `· OBD-Fehlerspeicher auslesen: 25–30 €\n\n` +
-      `Zu welchem Bereich möchten Sie genauere Kosteninformationen?`;
+      `Zu welchem Bereich möchten Sie genauere Kosteninformationen?` +
+      warrantyBlock(carData);
   }
 
   // ── Default: freie Fragen ──
