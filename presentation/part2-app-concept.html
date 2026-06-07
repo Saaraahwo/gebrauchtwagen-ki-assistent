@@ -26,8 +26,8 @@
     position: fixed; inset: 0; display: none; flex-direction: column;
     padding: 4.6vh 5vw 4.2vh; background: #ffffff;
   }
-  .slide.active { display: flex; animation: fadeUp 0.45s cubic-bezier(.22,.61,.36,1); }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .slide.active { display: flex; animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
   /* M-tricolor edge on every slide */
   .slide::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--mstripe); z-index: 5; }
@@ -36,7 +36,7 @@
   .topbar .sec { font-size: clamp(13px, 1.5vw, 20px); font-weight: 700; color: var(--ink); letter-spacing: 0.02em; }
   .topbar .brand { font-size: clamp(10px, 1.05vw, 14px); font-weight: 600; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
 
-  h1.slide-title { font-size: clamp(24px, 3.1vw, 46px); font-weight: 800; color: var(--ink); line-height: 1.1; margin-bottom: 2.4vh; }
+  h1.slide-title { font-size: clamp(23px, 2.9vw, 42px); font-weight: 800; color: var(--ink); line-height: 1.12; letter-spacing: -0.01em; margin-bottom: 2.4vh; }
   h1.slide-title .accent {
     background-image: var(--mstripe); background-repeat: no-repeat;
     background-position: 0 92%; background-size: 100% 5px; padding-bottom: 4px;
@@ -91,10 +91,10 @@
   /* ---------- Section / cover slides ---------- */
   .slide.kind-cover, .slide.kind-section { background: #f5f6f9; color: var(--ink); justify-content: center; padding: 6vh 7vw; }
   .kicker { font-size: clamp(13px, 1.4vw, 19px); letter-spacing: 0.28em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 2.2vh; }
-  .slide.kind-cover h1, .slide.kind-section h1 { font-size: clamp(30px, 4.4vw, 66px); font-weight: 800; line-height: 1.05; max-width: 24ch; color: var(--ink); }
+  .slide.kind-cover h1, .slide.kind-section h1 { font-size: clamp(30px, 4.2vw, 60px); font-weight: 800; line-height: 1.06; letter-spacing: -0.015em; max-width: 24ch; color: var(--ink); }
   .mstripe { width: 118px; height: 7px; border-radius: 4px; margin: 3vh 0; background: var(--mstripe); }
   .slide.kind-cover .meta, .slide.kind-section .meta { font-size: clamp(14px, 1.5vw, 21px); color: var(--muted); line-height: 1.7; }
-  .time-pill { display: inline-block; margin-top: 2.4vh; background: #fff; border: 1px solid var(--line); color: var(--ink); font-size: clamp(12px, 1.25vw, 17px); font-weight: 600; padding: 0.5em 1.1em; border-radius: 999px; }
+  .time-pill { display: inline-block; margin-top: 2.4vh; background: #fff; border: 1px solid var(--line); color: var(--muted); font-size: clamp(11px, 1.05vw, 14px); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.55em 1.05em; border-radius: 6px; }
   .agenda { margin-top: 3vh; display: flex; flex-direction: column; gap: 1vh; }
   .agenda div { font-size: clamp(13px,1.4vw,20px); color: var(--ink); }
   .agenda b { color: var(--m-dblue); }
@@ -102,7 +102,11 @@
   /* ---------- Chrome ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 5px; background: var(--mstripe); width: 0; transition: width 0.25s ease; z-index: 40; }
   .counter { position: fixed; right: 18px; bottom: 14px; font-size: 12px; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.85); padding: 3px 9px; border-radius: 6px; z-index: 40; }
-  .hint { position: fixed; left: 18px; bottom: 12px; font-size: 11px; color: var(--muted); z-index: 40; opacity: 0.85; }
+  .hint { position: fixed; left: 18px; bottom: 12px; font-size: 11px; color: var(--muted); z-index: 40; opacity: 0.85; transition: opacity 0.6s ease; }
+
+  /* Corporate footer on content slides */
+  .footer { margin-top: 1.8vh; padding-top: 1.1vh; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: clamp(9px, 0.95vw, 12px); color: #9aa3b5; letter-spacing: 0.05em; }
+  .footer span:last-child { font-variant-numeric: tabular-nums; }
 
   .notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 42vh; overflow-y: auto; background: #0d1530; color: #e7ecf7; border-top: 4px solid #1a2336; padding: 20px 26px 26px; transform: translateY(100%); transition: transform 0.28s ease; z-index: 50; box-shadow: 0 -12px 40px rgba(0,0,0,0.4); }
   .notes.show { transform: translateY(0); }
@@ -151,7 +155,7 @@
   <h1>Warum wir das bauen</h1>
   <div class="mstripe"></div>
   <div class="meta">Vertrauen ist beim Gebrauchtwagen die härteste Währung.</div>
-  <span class="time-pill">⏱ ca. 2 Min.</span>
+  <span class="time-pill">Dauer · ca. 2 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Das „Warum" ist die Verkaufsgrundlage. Wenn das Autohaus das Problem fühlt, ist die Lösung leicht zu verkaufen. Zwei Folgen: das Problem, dann unser Kerngedanke.</p>
   </div></aside>
@@ -199,7 +203,7 @@
   <h1>Die Lösung — was &amp; wie</h1>
   <div class="mstripe"></div>
   <div class="meta">Eine Transparenz- und Beratungsschicht für das gesamte Autohaus.</div>
-  <span class="time-pill">⏱ ca. 3 Min.</span>
+  <span class="time-pill">Dauer · ca. 3 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Vier Folgen: <strong>was</strong> es ist, <strong>wie</strong> es funktioniert, die <strong>Konzept-Grafik</strong> (Datenfluss) und <strong>was uns von einem normalen Chatbot unterscheidet</strong>.</p>
   </div></aside>
@@ -410,7 +414,7 @@
   <h1>Für den Käufer</h1>
   <div class="mstripe"></div>
   <div class="meta">Alles sehen, alles fragen — und ohne Restzweifel kaufen.</div>
-  <span class="time-pill">⏱ ca. 3 Min.</span>
+  <span class="time-pill">Dauer · ca. 3 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Kurz halten — die Details kommen in der Demo. Hier nur das Versprechen an den Käufer und warum das dem Autohaus nützt (Vertrauen).</p>
   </div></aside>
@@ -440,7 +444,7 @@
   <h1>Für den Verkäufer</h1>
   <div class="mstripe"></div>
   <div class="meta">Der eigentliche Mehrwert fürs Autohaus — Vorbereitung auf Knopfdruck.</div>
-  <span class="time-pill">⏱ ca. 4 Min.</span>
+  <span class="time-pill">Dauer · ca. 4 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Der Verkaufsblock für die Entscheider. Drei Folgen: erst der Unterschied (vorher/nachher), dann das Cockpit, dann die Highlights Probefahrt-Helfer &amp; Käufer-Fragen.</p>
   </div></aside>
@@ -543,7 +547,7 @@
   <h1>Live-Demo</h1>
   <div class="mstripe"></div>
   <div class="meta">Vom Konzept zum klickbaren Prototyp.</div>
-  <span class="time-pill">⏱ ca. 2 Min.</span>
+  <span class="time-pill">Dauer · ca. 2 Min.</span>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
     <p>Jetzt in den Prototyp wechseln. Diese Folie ist nur die Landkarte — bewusst kurz, weil die App selbst spricht.</p>
   </div></aside>
@@ -641,19 +645,34 @@
 </section>
 
 <div class="progress" id="progress"></div>
-<div class="counter" id="counter">1 / 22</div>
 <div class="hint">← → blättern · <b>N</b> Notizen · <b>F</b> Vollbild · <b>P</b> Drucken</div>
 
 <script>
   const slides = Array.from(document.querySelectorAll('.slide'));
   const progress = document.getElementById('progress');
-  const counter = document.getElementById('counter');
   let i = 0;
+
+  // Corporate footer on each content slide (brand · section · page)
+  slides.forEach((s, n) => {
+    if (!s.classList.contains('kind-content')) return;
+    const sec = s.querySelector('.topbar .sec');
+    const f = document.createElement('div');
+    f.className = 'footer';
+    const left = document.createElement('span');
+    left.textContent = 'BMW · KI-Kaufassistent';
+    const right = document.createElement('span');
+    right.textContent = (sec ? sec.textContent : '') + ' · ' + (n + 1) + ' / ' + slides.length;
+    f.append(left, right);
+    const notes = s.querySelector('.notes');
+    if (notes) s.insertBefore(f, notes); else s.appendChild(f);
+  });
+
+  // Auto-hide the controls hint after a few seconds for a cleaner stage
+  setTimeout(() => { const hint = document.querySelector('.hint'); if (hint) hint.style.opacity = '0'; }, 5000);
 
   function render() {
     slides.forEach((s, n) => s.classList.toggle('active', n === i));
     progress.style.width = ((i + 1) / slides.length * 100) + '%';
-    counter.textContent = (i + 1) + ' / ' + slides.length;
     const open = document.querySelector('.notes.show');
     if (open) { open.classList.remove('show'); toggleNotes(true); }
   }
