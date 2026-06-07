@@ -77,6 +77,13 @@
   .goal span { color: var(--muted); font-weight: 400; }
   .goal.big { font-size: clamp(16px, 1.95vw, 28px); line-height: 1.25; }
 
+  /* ---------- Differentiator chips ---------- */
+  .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8vh 1.8vw; flex: 1; align-content: center; }
+  .chip { display: flex; gap: 0.7em; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 2.2vh 1.6vw; box-shadow: 0 6px 20px rgba(15, 30, 60, 0.06); }
+  .chip .ck { flex: none; color: #16a34a; font-weight: 800; font-size: clamp(16px, 1.5vw, 22px); line-height: 1.2; }
+  .chip .ct { font-size: clamp(15px, 1.6vw, 22px); font-weight: 700; color: var(--ink); }
+  .chip .cs { font-size: clamp(12px, 1.2vw, 16px); color: var(--muted); margin-top: 0.4vh; }
+
   /* ---------- Concept graphic ---------- */
   .diagram-wrap { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
   .diagram { width: 100%; height: 100%; max-height: 66vh; }
@@ -522,36 +529,58 @@
   </div></aside>
 </section>
 
-<!-- 18 · ZUSAMMENFASSUNG -->
+<!-- 18 · NICHT NUR EIN CHATBOT (post-demo) -->
 <section class="slide kind-content">
-  <div class="topbar"><div class="sec">05 · Zusammenfassung</div><div class="brand">Was das Produkt kann</div></div>
-  <h1 class="slide-title">Was das Produkt <span class="accent">kann</span></h1>
+  <div class="topbar"><div class="sec">05 · Differenzierung</div><div class="brand">Nach der Demo</div></div>
+  <h1 class="slide-title">Nicht nur ein <span class="accent">Chatbot</span></h1>
+  <p class="lead">Sie haben es gerade gesehen — ein belegbarer Berater, kein Spielzeug.</p>
+  <div class="chips">
+    <div class="chip"><span class="ck">✓</span><div><div class="ct">Jede Antwort mit Quelle</div><div class="cs">belegt statt erfunden</div></div></div>
+    <div class="chip"><span class="ck">✓</span><div><div class="ct">Kennt jedes Fahrzeug</div><div class="cs">modellspezifisch statt generisch</div></div></div>
+    <div class="chip"><span class="ck">✓</span><div><div class="ct">Nennt auch Schwächen</div><div class="cs">schafft Vertrauen statt Skepsis</div></div></div>
+    <div class="chip"><span class="ck">✓</span><div><div class="ct">Käufer &amp; Verkäufer</div><div class="cs">eine Datenbasis, zwei Oberflächen</div></div></div>
+  </div>
+  <div class="goal">Genau das unterscheidet uns von einem gewöhnlichen KI-Chat. <span>Jetzt der Gesamtüberblick.</span></div>
+  <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
+    <p>Payoff direkt nach der Demo: „Was Sie gesehen haben, ist kein Chatbot, sondern ein <strong>belegbarer Berater</strong>." Die vier Punkte sind die Quintessenz — jeder ist in der Demo sichtbar geworden.</p>
+    <p>Überleiten: „Fassen wir zusammen, was das Werkzeug insgesamt kann."</p>
+  </div></aside>
+</section>
+
+<!-- 19 · ALLE FUNKTIONEN (Zusammenfassung) -->
+<section class="slide kind-content">
+  <div class="topbar"><div class="sec">05 · Zusammenfassung</div><div class="brand">Alle Funktionen</div></div>
+  <h1 class="slide-title">Alle Funktionen <span class="accent">auf einen Blick</span></h1>
   <div class="cols">
     <div class="panel">
-      <h3>Für den Käufer</h3>
+      <h3>Käufer-Ansicht</h3>
       <ul class="bullets">
-        <li>Volle Transparenz: Stärken &amp; Mängel mit Quelle</li>
-        <li>Preis-Ampel &amp; Marktwert</li>
-        <li>Ehrlicher KI-Chat &amp; Probefahrt-Anfrage</li>
+        <li>Fahrzeug-Check: Stärken, Mängel &amp; Schäden im Detail</li>
+        <li>Preis-Ampel &amp; erwarteter Marktwert</li>
+        <li>Ausstattung erklärt + Kauf-Checkliste</li>
+        <li>Ehrlicher KI-Chat — modellspezifisch, mit Quelle</li>
+        <li>Probefahrt online anfragen</li>
       </ul>
     </div>
     <div class="panel alt">
-      <h3>Für den Verkäufer</h3>
+      <h3>Verkäufer-Cockpit</h3>
       <ul class="bullets">
-        <li>Verkaufs-Briefing &amp; Einwand-Konter</li>
-        <li>Probefahrt-Drehbuch &amp; echte Kundenfragen</li>
-        <li>Flotten-Überblick &amp; FAQ-Export</li>
+        <li>Verkaufs-Briefing: Stärken &amp; erwartete Fragen</li>
+        <li>Einwand-Behandlung mit fertigen Kontern</li>
+        <li>Probefahrt-Drehbuch &amp; empfohlene Route</li>
+        <li>Echte Kundenfragen (Ranking) &amp; FAQ-Export</li>
+        <li>Flotten-Übersicht: Preise, Gesundheit, Auffälligkeiten</li>
       </ul>
     </div>
   </div>
   <div class="goal big">Transparenz schafft Vertrauen — <span>Vertrauen schafft Abschlüsse und Stammkunden.</span></div>
   <aside class="notes"><div class="nlabel">Sprechernotiz</div><div class="nbody">
-    <p>Capability-Recap in einem Satz pro Seite. Dann den Schlusssatz als Klammer zur Eingangs-These (Folie 4) setzen.</p>
-    <p>Direkt überleiten zur Fazit-Folie.</p>
+    <p>Der vollständige Werkzeugkasten — links für den Käufer, rechts fürs Verkaufsteam. Nicht alles vorlesen; die Breite wirken lassen und 2–3 Highlights herausgreifen.</p>
+    <p>Schlusssatz als Klammer zur Eingangs-These (Folie 4), dann zur Fazit-Folie.</p>
   </div></aside>
 </section>
 
-<!-- 19 · FAZIT / CLOSING -->
+<!-- 20 · FAZIT / CLOSING -->
 <section class="slide kind-section">
   <div class="kicker">Teil 2 · Fazit</div>
   <h1>Transparenz verkauft.</h1>
@@ -563,7 +592,7 @@
 </section>
 
 <div class="progress" id="progress"></div>
-<div class="counter" id="counter">1 / 19</div>
+<div class="counter" id="counter">1 / 20</div>
 <div class="hint">← → blättern · <b>N</b> Notizen · <b>F</b> Vollbild · <b>P</b> Drucken</div>
 
 <script>
