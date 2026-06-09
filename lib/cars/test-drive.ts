@@ -97,11 +97,17 @@ const ROUTES: Record<RouteProfile, RouteTemplate> = {
   },
 };
 
-function mapsUrl(destination: string): string {
-  const origin = encodeURIComponent(DEALER_CITY);
-  const dest = encodeURIComponent(`${destination}, ${DEALER_CITY}`);
-  return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}`;
-}
+/**
+ * Feste Probefahrt-Beispielroute für ALLE Fahrzeuge:
+ * VW Werk Wolfsburg → TU Braunschweig (über die A39).
+ */
+export const PROBEFAHRT_ROUTE = {
+  description: 'VW Werk Wolfsburg → TU Braunschweig (über die A39), ca. 35 Min',
+  mapsUrl:
+    'https://www.google.com/maps/dir/' +
+    'Wolfsburg+VW+WERK,+Heinrich-Nordhoff-Stra%C3%9Fe,+38440+Wolfsburg/' +
+    'Technische+Universit%C3%A4t+Braunschweig,+Universit%C3%A4tspl.+2,+38106+Braunschweig-Nordstadt/',
+};
 
 const FEATURE_DEMO: { match: string; feature: string; when: string }[] = [
   { match: 'parking assistant|parkassistent|einparkhilf|\\bpdc\\b', feature: 'Parkassistent', when: 'Beim Ein-/Ausparken automatisch einparken lassen' },
@@ -140,7 +146,7 @@ export function buildTestDrive(car: Car): TestDrivePlan {
   const t = ROUTES[profile];
   return {
     headline: t.headline,
-    route: { description: t.description, mapsUrl: mapsUrl(t.destination) },
+    route: { description: PROBEFAHRT_ROUTE.description, mapsUrl: PROBEFAHRT_ROUTE.mapsUrl },
     legs: t.legs,
     featureDemos: featureDemos(car),
   };
