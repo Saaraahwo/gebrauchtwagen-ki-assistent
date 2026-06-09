@@ -24,7 +24,7 @@ Eine Datenbasis, zwei Oberflächen: derselbe geprüfte Faktenkern — einmal fü
 aufbereitet, einmal als Verkaufshilfe für das Autohaus.
 
 <p align="center">
-  <img src="presentation/concept-diagram.svg" alt="Datenquellen → KI-Assistent (belegt, mit Quelle) → Käufer-Ansicht und Verkäufer-Cockpit" width="780">
+  <img src="presentation/concept-diagram.png" alt="Datenquellen → KI-Assistent (belegt, mit Quelle) → Käufer-Ansicht und Verkäufer-Cockpit" width="820">
 </p>
 
 ## Wie es funktioniert
