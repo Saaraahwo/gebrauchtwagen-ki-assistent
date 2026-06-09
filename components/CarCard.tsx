@@ -48,7 +48,6 @@ export function CarCard({ car }: { car: Car }) {
       <div className="px-3.5 pt-3.5">
         <div className="text-[10px] text-bmw-gray-muted uppercase tracking-wider mb-1">BMW Niederlassung</div>
         <div className="text-sm font-bold text-bmw-dark leading-tight">{car.name}</div>
-        {car.subtitle && <div className="text-xs text-bmw-gray-text mt-0.5">{car.subtitle}</div>}
         <div className="text-xl font-bold text-bmw-dark mt-2.5">
           {car.price.toLocaleString('de-DE')} <span className="text-xs font-normal text-bmw-gray-muted">€</span>
         </div>

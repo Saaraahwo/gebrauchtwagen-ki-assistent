@@ -66,6 +66,7 @@ export interface Car {
   badge?: string | null;
   description?: string;
   specs?: CarSpecs;
+  surprises?: { type: 'warning' | 'positive'; text: string; detail: string; source: string }[];
 }
 
 export type Severity = 'red' | 'orange' | 'green';
@@ -75,6 +76,7 @@ export interface Finding {
   message: string;
   severity: Severity;
   tip: string;
+  source?: string;
 }
 
 export interface Findings {
@@ -91,6 +93,7 @@ export interface Anomaly {
   detail: string;
   tip: string;
   severity: AnomalySeverity;
+  source?: string;
 }
 
 export interface PriceAmpel {

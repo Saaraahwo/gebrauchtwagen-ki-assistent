@@ -13,7 +13,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'BESITZERHISTORIE',
       message: `${carData.owners} Besitzer in ${new Date().getFullYear() - carData.yearBuilt} Jahren`,
       severity: 'red',
-      tip: 'Vollständig dokumentierte Besitzerhistorie – alle Fahrzeugdaten transparent einsehbar'
+      tip: 'Vollständig dokumentierte Besitzerhistorie – alle Fahrzeugdaten transparent einsehbar',
+      source: 'Fahrzeugdaten',
     });
   }
 
@@ -24,7 +25,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'SERVICEHISTORIE',
       message: `${carData.maintenanceRecords} Service-Einträge vorhanden`,
       severity: 'orange',
-      tip: 'Inspektionsvereinbarung beim Kauf möglich – Werkstatt Ihrer Wahl für eine vollständige Überprüfung'
+      tip: 'Inspektionsvereinbarung beim Kauf möglich – Werkstatt Ihrer Wahl für eine vollständige Überprüfung',
+      source: 'BMW Servicestandard',
     });
   }
 
@@ -36,7 +38,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'LAUFLEISTUNG',
       message: `${carData.km.toLocaleString()} km – gut eingefahrener Motor`,
       severity: 'orange',
-      tip: 'Bewährte Motorleistung mit bekanntem Verschleißprofil – alle relevanten Wartungsschritte planbar'
+      tip: 'Bewährte Motorleistung mit bekanntem Verschleißprofil – alle relevanten Wartungsschritte planbar',
+      source: 'Kilometerstatistik (Ø 13.000 km/Jahr)',
     });
   }
 
@@ -46,7 +49,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'FAHRZEUGALTER',
       message: `${new Date().getFullYear() - carData.yearBuilt} Jahre – gereifte Fahrzeugtechnik`,
       severity: 'orange',
-      tip: 'Bewährte Technik mit langer Ersatzteil-Verfügbarkeit und vergleichsweise günstigen Wartungskosten'
+      tip: 'Bewährte Technik mit langer Ersatzteil-Verfügbarkeit und vergleichsweise günstigen Wartungskosten',
+      source: 'Marktanalyse',
     });
   }
 
@@ -57,7 +61,8 @@ export function runRulesEngine(carData: Car): Findings {
         flag: 'TRANSPARENTE UNFALLHISTORIE',
         message: `Dokumentierter Unfall: ${accident.type}`,
         severity: 'red',
-        tip: `Vollständig dokumentierte Reparatur – alle Schäden transparent und nachvollziehbar einsehbar`
+        tip: `Vollständig dokumentierte Reparatur – alle Schäden transparent und nachvollziehbar einsehbar`,
+        source: 'Fahrzeugdaten',
       });
     });
   }
@@ -68,7 +73,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'INDIVIDUALISIERUNG',
       message: 'Individuelle Scheinwerfer-Anpassung vorhanden',
       severity: 'red',
-      tip: 'Rückbau auf Serienausstattung vor Übergabe möglich – sprechen Sie uns gerne an'
+      tip: 'Rückbau auf Serienausstattung vor Übergabe möglich – sprechen Sie uns gerne an',
+      source: 'Fahrzeugdaten',
     });
   }
 
@@ -87,7 +93,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'ATTRAKTIVES ANGEBOT',
       message: `${brand} zum Vorteilspreis von ${carData.price.toLocaleString('de-DE')} €`,
       severity: 'red',
-      tip: 'Ausgezeichnetes Preis-Leistungs-Verhältnis – ideal für preisbewusste Käufer'
+      tip: 'Ausgezeichnetes Preis-Leistungs-Verhältnis – ideal für preisbewusste Käufer',
+      source: 'Marktpreisvergleich',
     });
   }
 
@@ -97,7 +104,8 @@ export function runRulesEngine(carData: Car): Findings {
       flag: 'GUTER ZUSTAND',
       message: 'Dieses Auto zeigt keine großen Warnsignale',
       severity: 'green',
-      tip: 'Empfehlung: Unabhängige Inspektion durchführen'
+      tip: 'Empfehlung: Unabhängige Inspektion durchführen',
+      source: 'Regelprüfung',
     });
   }
 

@@ -39,6 +39,10 @@
 /data/bookings.db
 /data/bookings.db.tmp
 
+# seeded car knowledge base (sql.js sqlite file)
+/data/knowledge.db
+/data/knowledge.db.tmp
+
 # debug
 npm-debug.log*
 yarn-debug.log*

@@ -99,9 +99,6 @@ export function CarDetail({ car }: { car: Car }) {
                   ` · Reparatur: ${car.accidents.reduce((s, a) => s + (a.repairCost ?? 0), 0).toLocaleString('de-DE')} €`}
               </div>
             )}
-            {car.description && (
-              <div className="mt-2.5 text-xs text-bmw-gray-text italic border-t border-bmw-gray-bg pt-2.5">{car.description}</div>
-            )}
           </div>
 
           {/* Zustand & Historie — trust-critical facts, inline (no popup needed) */}
@@ -147,29 +144,6 @@ export function CarDetail({ car }: { car: Car }) {
             </div>
           </div>
 
-          {/* Tech specs */}
-          <div className="bg-white border border-bmw-gray-border p-4">
-            <h2 className="text-sm font-bold mb-3">Technische Daten</h2>
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
-              <dt className="text-bmw-gray-muted">Kilometerstand</dt><dd className="font-medium">{car.km.toLocaleString('de-DE')} km</dd>
-              {car.erstzulassung && <><dt className="text-bmw-gray-muted">Erstzulassung</dt><dd className="font-medium">{car.erstzulassung}</dd></>}
-              <dt className="text-bmw-gray-muted">Baujahr</dt><dd className="font-medium">{car.yearBuilt}</dd>
-              <dt className="text-bmw-gray-muted">Vorbesitzer</dt><dd className="font-medium">{car.owners}</dd>
-              <dt className="text-bmw-gray-muted">Service-Einträge</dt><dd className="font-medium">{car.maintenanceRecords}</dd>
-              {car.hu && <><dt className="text-bmw-gray-muted">HU bis</dt><dd className="font-medium">{car.hu}</dd></>}
-              {car.fuel && <><dt className="text-bmw-gray-muted">Kraftstoff</dt><dd className="font-medium">{car.fuel}</dd></>}
-              {car.transmission && <><dt className="text-bmw-gray-muted">Getriebe</dt><dd className="font-medium">{car.transmission}</dd></>}
-              {car.enginePower && <><dt className="text-bmw-gray-muted">Leistung</dt><dd className="font-medium">{car.enginePower}</dd></>}
-              {car.drive && <><dt className="text-bmw-gray-muted">Antrieb</dt><dd className="font-medium">{car.drive}</dd></>}
-              {car.consumption && <><dt className="text-bmw-gray-muted">Verbrauch</dt><dd className="font-medium">{car.consumption} l/100km</dd></>}
-              {car.emission && <><dt className="text-bmw-gray-muted">Abgasnorm</dt><dd className="font-medium">{car.emission}</dd></>}
-              {car.doors && <><dt className="text-bmw-gray-muted">Türen / Sitze</dt><dd className="font-medium">{car.doors} / {car.seats ?? '–'}</dd></>}
-              {car.color && <><dt className="text-bmw-gray-muted">Farbe</dt><dd className="font-medium">{car.color}</dd></>}
-              {car.polster && <><dt className="text-bmw-gray-muted">Polster</dt><dd className="font-medium">{car.polster}</dd></>}
-              {car.interiorColor && <><dt className="text-bmw-gray-muted">Innenfarbe</dt><dd className="font-medium">{car.interiorColor}</dd></>}
-            </dl>
-          </div>
-
           {/* Features */}
           {car.features.length > 0 && (
             <div className="bg-white border border-bmw-gray-border p-4">
@@ -178,6 +152,11 @@ export function CarDetail({ car }: { car: Car }) {
                 {car.features.map(f => (
                   <li key={f} className="text-bmw-dark">
                     <span className="text-bmw-blue mr-1">·</span>{f}
+                  </li>
+                ))}
+                {(car.surprises ?? []).map((s, i) => (
+                  <li key={`s-${i}`} className="text-bmw-dark">
+                    <span className="text-bmw-blue mr-1">·</span>{s.text}
                   </li>
                 ))}
               </ul>

@@ -7,7 +7,7 @@ import { sellers } from '@/lib/auth/sellers';
 import { computeInventoryStats, carCondition } from '@/lib/cars/inventory-stats';
 import { buildSalesIntelligence } from '@/lib/cars/sales-intelligence';
 import { disclosureChecklist } from '@/lib/cars/disclosure';
-import { getTopQuestions } from '@/lib/questions/log';
+import { getTopQuestions, getQuestionsForCar } from '@/lib/questions/log';
 import { getBookings } from '@/lib/bookings/store';
 import { Header } from '@/components/Header';
 import { SellerDashboard } from '@/components/SellerDashboard';
@@ -25,6 +25,7 @@ export default async function DashboardPage() {
     intelligence: buildSalesIntelligence(car),
     condition: carCondition(car),
     disclosure: disclosureChecklist(car),
+    chatQuestions: getQuestionsForCar(car.id).logs,
   }));
   const topQuestions = getTopQuestions(8);
   const bookings = getBookings();

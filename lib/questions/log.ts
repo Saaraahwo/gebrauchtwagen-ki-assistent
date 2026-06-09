@@ -109,15 +109,22 @@ export function getQuestionsForCar(carId: number): {
   return { articleNr: articleNr(carId), logs, faq };
 }
 
-export function getTopQuestions(limit = 8): { question: string; count: number }[] {
+export function getTopQuestions(limit = 8): { question: string; count: number; carName: string }[] {
   const stmt = db.prepare(
-    'SELECT question, COUNT(*) AS c FROM questions GROUP BY lower(trim(question)) ORDER BY c DESC, question ASC LIMIT ?',
+    `SELECT q.question, COUNT(*) AS c,
+       (SELECT car_name FROM questions q2
+        WHERE lower(trim(q2.question)) = lower(trim(q.question))
+        ORDER BY rowid DESC LIMIT 1) AS car_name
+     FROM questions q
+     GROUP BY lower(trim(q.question))
+     ORDER BY c DESC, q.question ASC
+     LIMIT ?`,
   );
   stmt.bind([limit]);
-  const out: { question: string; count: number }[] = [];
+  const out: { question: string; count: number; carName: string }[] = [];
   while (stmt.step()) {
     const row = stmt.getAsObject();
-    out.push({ question: String(row.question), count: Number(row.c) });
+    out.push({ question: String(row.question), count: Number(row.c), carName: String(row.car_name) });
   }
   stmt.free();
   return out;
