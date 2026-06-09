@@ -106,3 +106,11 @@ npm run lint         # ESLint
 - `data/cars.json` — Fahrzeug-Datensatz.
 
 Details und Konventionen: siehe [`CLAUDE.md`](CLAUDE.md).
+
+## Hinweis zur KI-Unterstützung
+
+Dieses Repository ist Teil einer **Universitäts-Fallstudie**. Der Prototyp (Mockup) —
+Code, Oberfläche und Texte sowie die Präsentations- und Demo-Materialien — wurde mit
+Unterstützung von **Claude**, dem KI-Assistenten von Anthropic, erstellt. Die KI diente
+dabei als Werkzeug für Implementierung, Design und Aufbereitung; Konzept, fachliche
+Entscheidungen und Inhalte wurden von der Autorin geprüft und verantwortet.
