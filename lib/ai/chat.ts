@@ -26,9 +26,12 @@ export async function chatWithClaude(
   messages: ChatMessage[],
   userMessage: string,
 ): Promise<ChatResult> {
+  // Warranty-coverage questions go to the chat logic, not the equipment lookup.
+  const isWarranty = /garantie|gewährleist|abgedeckt|abgesichert/i.test(userMessage);
+
   // "Was ist X?" equipment questions are answered from the SQLite knowledge base
   // first — deterministic and correct, regardless of whether a live key is set.
-  const equipment = lookupEquipmentAnswer(userMessage, carData);
+  const equipment = isWarranty ? null : lookupEquipmentAnswer(userMessage, carData);
   if (equipment) {
     return { reply: `**${equipment.term}**\n\n${equipment.answer}`, model: 'wissensdatenbank', basis: 'Wissensdatenbank' };
   }

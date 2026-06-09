@@ -32,6 +32,19 @@ describe('generateDemoChatResponse', () => {
     expect(r).toMatch(/Preis/i);
   });
 
+  it('checks BMW-Garantie coverage per part: mechanical covered, wear/accident not', () => {
+    const motor = generateDemoChatResponse(car, [], 'Ist ein Motorschaden von der BMW Garantie abgedeckt?');
+    expect(motor).toMatch(/BMW Garantie/);
+    expect(motor).toMatch(/Ja, abgedeckt/);
+    expect(motor).toMatch(/bmw\.de/);
+
+    const bremse = generateDemoChatResponse(car, [], 'Sind die Bremsbeläge von der Garantie gedeckt?');
+    expect(bremse).toMatch(/Nein, nicht abgedeckt/);
+
+    const lack = generateDemoChatResponse(car, [], 'Ist ein Lackschaden von der Garantie abgedeckt?');
+    expect(lack).toMatch(/Nein, nicht abgedeckt/);
+  });
+
   it('offers the BMW warranty solution (with source) for an accident-car repair-cost question', () => {
     const accidentCar: Car = {
       ...car,

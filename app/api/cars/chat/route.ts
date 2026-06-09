@@ -23,8 +23,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'carData und message erforderlich' }, { status: 400 });
   }
 
+  // Warranty-coverage questions must reach the chat logic, not the spec knowledge
+  // base (e.g. "Motorschaden … von der Garantie abgedeckt?" must not return PS specs).
+  const isWarranty = /garantie|gewährleist|abgedeckt|abgesichert/i.test(message);
+
   // Check pre-seeded knowledge base first
-  const knowledge = findKnowledgeAnswer(carData.id, message);
+  const knowledge = isWarranty ? null : findKnowledgeAnswer(carData.id, message);
   if (knowledge) {
     if (carData.id) logQuestion(carData.id, carData.name, message, knowledge.answer);
     return NextResponse.json({ reply: knowledge.answer, basis: 'Technische Fahrzeugdaten', model: 'Wissensdatenbank' });

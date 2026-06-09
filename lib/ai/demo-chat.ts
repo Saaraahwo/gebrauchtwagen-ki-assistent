@@ -96,6 +96,44 @@ export function generateDemoChatResponse(
     }
   }
 
+  // ── BMW Garantie: ist eine Reparatur / ein Schaden abgedeckt? ──
+  if (r('garantie|gewährleist|abgedeckt|abgesichert')) {
+    const COVERAGE: { match: string; label: string; covered: 'ja' | 'nein' | 'teilweise'; note: string }[] = [
+      { match: 'rost|durchrost|korrosion', label: 'Durchrostung', covered: 'teilweise',
+        note: 'Durchrostung von innen läuft über die separate BMW Durchrostungsgarantie (Werksstandard, mehrere Jahre ab Erstzulassung) – nicht über die Gebrauchtwagengarantie.' },
+      { match: 'unfall|lack|kratzer|delle|beule|steinschlag|glasbruch|\\bscheibe\\b|karosserie|parkrempler', label: 'Unfall- bzw. Karosserieschaden', covered: 'nein',
+        note: 'Unfall- und Lack-/Karosserieschäden sind keine Garantiefälle. Dafür ist die Kfz-Versicherung (Teil-/Vollkasko) zuständig; bei bereits vorhandenen Mängeln greift die gesetzliche Gewährleistung des Händlers.' },
+      { match: 'bremsbel|bremsscheib|\\bbremse|reifen|kupplung|wischer|zündkerze|glühkerze|luftfilter|ölwechsel|inspektion|batterie|verschleiß|scheibenwischer', label: 'Verschleiß-/Wartungsteil', covered: 'nein',
+        note: 'Verschleiß- und Wartungsteile (z. B. Bremsen, Reifen, Kupplung, Wischer, Batterie, Filter) sind von der Garantie ausgenommen – das sind normale Unterhaltskosten.' },
+      { match: 'motor|getriebe|steuerkette|turbo|einspritz|wasserpumpe|lichtmaschine|anlasser|antrieb|differential|kardan', label: 'Motor-/Getriebe-/Antriebsdefekt', covered: 'ja',
+        note: 'Mechanische Defekte an Motor, Getriebe und Antrieb sind über die BMW Gebrauchtwagengarantie (Premium Selection) abgedeckt – Material und Arbeit zu 100 %, ohne Selbstbeteiligung.' },
+      { match: 'elektr|elektronik|steuergerät|sensor|navigation|display|fensterheber|zentralverriegel|klimaanlage|klimakompressor|bordcomputer|infotainment', label: 'Elektrik-/Elektronikdefekt', covered: 'ja',
+        note: 'Elektrische und elektronische Bauteile sind über die BMW Gebrauchtwagengarantie abgedeckt – Material und Arbeit zu 100 %, ohne Selbstbeteiligung.' },
+    ];
+    const hit = COVERAGE.find(c => new RegExp(c.match, 'i').test(userMessage));
+    const eligible = age <= 12 && carData.km <= 200000;
+    let body: string;
+    if (hit) {
+      const mark = hit.covered === 'ja' ? '✓ **Ja, abgedeckt.**'
+        : hit.covered === 'nein' ? '✗ **Nein, nicht abgedeckt.**'
+        : '➖ **Teilweise – über eine andere Garantie.**';
+      body = `**${hit.label}:** ${mark}\n${hit.note}`;
+    } else {
+      body = `Das hängt vom Bauteil ab:\n` +
+        `✓ Abgedeckt: mechanische und elektronische Defekte (z. B. Motor, Getriebe, Elektrik).\n` +
+        `✗ Nicht abgedeckt: Verschleißteile (Bremsen, Reifen, Kupplung …) sowie Unfall- und Lackschäden.\n` +
+        `Nennen Sie das konkrete Bauteil oder den Schaden, dann sage ich Ihnen, ob es ein Garantiefall ist.`;
+    }
+    let reply = `**BMW Garantie – ist die Reparatur abgedeckt?**\n\n${body}\n\n` +
+      `Rahmen: BMW Premium Selection – 24 Monate, 100 % Material + Arbeit, ohne Selbstbeteiligung` +
+      (eligible ? '.' : ` (gilt bis 12 Jahre / 200.000 km – Förderfähigkeit dieses Fahrzeugs bitte prüfen).`);
+    if (hasAccidents) {
+      reply += `\n\nZu diesem Fahrzeug (${carData.accidents.map(a => a.type).join(', ')}): Der bereits reparierte Schaden selbst ist kein Garantiefall – künftige mechanische/elektronische Defekte dagegen schon.`;
+    }
+    reply += `\n\nQuelle: BMW Premium Selection Garantie (bmw.de)`;
+    return reply;
+  }
+
   // ── Ausstattung & Features (vor allen anderen, da Begriffe wie "sitz" sonst zu früh matchen) ──
   if (r('ausstatt|sportpaket|m.sport|hat.*navi|gibt.*navi|navi.*vorhand|sitzheiz|hat.*sitzheiz|hat.*leder|hat.*pano|hat.*laser|hat.*kamera|hat.*parkassist|hat.*standheiz|hat.*harman|hat.*bang|hat.*bowers|hat.*tempomat|hat.*head.up|hat.*fahrassist|hat.*ambient|hat.*soft.close|hat.*bluetooth|hat.*usb|welche.*features|was.*drin|was.*ausgestattet|wie.*ausgestattet|vorhanden|ausstattungliste|was.*hat.*auto')) {
     const features = carData.features || [];

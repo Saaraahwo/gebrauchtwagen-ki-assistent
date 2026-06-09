@@ -17,4 +17,7 @@ describe('basisForMessage', () => {
   it('default → Fahrzeugdaten & Prüf-Erfahrung', () => {
     expect(basisForMessage('Wie ist der Motor?')).toBe('Fahrzeugdaten & Prüf-Erfahrung');
   });
+  it('warranty coverage → BMW Garantie-Bedingungen', () => {
+    expect(basisForMessage('Ist der Schaden von der Garantie abgedeckt?')).toBe('BMW Garantie-Bedingungen');
+  });
 });
