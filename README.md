@@ -53,17 +53,19 @@ Quelle zurückführbar (z. B. Fahrzeugdaten, ADAC, WLTP, Marktvergleich, Schaden
 - **Verkäufer-Cockpit** (Dashboard): Verkaufsargumente, Einwand-Behandlung,
   echte Kundenfragen + FAQ-Export, Probefahrt-Drehbuch, Flotten-Übersicht.
 
-## Demo-Videos
+## Demo
 
-Im Ordner [`presentation/`](presentation/) liegen die Bildschirmaufnahmen — beide zeigen,
-wie es funktioniert und was der Assistent kann:
+### Käufer-Seite
 
-- **Käufer-Seite** — `presentation/Käufer Seite OEM.mp4`
-- **Verkäufer-Seite (Dashboard)** — `presentation/Käufer Dashboard.mp4`
+Hier ist die Käufer-Seite:
 
-[`presentation/index.html`](presentation/index.html) zeigt beide Videos nebeneinander mit
-Beschreibung. Die Videos sind per **Git LFS** versioniert — nach dem Klonen `git lfs pull`
-ausführen, damit die `.mp4`-Dateien vollständig geladen werden.
+<video src="https://github.com/Saaraahwo/gebrauchtwagen-ki-assistent/raw/master/presentation/kaeufer-seite.mp4" controls></video>
+
+### Verkäufer-Seite
+
+Hier ist die Verkäufer-Seite:
+
+<video src="https://github.com/Saaraahwo/gebrauchtwagen-ki-assistent/raw/master/presentation/verkaeufer-seite.mp4" controls></video>
 
 ## Schnellstart
 
