@@ -1,22 +1,25 @@
 # Gebrauchtwagen KI-Kaufassistent
 
+> **„Transparenz, die verkauft."**
+
 Ein KI-gestützter Kaufassistent für gebrauchte BMW — als Fallstudie im OEM-Kontext.
-Leitidee: **Transparenz, die verkauft.**
+Der Assistent zeigt Käufern offen auch die Schwächen eines Fahrzeugs (mit Quelle) und gibt
+Verkäufern ein fertiges Verkaufs-Briefing. Jede Aussage ist regelbasiert hergeleitet und
+belegt — keine Halluzination.
 
-Next.js (App Router) · TypeScript · Tailwind · Vitest. Läuft vollständig im **Demo-Modus**
-ohne API-Key (deterministische Fallbacks); mit `ANTHROPIC_API_KEY` werden Analyse- und
-Chat-Antworten live von Claude erzeugt.
+![Next.js](https://img.shields.io/badge/Next.js-App%20Router-000000?logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38BDF8?logo=tailwindcss&logoColor=white)
+![Vitest](https://img.shields.io/badge/Tests-157%20passing-2ea44f?logo=vitest&logoColor=white)
+![Demo-Modus](https://img.shields.io/badge/Demo--Modus-ohne%20API--Key-1c69d4)
 
-## Warum wir das bauen
+## Warum
 
 Der Gebrauchtwagenkauf ist ein **Vertrauensproblem**: Der Käufer fürchtet versteckte Mängel
-und glaubt dem Verkäufer erst einmal nicht. Dieses Misstrauen macht Verhandlungen zäh,
-drückt den Preis und kostet Stammkunden.
-
-Unsere Idee dreht das um: Der Assistent zeigt **aktiv auch das, was nicht perfekt ist** —
-sachlich, mit Quelle und immer mit einer Lösung. Wer auch die Schwächen offen nennt, dem
-glaubt man die Stärken. Der Käufer entscheidet ohne Restzweifel und kommt wieder.
-**Transparenz wird so vom Risiko zum stärksten Verkaufsargument.**
+und glaubt dem Verkäufer erst einmal nicht. Das macht Verhandlungen zäh, drückt den Preis und
+kostet Stammkunden. Unsere Idee dreht das um — wer auch die Schwächen offen nennt (sachlich,
+mit Quelle und mit Lösung), dem glaubt man die Stärken. **Transparenz wird so vom Risiko zum
+stärksten Verkaufsargument.**
 
 ## Konzept
 
@@ -27,43 +30,75 @@ aufbereitet, einmal als Verkaufshilfe für das Autohaus.
   <img src="presentation/concept-diagram.png" alt="Datenquellen → KI-Assistent (belegt, mit Quelle) → Käufer-Ansicht und Verkäufer-Cockpit" width="820">
 </p>
 
-## Wie es funktioniert
+Jede Aussage steht auf Daten: Eine **Regel-Engine** prüft die Fahrzeugdaten, erkennt
+Auffälligkeiten und liefert die Quelle; die **KI** formuliert daraus verständliche Antworten.
+So kann nichts „erfunden" werden — jeder Satz ist auf eine Quelle zurückführbar.
 
-Jede Aussage steht auf Daten, nicht auf Bauchgefühl. Eine **Regel-Engine** prüft die
-Fahrzeugdaten, erkennt Auffälligkeiten und liefert die passende Quelle; die **KI** formuliert
-daraus verständliche Antworten. So kann nichts „erfunden" werden — jeder Satz ist auf eine
-Quelle zurückführbar (z. B. Fahrzeugdaten, ADAC, WLTP, Marktvergleich, Schadens-Datenbank).
+---
 
-## Was der Assistent kann
+## Rundgang durch das Mockup
 
-- **KI-Chat mit Quellen** — Jede Chat-Antwort nennt ihre Grundlage und Quelle
-  (z. B. *Technische Fahrzeugdaten · Wissensdatenbank*, *Marktvergleich*,
-  *Schadens-Datenbank*). Modellspezifisch und nachprüfbar statt generisch.
-- **KI-Fahrzeug-Check mit allen Highlights + Erklärungen** — Ein Klick zeigt alle
-  Besonderheiten des Autos: Prüfpunkte, Schäden im Detail (mit Folgekosten & ADAC-Tipp),
-  Ausstattung erklärt, Preis-Ampel/Marktwert und eine Kauf-Checkliste — jede Angabe mit Quelle.
-- **Garantien erklärt** — Bei Unfall- oder Reparaturkosten-Risiko wird die passende
-  BMW-Garantie als Lösung erklärt: BMW Premium Selection (24 Monate, 100 % Material + Arbeit,
-  ohne Selbstbeteiligung) bzw. Anschlussgarantie — mit Quelle ([bmw.de](https://www.bmw.de/de/mehr-bmw/bmw-gebrauchte/garantie.html)).
+### Käufer-Seite
 
-### KI-Fahrzeug-Check mit Garantie-Hinweis
+**1 · Startseite & Fahrzeugliste**
+Alle Fahrzeuge auf einen Blick, mit Filtern nach Preis, Kilometerstand, Baujahr und Kraftstoff.
 
-Ein Klick zeigt alle Besonderheiten des Fahrzeugs — jede mit Quelle — und erklärt bei
-Reparaturkosten-Risiko die passende BMW-Garantie als Lösung. Genau diese Kombination aus
-offener Information und konkreter Absicherung schafft Vertrauen.
+![Startseite & Fahrzeugliste](presentation/screens/01-fahrzeugliste.png)
 
-<p align="center">
-  <img src="presentation/fahrzeugcheck-garantie.png" alt="KI-Fahrzeug-Check mit Highlights und hervorgehobenem BMW-Garantie-Hinweis" width="600">
-</p>
+**2 · Fahrzeug-Detailseite**
+Ausstattung und technische Daten je Fahrzeug — die Grundlage für eine informierte Entscheidung.
 
-## Zwei Seiten, ein Assistent
+![Fahrzeug-Detailseite](presentation/screens/02-detailseite.png)
 
-- **Käufer-Seite** (Fahrzeugseite): Fahrzeug-Check mit Stärken/Mängeln & Quellen,
-  Preis-Ampel, ehrlicher KI-Chat, Probefahrt-Anfrage.
-- **Verkäufer-Cockpit** (Dashboard): Verkaufsargumente, Einwand-Behandlung,
-  echte Kundenfragen + FAQ-Export, Probefahrt-Drehbuch, Flotten-Übersicht.
+**3 · Fahrzeug-Check — Highlights, Quellen & Garantie**
+Ein Klick zeigt alle Besonderheiten des Fahrzeugs (jede mit Quelle), die Schäden im Detail —
+und erklärt bei Reparaturkosten-Risiko die passende BMW-Garantie als Lösung.
 
-## Demo
+![Fahrzeug-Check mit Garantie-Hinweis](presentation/fahrzeugcheck-garantie.png)
+
+**4 · KI-Chat mit Quellen**
+Ehrliche, modellspezifische Antworten zu Motor, Unfall, Kosten, Verhandlung — und zur Frage,
+ob eine Reparatur von der BMW Garantie abgedeckt ist. Jede Antwort nennt ihre Grundlage und Quelle.
+
+![KI-Chat mit Quellen](presentation/screens/04-chat.png)
+
+**5 · Probefahrt-Anfrage**
+Probefahrt direkt online anfragen — mit transparenter Einwilligung zur Datenspeicherung.
+
+![Probefahrt-Anfrage](presentation/screens/05-probefahrt.png)
+
+### Verkäufer-Seite
+
+**6 · Dashboard — Übersicht**
+Flotten-Kennzahlen auf einen Blick: Durchschnittspreis, Laufleistung, Flottengesundheit,
+Kraftstoff- und Abgasmix.
+
+![Dashboard Übersicht](presentation/screens/06-dashboard-uebersicht.png)
+
+**7 · Fahrzeuge**
+Alle Fahrzeuge als Karten mit Status (Gut / Hinweise / Kritisch), Preis und Eckdaten.
+
+![Dashboard Fahrzeuge](presentation/screens/07-dashboard-fahrzeuge.png)
+
+**8 · Fahrzeug-Briefing**
+Pro Fahrzeug ein fertiges Verkaufs-Briefing: Verkaufsargumente, Kaufhemmnisse, erwartete und
+echte Kundenfragen, Probefahrt-Drehbuch (feste Route) und Ausstattung.
+
+![Fahrzeug-Briefing](presentation/screens/08-dashboard-briefing.png)
+
+**9 · Kundenfragen**
+Welche Fragen Kunden im Chat wirklich stellen — als Ranking und pro Fahrzeug, mit FAQ-Export.
+
+![Kundenfragen](presentation/screens/09-dashboard-kundenfragen.png)
+
+**10 · Probefahrten**
+Eingehende Probefahrt-Anfragen mit Kontakt und Wunschtermin.
+
+![Probefahrten](presentation/screens/10-dashboard-probefahrten.png)
+
+---
+
+## Demo-Videos
 
 ### Käufer-Seite
 
