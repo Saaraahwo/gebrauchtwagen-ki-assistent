@@ -109,8 +109,7 @@ Details und Konventionen: siehe [`CLAUDE.md`](CLAUDE.md).
 
 ## Hinweis zur KI-Unterstützung
 
-Dieses Repository ist Teil einer **Universitäts-Fallstudie**. Der Prototyp (Mockup) —
-Code, Oberfläche und Texte sowie die Präsentations- und Demo-Materialien — wurde mit
-Unterstützung von **Claude**, dem KI-Assistenten von Anthropic, erstellt. Die KI diente
-dabei als Werkzeug für Implementierung, Design und Aufbereitung; Konzept, fachliche
-Entscheidungen und Inhalte wurden von der Autorin geprüft und verantwortet.
+Dieses Repository ist Teil eines Projektes für **Unternehmensethik**. Das Mockup — also
+**Code und Oberfläche** — wurde mit Unterstützung von **Claude**, dem KI-Assistenten von
+Anthropic, erstellt. Die KI diente dabei als Werkzeug für Implementierung und Design;
+Konzept, fachliche Entscheidungen und Inhalte wurden von der Autorin geprüft und verantwortet.
