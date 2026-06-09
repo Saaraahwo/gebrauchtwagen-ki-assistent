@@ -4,8 +4,7 @@
 
 Ein KI-gestützter Kaufassistent für gebrauchte BMW — als Fallstudie im OEM-Kontext.
 Der Assistent zeigt Käufern offen auch die Schwächen eines Fahrzeugs (mit Quelle) und gibt
-Verkäufern ein fertiges Verkaufs-Briefing. Jede Aussage ist regelbasiert hergeleitet und
-belegt — keine Halluzination.
+Verkäufern ein fertiges Verkaufs-Briefing. Jede Aussage ist regelbasiert hergeleitet und belegt.
 
 ![Next.js](https://img.shields.io/badge/Next.js-App%20Router-000000?logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
@@ -100,17 +99,29 @@ Eingehende Probefahrt-Anfragen mit Kontakt und Wunschtermin.
 
 ## Demo-Videos
 
+Die beiden Aufnahmen zeigen die App in Aktion — einmal aus Sicht des Käufers, einmal aus
+Sicht des Verkäufers.
+
 ### Käufer-Seite
 
-Hier ist die Käufer-Seite — ▶ aufs Bild klicken zum Abspielen:
+▶ Aufs Bild klicken zum Abspielen:
 
 [![Käufer-Seite — Demo-Video](presentation/poster-kaeufer.png)](presentation/kaeufer-seite.mp4)
 
+Das Video zeigt den Weg des Käufers durch die OEM-Fahrzeugseite: von der **Fahrzeugliste**
+über die **Detailseite** und den **Fahrzeug-Check** (Stärken, Mängel und Schäden — jeweils mit
+Quelle, samt BMW-Garantie-Hinweis) bis zum **KI-Chat mit Quellen** und der **Probefahrt-Anfrage**.
+
 ### Verkäufer-Seite
 
-Hier ist die Verkäufer-Seite — ▶ aufs Bild klicken zum Abspielen:
+▶ Aufs Bild klicken zum Abspielen:
 
 [![Verkäufer-Seite — Demo-Video](presentation/poster-verkaeufer.png)](presentation/verkaeufer-seite.mp4)
+
+Das Video zeigt das **Verkäufer-Cockpit**: die **Übersicht** mit Flotten-Kennzahlen
+(Durchschnittspreis, Laufleistung, Flottengesundheit), das **Fahrzeug-Briefing** pro Auto
+(Verkaufsargumente und Einwand-Konter), die **echten Kundenfragen** aus dem Chat und die
+eingehenden **Probefahrt-Anfragen**.
 
 ## Schnellstart
 
