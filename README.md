@@ -46,6 +46,16 @@ Quelle zurückführbar (z. B. Fahrzeugdaten, ADAC, WLTP, Marktvergleich, Schaden
   BMW-Garantie als Lösung erklärt: BMW Premium Selection (24 Monate, 100 % Material + Arbeit,
   ohne Selbstbeteiligung) bzw. Anschlussgarantie — mit Quelle ([bmw.de](https://www.bmw.de/de/mehr-bmw/bmw-gebrauchte/garantie.html)).
 
+### KI-Fahrzeug-Check mit Garantie-Hinweis
+
+Ein Klick zeigt alle Besonderheiten des Fahrzeugs — jede mit Quelle — und erklärt bei
+Reparaturkosten-Risiko die passende BMW-Garantie als Lösung. Genau diese Kombination aus
+offener Information und konkreter Absicherung schafft Vertrauen.
+
+<p align="center">
+  <img src="presentation/fahrzeugcheck-garantie.png" alt="KI-Fahrzeug-Check mit Highlights und hervorgehobenem BMW-Garantie-Hinweis" width="600">
+</p>
+
 ## Zwei Seiten, ein Assistent
 
 - **Käufer-Seite** (Fahrzeugseite): Fahrzeug-Check mit Stärken/Mängeln & Quellen,
@@ -57,15 +67,15 @@ Quelle zurückführbar (z. B. Fahrzeugdaten, ADAC, WLTP, Marktvergleich, Schaden
 
 ### Käufer-Seite
 
-Hier ist die Käufer-Seite:
+Hier ist die Käufer-Seite — ▶ aufs Bild klicken zum Abspielen:
 
-<video src="https://github.com/Saaraahwo/gebrauchtwagen-ki-assistent/raw/master/presentation/kaeufer-seite.mp4" controls></video>
+[![Käufer-Seite — Demo-Video](presentation/poster-kaeufer.png)](presentation/kaeufer-seite.mp4)
 
 ### Verkäufer-Seite
 
-Hier ist die Verkäufer-Seite:
+Hier ist die Verkäufer-Seite — ▶ aufs Bild klicken zum Abspielen:
 
-<video src="https://github.com/Saaraahwo/gebrauchtwagen-ki-assistent/raw/master/presentation/verkaeufer-seite.mp4" controls></video>
+[![Verkäufer-Seite — Demo-Video](presentation/poster-verkaeufer.png)](presentation/verkaeufer-seite.mp4)
 
 ## Schnellstart
 
