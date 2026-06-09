@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Präsentation — KI-Kaufassistent fürs Autohaus</title>
+<style>
+  :root {
+    --ink: #1a2336; --muted: #5c6884; --line: #d8deea; --panel: #f5f6f9;
+    --m-lblue: #2ea8e0; --m-dblue: #003e7e; --m-red: #e2001a;
+    --mstripe: linear-gradient(90deg, var(--m-lblue) 0 33.3%, var(--m-dblue) 33.3% 66.6%, var(--m-red) 66.6% 100%);
+    --font: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); color: var(--ink); background: #eef1f6; line-height: 1.5; }
+  .topbar { height: 5px; background: var(--mstripe); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px 64px; }
+
+  header { margin-bottom: 36px; }
+  .kicker { font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 12px; }
+  h1 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -0.015em; line-height: 1.1; }
+  .tagline { font-size: clamp(16px, 2.2vw, 22px); font-weight: 700; margin-top: 12px; }
+  .sub { color: var(--muted); margin-top: 8px; font-size: 15px; }
+  .mbar { width: 110px; height: 6px; border-radius: 4px; background: var(--mstripe); margin: 18px 0 0; }
+
+  .deck-cta {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 26px;
+    background: var(--ink); color: #fff; text-decoration: none; font-weight: 600;
+    padding: 12px 20px; border-radius: 10px; font-size: 15px;
+    box-shadow: 0 8px 22px rgba(20,30,60,0.18);
+  }
+  .deck-cta:hover { opacity: 0.92; }
+  .deck-cta .arrow { font-size: 18px; }
+
+  h2.section { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 44px 0 16px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+
+  .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 760px) { .videos { grid-template-columns: 1fr; } }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 6px 22px rgba(15,30,60,0.07); display: flex; flex-direction: column; }
+  .card .head { padding: 16px 18px 4px; }
+  .card .badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 3px 9px; border-radius: 6px; }
+  .card h3 { font-size: 19px; font-weight: 800; margin: 10px 0 4px; }
+  .card p { color: var(--muted); font-size: 14px; padding: 0 18px; }
+  video { width: 100%; display: block; background: #000; margin-top: 12px; }
+  .card ul { list-style: none; padding: 12px 18px 18px; margin-top: auto; }
+  .card li { position: relative; padding-left: 18px; font-size: 13.5px; margin-top: 6px; }
+  .card li::before { content: ""; position: absolute; left: 0; top: 8px; width: 7px; height: 7px; background: var(--ink); border-radius: 2px; }
+
+  footer { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  footer a { color: var(--m-dblue); }
+</style>
+</head>
+<body>
+<div class="topbar"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Teil 2 · Präsentation</div>
+    <h1>Der KI-Kaufassistent fürs Autohaus</h1>
+    <div class="tagline">„Transparenz, die verkauft."</div>
+    <div class="sub">App-Konzept &amp; Features · Fallstudie für Autohäuser &amp; Verkaufsplattformen</div>
+    <div class="mbar"></div>
+    <a class="deck-cta" href="part2-app-concept.html">Foliendeck öffnen <span class="arrow">→</span></a>
+  </header>
+
+  <h2 class="section">Demo-Videos — so funktioniert es</h2>
+  <div class="videos">
+
+    <!-- Käufer-Seite -->
+    <div class="card">
+      <div class="head">
+        <span class="badge">Käufer-Seite</span>
+        <h3>So erlebt es der Käufer</h3>
+      </div>
+      <p>Die kundenseitige OEM-Fahrzeugseite — volle Transparenz vor dem Kauf.</p>
+      <video controls preload="metadata" src="Käufer%20Seite%20OEM.mp4"></video>
+      <ul>
+        <li>Fahrzeugliste &amp; Detailseite mit Preis-Ampel</li>
+        <li>Fahrzeug-Check: Stärken, Mängel &amp; Schäden — mit Quelle</li>
+        <li>KI-Chat: ehrliche, modellspezifische Antworten</li>
+        <li>Probefahrt direkt online anfragen</li>
+      </ul>
+    </div>
+
+    <!-- Verkäufer-Seite -->
+    <div class="card">
+      <div class="head">
+        <span class="badge">Verkäufer-Seite</span>
+        <h3>So arbeitet der Verkäufer</h3>
+      </div>
+      <p>Das interne Verkäufer-Cockpit — Vorbereitung &amp; Verkaufshilfe auf Knopfdruck.</p>
+      <video controls preload="metadata" src="Käufer%20Dashboard.mp4"></video>
+      <ul>
+        <li>Übersicht: Flotten-Gesundheit, Preise, Auffälligkeiten</li>
+        <li>Fahrzeug-Briefing: Verkaufsargumente &amp; Einwand-Konter</li>
+        <li>Kundenfragen: was Kunden real fragen + FAQ-Export</li>
+        <li>Probefahrt-Anfragen auf einen Blick</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>BMW · KI-Kaufassistent · Konzept-Fallstudie</span>
+    <span>Auch enthalten: <a href="part2-app-concept.html">Foliendeck</a> · <a href="concept-diagram.svg">Konzept-Grafik</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
