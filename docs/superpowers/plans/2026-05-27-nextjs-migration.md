@@ -1362,7 +1362,7 @@ export const sellers: Record<string, Seller> = {
     id: 'seller-1',
     email: 'demo@carcheck.de',
     passwordHash: 'hashed-password-demo',
-    name: 'Max Müller',
+    name: 'Sarah Wohlert',
   },
 };
 ```
@@ -1918,7 +1918,7 @@ export async function GET(req: NextRequest) {
 
   // Port dashboard data verbatim from master server.js:1019-1067.
   const dashboardData = {
-    sellerInfo: { email: seller.email, name: 'Max Müller' },
+    sellerInfo: { email: seller.email, name: 'Sarah Wohlert' },
     statistics: {
       carsAnalyzed: 47,
       commonAnomalies: [
