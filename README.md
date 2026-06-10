@@ -18,7 +18,8 @@ Der Gebrauchtwagenkauf ist ein **Vertrauensproblem**: Der Käufer fürchtet vers
 und glaubt dem Verkäufer erst einmal nicht. Das macht Verhandlungen zäh, drückt den Preis und
 kostet Stammkunden. Unsere Idee dreht das um — wer auch die Schwächen offen nennt (sachlich,
 mit Quelle und mit Lösung), dem glaubt man die Stärken. **Transparenz wird so vom Risiko zum
-stärksten Verkaufsargument.**
+stärksten Verkaufsargument.** Dass dies funktioniert, ist empirisch belegt — als
+**Blemishing-Effekt** (siehe unten, *Quellen & theoretische Grundlage*).
 
 ## Konzept
 
@@ -152,6 +153,39 @@ npm run lint         # ESLint
 - `data/cars.json` — Fahrzeug-Datensatz.
 
 Details und Konventionen: siehe [`CLAUDE.md`](CLAUDE.md).
+
+## Quellen & theoretische Grundlage
+
+### Warum „Schwächen offenlegen" funktioniert — der Blemishing-Effekt
+
+Der Ansatz, gezielt auch Schwächen offenzulegen, ist kein Bauchgefühl, sondern durch
+Konsumforschung gestützt — den **Blemishing-Effekt**: Eine kleine Dosis negativer Information,
+eingebettet in überwiegend positive Information, kann die Gesamtbewertung und das Vertrauen
+**erhöhen** statt zu senken.
+
+- Ein-Gar, D., Shiv, B., & Tormala, Z. L. (2012). *When Blemishing Leads to Blossoming:
+  The Positive Effect of Negative Information.* Journal of Consumer Research, 38(5), 846–859.
+
+Verwandt sind die Forschung zur **zweiseitigen Kommunikation** (two-sided messaging — auch
+Nachteile zu nennen wirkt glaubwürdiger) sowie die **Inokulationstheorie** (McGuire, 1964).
+→ Für die schriftliche Arbeit die genauen Quellenangaben bitte noch einmal verifizieren.
+
+### Quellen & Datengrundlage des Mockups
+
+Hinweis: Das Mockup ist ein **Konzept-Prototyp** — die angezeigten Fahrzeug- und Marktdaten
+sind illustrativ. Die im Fahrzeug-Check und KI-Chat eingeblendeten **Quellen-Angaben**
+verweisen auf die folgenden Referenztypen, also worauf eine echte Aussage gestützt *wäre*:
+
+| Quelle | Verwendet für |
+|---|---|
+| **BMW.de / Fahrzeugdaten** | Modell-, Ausstattungs- und technische Daten |
+| **BMW Premium Selection Garantie** ([bmw.de](https://www.bmw.de/de/mehr-bmw/bmw-gebrauchte/garantie.html)) | Garantie-Bedingungen & Deckung |
+| **ADAC** (Kaufberatung, Gebrauchtwagencheck) | Prüf-Tipps und ADAC-Hinweise in der Schaden-Datenbank |
+| **DEKRA / TÜV** | Gutachten-Empfehlungen bei Unfall- und Strukturschäden |
+| **WLTP-Messverfahren / Umweltbundesamt** | Verbrauchs- und CO₂-Angaben |
+| **DAT / Marktpreisvergleich** (mobile.de, autoscout24) | Marktwert & Preisbewertung |
+| **StVZO §22a · ECE R149 · EU-Richtlinie 2019/631** | rechtliche Prüfpunkte (Scheinwerfer, Emissionen) |
+| **carVertical** | Fahrzeughistorie (im Chat erwähnt) |
 
 ## Hinweis zur KI-Unterstützung
 
